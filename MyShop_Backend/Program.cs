@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using MyShop_Backend.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,8 +10,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-
-
+builder.Services.AddDbContext<MyShopDbContext>(options =>
+	options.UseSqlServer(builder.Configuration.GetConnectionString("MyShop_Backend")));
 
 var app = builder.Build();
 
