@@ -1,5 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using MyShop_Backend.Data;
+using MyShop_Backend.Mappers;
+using MyShop_Backend.Repositories.CategoryRepositories;
+using MyShop_Backend.Services.CategoryService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,8 +13,18 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+//ket noi csdl
 builder.Services.AddDbContext<MyShopDbContext>(options =>
 	options.UseSqlServer(builder.Configuration.GetConnectionString("MyShop_Backend")));
+
+// Register AutoMapper
+builder.Services.AddAutoMapper(typeof(Mapper));
+
+// Register services
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+
 
 var app = builder.Build();
 

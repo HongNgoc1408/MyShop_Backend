@@ -220,7 +220,7 @@ namespace MyShop_Backend.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("MyShop_Backend.Models.Category", b =>
+            modelBuilder.Entity("MyShop_Backend.Models.CategoryModel", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -236,7 +236,6 @@ namespace MyShop_Backend.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Status")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("UpdateAt")
@@ -258,14 +257,23 @@ namespace MyShop_Backend.Migrations
                     b.Property<DateTime>("CreateAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("ImageURL")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
 
                     b.Property<int>("ProductsId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdateAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
@@ -275,7 +283,7 @@ namespace MyShop_Backend.Migrations
                     b.ToTable("Images");
                 });
 
-            modelBuilder.Entity("MyShop_Backend.Models.Product", b =>
+            modelBuilder.Entity("MyShop_Backend.Models.ProductModel", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -378,7 +386,7 @@ namespace MyShop_Backend.Migrations
 
             modelBuilder.Entity("MyShop_Backend.Models.Image", b =>
                 {
-                    b.HasOne("MyShop_Backend.Models.Product", "Products")
+                    b.HasOne("MyShop_Backend.Models.ProductModel", "Products")
                         .WithMany("Images")
                         .HasForeignKey("ProductsId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -387,9 +395,9 @@ namespace MyShop_Backend.Migrations
                     b.Navigation("Products");
                 });
 
-            modelBuilder.Entity("MyShop_Backend.Models.Product", b =>
+            modelBuilder.Entity("MyShop_Backend.Models.ProductModel", b =>
                 {
-                    b.HasOne("MyShop_Backend.Models.Category", "Category")
+                    b.HasOne("MyShop_Backend.Models.CategoryModel", "Category")
                         .WithMany("Products")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -398,12 +406,12 @@ namespace MyShop_Backend.Migrations
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("MyShop_Backend.Models.Category", b =>
+            modelBuilder.Entity("MyShop_Backend.Models.CategoryModel", b =>
                 {
                     b.Navigation("Products");
                 });
 
-            modelBuilder.Entity("MyShop_Backend.Models.Product", b =>
+            modelBuilder.Entity("MyShop_Backend.Models.ProductModel", b =>
                 {
                     b.Navigation("Images");
                 });
