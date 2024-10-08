@@ -6,7 +6,7 @@ using MyShop_Backend.Services.PagedServices;
 
 namespace MyShop_Backend.Repositories.UserRepositories
 {
-	public class UserRepository : CommonRepository<Users>, IUserRepository
+	public class UserRepository : CommonRepository<User>, IUserRepository
 	{
 		private readonly MyShopDbContext _context;
 
@@ -26,16 +26,16 @@ namespace MyShop_Backend.Repositories.UserRepositories
 				.CountAsync();
 		}
 
-		public async Task<IEnumerable<Users>> GetAllUserAsync(int page, int pageSize)
+		public async Task<IEnumerable<User>> GetAllUserAsync(int page, int pageSize)
 		{
-			return (IEnumerable<Users>)await _context.Users
+			return (IEnumerable<User>)await _context.Users
 			   .Paginate(page, pageSize)
 			   .ToListAsync();
 		}
 
-		public async Task<IEnumerable<Users>> GetAllUserAsync(int page, int pageSize, string search)
+		public async Task<IEnumerable<User>> GetAllUserAsync(int page, int pageSize, string search)
 		{
-			return (IEnumerable<Users>)await _context.Users
+			return (IEnumerable<User>)await _context.Users
 				.Where(e => e.Id.ToString().Contains(search)
 				|| (e.UserName != null && e.UserName.Contains(search))
 				|| (e.Email != null && e.Email.Contains(search))

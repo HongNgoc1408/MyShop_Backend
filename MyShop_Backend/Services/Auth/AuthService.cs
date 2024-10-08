@@ -14,13 +14,13 @@ namespace MyShop_Backend.Services.AuthServices
 {
 	public class AuthService : IAuthService
 	{
-		private readonly SignInManager<Users> _signInManager;
-		private readonly UserManager<Users> _userManager;
+		private readonly SignInManager<User> _signInManager;
+		private readonly UserManager<User> _userManager;
 		private readonly IConfiguration _config;
 		private readonly ISendMailService _emailSender;
 		private readonly ICachingService _cachingService;
 
-		public AuthService(SignInManager<Users> signInManager, UserManager<Users> userManager,
+		public AuthService(SignInManager<User> signInManager, UserManager<User> userManager,
 			IConfiguration config,
 			ISendMailService emailSender,
 			ICachingService cachingService)
@@ -31,7 +31,7 @@ namespace MyShop_Backend.Services.AuthServices
 			_emailSender = emailSender;
 			_cachingService = cachingService;
 		}
-		private async Task<string> CreateJWT(Users user, bool isRefreshToken = false)
+		private async Task<string> CreateJWT(User user, bool isRefreshToken = false)
 		{
 			var roles = await _userManager.GetRolesAsync(user);
 			var claims = new List<Claim>
@@ -90,7 +90,7 @@ namespace MyShop_Backend.Services.AuthServices
 
 			if (isTokenValid)
 			{
-				var User = new Users()
+				var User = new User()
 				{
 					Email = request.Email,
 					NormalizedEmail = request.Email,

@@ -13,12 +13,12 @@ namespace MyShop_Backend.Repositories.ImageRepositories
 			_dbContext = dbContext;
 		}
 
-		public async Task<Image?> GetFirstImageByProductAsync(int id)
+		public async Task<Image?> GetFirstImageByProductAsync(long id)
 		{
 			return await _dbContext.Images.FirstOrDefaultAsync(e => e.ProductId == id);
 		}
 
-		public async Task<IEnumerable<Image>> GetImageProductAsync(int ProductId)
+		public async Task<IEnumerable<Image>> GetImageProductAsync(long ProductId)
 		{
 			return await _dbContext.Images.Where(e => e.ProductId == ProductId).ToListAsync();
 		}

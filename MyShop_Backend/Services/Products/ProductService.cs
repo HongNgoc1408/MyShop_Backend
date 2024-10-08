@@ -138,7 +138,7 @@ namespace MyShop_Backend.Services.Products
 				IEnumerable<Product> products = [];
 				Expression<Func<Product, bool>> expression = e => e.Enable;
 
-				Expression<Func<Product, double>> priceExp = e => e.Price - (e.Price * (e.Discount / 100));
+				Expression<Func<Product, double>> priceExp = e => e.Price - (e.Price * (e.DiscountPercent / 100));
 
 				if (filters.Sorter > Enum.GetNames(typeof(SortEnum)).Length - 1)
 				{
@@ -147,15 +147,15 @@ namespace MyShop_Backend.Services.Products
 
 				if (filters.MinPrice != null)
 				{
-					expression = CombineExpressions(expression, e => (e.Price - (e.Price * (e.Discount / 100))) >= filters.MinPrice);
+					expression = CombineExpressions(expression, e => (e.Price - (e.Price * (e.DiscountPercent / 100))) >= filters.MinPrice);
 				}
 				if (filters.MaxPrice != null)
 				{
-					expression = CombineExpressions(expression, e => (e.Price - (e.Price * (e.Discount / 100))) <= filters.MaxPrice);
+					expression = CombineExpressions(expression, e => (e.Price - (e.Price * (e.DiscountPercent / 100))) <= filters.MaxPrice);
 				}
 				if (filters.Discount != null && filters.Discount == true)
 				{
-					expression = CombineExpressions(expression, e => e.Discount > 0);
+					expression = CombineExpressions(expression, e => e.DiscountPercent > 0);
 				}
 				if (filters.CategoryIds != null && filters.CategoryIds.Count() > 0)
 				{
@@ -243,7 +243,7 @@ namespace MyShop_Backend.Services.Products
 					product.Name = request.Name;
 					product.Price = request.Price;
 					product.Quantity = request.Quantity;
-					product.Discount = request.Discount;
+					product.DiscountPercent = request.DiscountPercent;
 					product.Description = request.Description;
 
 					var oldImgs = await _imageRepository.GetImageProductAsync(id);

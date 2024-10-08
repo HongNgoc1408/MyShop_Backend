@@ -30,7 +30,7 @@ namespace MyShop_Backend.Services.BrandServices
 				Brand brand = new()
 				{
 					Name = name,
-					ImageURL = Path.Combine(path, fileName)
+					ImageUrl = Path.Combine(path, fileName)
 				};
 
 				await _brandRepository.AddAsync(brand);
@@ -50,7 +50,7 @@ namespace MyShop_Backend.Services.BrandServices
 				var brand = await _brandRepository.FindAsync(id);
 				if (brand != null)
 				{
-					_fileStorage.Delete(brand.ImageURL);
+					_fileStorage.Delete(brand.ImageUrl);
 					await _brandRepository.DeleteAsync(id);
 				}
 				else throw new Exception($"ID {id} " + ErrorMessage.NOT_FOUND);
@@ -97,10 +97,10 @@ namespace MyShop_Backend.Services.BrandServices
 				brand.Name = name;
 				if (image != null)
 				{
-					_fileStorage.Delete(brand.ImageURL);
+					_fileStorage.Delete(brand.ImageUrl);
 
 					string fileName = Guid.NewGuid().ToString() + Path.GetExtension(image.FileName);
-					brand.ImageURL = Path.Combine(path, fileName);
+					brand.ImageUrl = Path.Combine(path, fileName);
 
 					await _fileStorage.SaveAsync(path, image, fileName);
 				}

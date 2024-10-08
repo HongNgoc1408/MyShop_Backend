@@ -4,15 +4,24 @@ namespace MyShop_Backend.Models
 {
 	public class Product : IBaseEntity
 	{
-		public int Id { get; set; }
+		public long Id { get; set; }
+
+		[MaxLength(150)]
 		public string Name { get; set; }
-		public double Price { get; set; }
+		[MaxLength(500)]
 		public string? Description { get; set; }
-		public double Discount { get; set; }
+		[Range(0, 100)]
+		public float DiscountPercent { get; set; }
+
+		[Range(1000, double.MaxValue)]
+		public double Price { get; set; }
+
+		[Range(0, int.MaxValue)]
 		public int Quantity { get; set; }
-		public bool Enable { get; set; }
+
 		[Range(0, int.MaxValue)]
 		public int Sold { get; set; }
+		public bool Enable { get; set; }
 		public DateTime CreatedAt { get; set; }
 		public DateTime? UpdatedAt { get; set; }
 
@@ -20,7 +29,7 @@ namespace MyShop_Backend.Models
 		public Category Caterory { get; set; }
 		public int BrandId { get; set; }
 		public Brand Brand { get; set; }
-		//public Type Type { get; set; }
+
 		public ICollection<Image> Images { get; set; } = new HashSet<Image>();
 	}
 }
