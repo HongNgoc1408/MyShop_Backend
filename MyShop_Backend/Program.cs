@@ -1,8 +1,25 @@
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using MyShop_Backend.Data;
 using MyShop_Backend.Mappers;
+using MyShop_Backend.Models;
+using MyShop_Backend.Repositories.BrandRepositories;
 using MyShop_Backend.Repositories.CategoryRepositories;
+using MyShop_Backend.Repositories.ImageRepositories;
+using MyShop_Backend.Repositories.UserRepositories;
+using MyShop_Backend.Repository.ProductRepository;
+using MyShop_Backend.Services.AuthServices;
+using MyShop_Backend.Services.BrandServices;
+using MyShop_Backend.Services.CachingServices;
 using MyShop_Backend.Services.CategoryService;
+using MyShop_Backend.Services.Products;
+using MyShop_Backend.Services.SendMailServices;
+using MyShop_Backend.Services.UserServices;
+using MyShop_Backend.Storages;
+using MyStore.Repository.ProductRepository;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,10 +37,62 @@ builder.Services.AddDbContext<MyShopDbContext>(options =>
 // Register AutoMapper
 builder.Services.AddAutoMapper(typeof(Mapping));
 
-// Register services
-builder.Services.AddScoped<ICategoryService, CategoryService>();
+//Auth
+builder.Services.AddIdentity<User, IdentityRole>()
+	.AddEntityFrameworkStores<MyShopDbContext>()
+	.AddTokenProvider<DataProtectorTokenProvider<User>>("MyShop_Backend")
+	.AddDefaultTokenProviders(); 
 
+// Register services
+builder.Services.AddMemoryCache();
+builder.Services.AddSingleton<ICachingService, CachingService>();
+builder.Services.AddScoped<IFileStorage, FileStorage>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IBrandService, BrandService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IProductService, ProductService>();
+
+//Repositories
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<IBrandRepository, BrandRepository>();
+builder.Services.AddScoped<IImageRepository, ImageRepository>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+
+//Email
+builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
+builder.Services.AddSingleton<ISendMailService, SendMailService>();
+
+builder.Services.AddAuthentication(option =>
+{
+	option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+	option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+	option.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(option =>
+{
+	option.RequireHttpsMetadata = false;
+	option.TokenValidationParameters = new TokenValidationParameters()
+	{
+		ValidateAudience = true,
+		ValidateIssuer = true,
+		ValidateLifetime = true,
+		ValidAudience = builder.Configuration.GetSection("JWT:Audience").Value,
+		ValidIssuer = builder.Configuration.GetSection("JWT:Issuer").Value,
+		IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration.GetSection("JWT:Key").Value ?? ""))
+	};
+});
+
+builder.Services.AddAutoMapper(typeof(Mapping));
+
+builder.Services.AddCors(opt =>
+{
+	opt.AddPolicy("MyCors", opt =>
+	{
+		opt.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+	});
+});
 
 
 var app = builder.Build();
@@ -37,7 +106,11 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseCors("MyCors");
+
 app.UseAuthorization();
+
+app.UseStaticFiles();
 
 app.MapControllers();
 
