@@ -8,7 +8,7 @@ namespace MyShop_Backend.Mappers
 	{
 		public Mapper()
 		{
-			CreateMap<CategoryDTO, CategoryModel>().ReverseMap();  // ReverseMap hai chieu
+			CreateMap<CategoryDTO, Category>().ReverseMap();  // ReverseMap hai chieu
 		}
 	}
 }

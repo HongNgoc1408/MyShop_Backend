@@ -79,9 +79,9 @@ namespace MyShop_Backend.Services.AuthServices
 
 					};
 				}
-				throw new Exception(ErrorMessage.NOT_FOUND_USER);
+				throw new Exception(ErrorMessage.USER_NOT_FOUND);
 			}
-			throw new ArgumentException(ErrorMessage.PASSWORD_ERROR);
+			throw new ArgumentException(ErrorMessage.INCORRECT_PASSWORD);
 		}
 
 		public async Task<IdentityResult> Register(RegisterRequest request)

@@ -1,6 +1,5 @@
 ﻿using MyShop_Backend.Enumerations;
 using System.ComponentModel.DataAnnotations;
-using System.Drawing.Imaging;
 
 namespace MyShop_Backend.Models
 {
@@ -33,15 +32,15 @@ namespace MyShop_Backend.Models
 		public int BrandId { get; set; }
 		public Brand Brand { get; set; }
 
-		public ICollection<ProductColor> ProductColors { get; } = new HashSet<ProductColor>();
+		//public ICollection<ProductColor> ProductColors { get; } = new HashSet<ProductColor>();
 
-		public ICollection<OrderDetail> OrderDetails { get; } = new HashSet<OrderDetail>();
+		//public ICollection<OrderDetail> OrderDetails { get; } = new HashSet<OrderDetail>();
 
 		public ICollection<Image> Images { get; } = new HashSet<Image>();
 
-		public ICollection<ProductReview> ProductReviews { get; } = new HashSet<ProductReview>();
+		//public ICollection<ProductReview> ProductReviews { get; } = new HashSet<ProductReview>();
 
-		public ICollection<ProductFavorite> ProductFavorites { get; } = new HashSet<ProductFavorite>();
+		//public ICollection<ProductFavorite> ProductFavorites { get; } = new HashSet<ProductFavorite>();
 
 
 	}
