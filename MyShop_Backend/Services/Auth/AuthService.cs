@@ -82,7 +82,7 @@ namespace MyShop_Backend.Services.AuthServices
 				}
 				throw new Exception(ErrorMessage.USER_NOT_FOUND);
 			}
-			throw new Exception(ErrorMessage.INVALID_PASSWORD);
+			throw new Exception(ErrorMessage.INCORRECT_PASSWORD);
 		}
 
 		public async Task<IdentityResult> Register(RegisterRequest request)

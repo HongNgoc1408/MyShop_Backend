@@ -38,29 +38,13 @@ builder.Services.AddAutoMapper(typeof(Mapping));
 // Auth and Identity
 builder.Services.AddIdentity<User, IdentityRole>()
 	.AddEntityFrameworkStores<MyShopDbContext>()
-	.AddTokenProvider<DataProtectorTokenProvider<User>>("MyShop_Backend")
-	.AddDefaultTokenProviders();
-
-// Register services
-builder.Services.AddMemoryCache();
-builder.Services.AddSingleton<ICachingService, CachingService>();
-builder.Services.AddScoped<IFileStorage, FileStorage>();
-builder.Services.AddScoped<ICategoryService, CategoryService>();
-builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IBrandService, BrandService>();
-builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IProductService, ProductService>();
-
-// Repositories
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
-builder.Services.AddScoped<IBrandRepository, BrandRepository>();
-builder.Services.AddScoped<IImageRepository, ImageRepository>();
-builder.Services.AddScoped<IProductRepository, ProductRepository>();
+	.AddTokenProvider("MyShop_Backend", typeof(DataProtectorTokenProvider<User>));
 
 // Email
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
 builder.Services.AddSingleton<ISendMailService, SendMailService>();
+
+
 
 // JWT Authentication
 builder.Services.AddAuthentication(option =>
@@ -82,6 +66,26 @@ builder.Services.AddAuthentication(option =>
 	};
 });
 
+// Register services
+builder.Services.AddMemoryCache();
+builder.Services.AddSingleton<ICachingService, CachingService>();
+builder.Services.AddScoped<IFileStorage, FileStorage>();
+
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IBrandService, BrandService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IProductService, ProductService>();
+
+// Repositories
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<IBrandRepository, BrandRepository>();
+builder.Services.AddScoped<IImageRepository, ImageRepository>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+
+
+
 // CORS
 builder.Services.AddCors(opt =>
 {
@@ -102,11 +106,13 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// Ensure UseAuthentication is added before UseAuthorization
+app.UseCors("MyCors");
+
 app.UseAuthentication();
+
 app.UseAuthorization();
 
-app.UseCors("MyCors");
+
 
 app.UseStaticFiles();
 

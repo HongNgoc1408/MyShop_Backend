@@ -1,8 +1,4 @@
-﻿using MyShop_Backend.Enumerations;
-using MyShop_Backend.Models;
-using System.ComponentModel.DataAnnotations;
-
-namespace MyShop_Backend.DTO
+﻿namespace MyShop_Backend.DTO
 {
 	public class ProductDTO
 	{
