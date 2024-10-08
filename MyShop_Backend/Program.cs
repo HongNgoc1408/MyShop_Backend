@@ -24,24 +24,22 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-//ket noi csdl
+// Database connection
 builder.Services.AddDbContext<MyShopDbContext>(options =>
 	options.UseSqlServer(builder.Configuration.GetConnectionString("MyShop_Backend")));
 
 // Register AutoMapper
 builder.Services.AddAutoMapper(typeof(Mapping));
 
-//Auth
+// Auth and Identity
 builder.Services.AddIdentity<User, IdentityRole>()
 	.AddEntityFrameworkStores<MyShopDbContext>()
 	.AddTokenProvider<DataProtectorTokenProvider<User>>("MyShop_Backend")
-	.AddDefaultTokenProviders(); 
+	.AddDefaultTokenProviders();
 
 // Register services
 builder.Services.AddMemoryCache();
@@ -51,20 +49,20 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IBrandService, BrandService>();
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 
-//Repositories
+// Repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IBrandRepository, BrandRepository>();
 builder.Services.AddScoped<IImageRepository, ImageRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
-//Email
+// Email
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
 builder.Services.AddSingleton<ISendMailService, SendMailService>();
 
+// JWT Authentication
 builder.Services.AddAuthentication(option =>
 {
 	option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -84,8 +82,7 @@ builder.Services.AddAuthentication(option =>
 	};
 });
 
-builder.Services.AddAutoMapper(typeof(Mapping));
-
+// CORS
 builder.Services.AddCors(opt =>
 {
 	opt.AddPolicy("MyCors", opt =>
@@ -93,7 +90,6 @@ builder.Services.AddCors(opt =>
 		opt.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
 	});
 });
-
 
 var app = builder.Build();
 
@@ -106,9 +102,11 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseCors("MyCors");
-
+// Ensure UseAuthentication is added before UseAuthorization
+app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseCors("MyCors");
 
 app.UseStaticFiles();
 

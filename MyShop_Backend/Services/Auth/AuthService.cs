@@ -23,7 +23,8 @@ namespace MyShop_Backend.Services.AuthServices
 		public AuthService(SignInManager<User> signInManager, UserManager<User> userManager,
 			IConfiguration config,
 			ISendMailService emailSender,
-			ICachingService cachingService)
+			ICachingService cachingService
+			)
 		{
 			_signInManager = signInManager;
 			_userManager = userManager;
@@ -81,7 +82,7 @@ namespace MyShop_Backend.Services.AuthServices
 				}
 				throw new Exception(ErrorMessage.USER_NOT_FOUND);
 			}
-			throw new ArgumentException(ErrorMessage.INCORRECT_PASSWORD);
+			throw new Exception(ErrorMessage.INVALID_PASSWORD);
 		}
 
 		public async Task<IdentityResult> Register(RegisterRequest request)
@@ -111,9 +112,9 @@ namespace MyShop_Backend.Services.AuthServices
 			var user = await _userManager.FindByIdAsync(userID);
 			if (user == null)
 			{
-				throw new Exception("User not found");
+				throw new ArgumentException(ErrorMessage.USER_NOT_FOUND); 
 			}
-			var provider = "MyStore";
+			var provider = "MyShop_Backend";
 			var name = "Refresh_Token";
 			await _userManager.RemoveAuthenticationTokenAsync(user, provider, name);
 			await _userManager.UpdateSecurityStampAsync(user);
@@ -142,8 +143,8 @@ namespace MyShop_Backend.Services.AuthServices
 			var token = new Random().Next(100000, 999999).ToString();
 			_cachingService.Set(email, token, TimeSpan.FromMinutes(5));
 
-			var message = $"Your verification code is: {token}";
-			await _emailSender.SendEmailAsync(email, "Verification code", message);
+			var message = $"Mã xác nhận tạo tài khoản MyShop: {token}";
+			await _emailSender.SendEmailAsync(email, "Reset password", message);
 
 			return true;
 		}

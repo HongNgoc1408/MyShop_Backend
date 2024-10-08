@@ -12,7 +12,7 @@ using MyShop_Backend.Data;
 namespace MyShop_Backend.Migrations
 {
     [DbContext(typeof(MyShopDbContext))]
-    [Migration("20241008153805_Add")]
+    [Migration("20241008163750_Add")]
     partial class Add
     {
         /// <inheritdoc />
