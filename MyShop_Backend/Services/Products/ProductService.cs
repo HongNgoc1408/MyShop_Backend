@@ -5,14 +5,13 @@ using MyShop_Backend.Enumerations;
 using MyShop_Backend.ErroMessage;
 using MyShop_Backend.Models;
 using MyShop_Backend.Repositories.ImageRepositories;
-using MyShop_Backend.Repositories.ProductRepositories;
 using MyShop_Backend.Request;
 using MyShop_Backend.Response;
 using MyShop_Backend.Storages;
-using static NuGet.Packaging.PackagingConstants;
+using MyStore.Repository.ProductRepository;
 using System.Linq.Expressions;
 
-namespace MyShop_Backend.Services.ProductServices
+namespace MyShop_Backend.Services.Products
 {
 	public class ProductService : IProductService
 	{
@@ -47,7 +46,7 @@ namespace MyShop_Backend.Services.ProductServices
 					var image = new Image()
 					{
 						ProductId = product.Id,
-						ImageURL = Path.Combine(path, name)
+						ImageUrl = Path.Combine(path, name)
 					};
 					return image;
 				});
@@ -58,7 +57,7 @@ namespace MyShop_Backend.Services.ProductServices
 				var image = await _imageRepository.GetFirstImageByProductAsync(product.Id);
 				if (image != null)
 				{
-					res.ImagesUrl = image.ImageURL;
+					res.ImageUrl = image.ImageUrl;
 				}
 				return res;
 			}
@@ -74,7 +73,7 @@ namespace MyShop_Backend.Services.ProductServices
 			if (product != null)
 			{
 				var images = await _imageRepository.GetImageProductAsync(id);
-				_fileStorage.Delete(images.Select(e => e.ImageURL));
+				_fileStorage.Delete(images.Select(e => e.ImageUrl));
 
 				await _productRepository.DeleteAsync(product);
 			}
@@ -139,7 +138,7 @@ namespace MyShop_Backend.Services.ProductServices
 				IEnumerable<Product> products = [];
 				Expression<Func<Product, bool>> expression = e => e.Enable;
 
-				Expression<Func<Product, double>> priceExp = e => e.Price - (e.Price * (e.Discount / 100));
+				Expression<Func<Product, double>> priceExp = e => e.Price - (e.Price * (e.DiscountPercent / 100));
 
 				if (filters.Sorter > Enum.GetNames(typeof(SortEnum)).Length - 1)
 				{
@@ -148,15 +147,15 @@ namespace MyShop_Backend.Services.ProductServices
 
 				if (filters.MinPrice != null)
 				{
-					expression = CombineExpressions(expression, e => (e.Price - (e.Price * (e.Discount / 100))) >= filters.MinPrice);
+					expression = CombineExpressions(expression, e => (e.Price - (e.Price * (e.DiscountPercent / 100))) >= filters.MinPrice);
 				}
 				if (filters.MaxPrice != null)
 				{
-					expression = CombineExpressions(expression, e => (e.Price - (e.Price * (e.Discount / 100))) <= filters.MaxPrice);
+					expression = CombineExpressions(expression, e => (e.Price - (e.Price * (e.DiscountPercent / 100))) <= filters.MaxPrice);
 				}
 				if (filters.Discount != null && filters.Discount == true)
 				{
-					expression = CombineExpressions(expression, e => e.Discount > 0);
+					expression = CombineExpressions(expression, e => e.DiscountPercent > 0);
 				}
 				if (filters.CategoryIds != null && filters.CategoryIds.Count() > 0)
 				{
@@ -244,8 +243,7 @@ namespace MyShop_Backend.Services.ProductServices
 					product.Name = request.Name;
 					product.Price = request.Price;
 					product.Quantity = request.Quantity;
-					product.Quantity = request.Sold;
-					product.Discount = request.Discount;
+					product.DiscountPercent = request.DiscountPercent;
 					product.Description = request.Description;
 
 					var oldImgs = await _imageRepository.GetImageProductAsync(id);

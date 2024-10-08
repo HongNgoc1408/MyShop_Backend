@@ -12,9 +12,14 @@ namespace MyShop_Backend.Data
 		}
 
 		#region DbSet
-		public DbSet<Product>? Products { get; set; }
+		public DbSet<User> Users { get; set; }
+		public DbSet<Brand> Brands { get; set; }
 		public DbSet<Category> Categories { get; set; }
+		public DbSet<Product>? Products { get; set; }
 		public DbSet<Image> Images { get; set; }
+		public DbSet<Size> Sizes { get; set; }
+		public virtual DbSet<ProductColor> ProductColors { get; set; }
+		public virtual DbSet<ProductSize> ProductSizes { get; set; }
 		#endregion
 	}
 

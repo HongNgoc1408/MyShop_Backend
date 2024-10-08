@@ -17,7 +17,7 @@ namespace MyShop_Backend.Controllers
 		}
 		[HttpGet]
 		//[Authorize(Roles = "Admin")]
-		public async Task<IActionResult> GetAllUser([FromQuery] PagedRequest request)
+		public async Task<IActionResult> GetAllUser([FromQuery] PageRequest request)
 		{
 			try
 			{

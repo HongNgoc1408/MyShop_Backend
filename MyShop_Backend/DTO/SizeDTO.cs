@@ -1,9 +1,8 @@
 ﻿namespace MyShop_Backend.DTO
 {
-	public class BrandDTO
+	public class SizeDTO
 	{
 		public int Id { get; set; }
 		public string Name { get; set; }
-		public string ImageUrl { get; set; }
 	}
 }

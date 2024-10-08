@@ -1,6 +1,6 @@
 ﻿namespace MyShop_Backend.Request
 {
-	public class PagedRequest
+	public class PageRequest
 	{
 		public int page { get; set; } = 1;
 		public int pageSize { get; set; } = 10;
