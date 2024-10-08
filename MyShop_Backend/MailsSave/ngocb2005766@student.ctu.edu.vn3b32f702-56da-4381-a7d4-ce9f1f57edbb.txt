@@ -1,0 +1,14 @@
+From: =?utf-8?b?TcOjIHjDoWMgbmjhuq1uIMSRxINuZyBrw70gdMOgaSBraG/huqNu?= MyStore
+	<lengoc14082002@gmail.com>
+Date: Sun, 15 Sep 2024 14:48:23 +0700
+Subject: Reset password
+Message-Id: <DPTB065U3OU4.5JDJ9G00JMSL1@hongngoc>
+Sender: =?utf-8?b?TcOjIHjDoWMgbmjhuq1uIMSRxINuZyBrw70gdMOgaSBraG/huqNu?= MyStore
+	<lengoc14082002@gmail.com>
+To: ngocb2005766@student.ctu.edu.vn
+MIME-Version: 1.0
+Content-Type: text/html; charset=utf-8
+
+Your password reset code is: 399026
+535: 5.7.8 Username and Password not accepted. For more information, go to
+5.7.8  https://support.google.com/mail/?p=BadCredentials d2e1a72fcca58-71944ab9cb1sm1843667b3a.52 - gsmtp

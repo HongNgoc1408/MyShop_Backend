@@ -1,0 +1,14 @@
+From: =?utf-8?b?TcOjIHjDoWMgbmjhuq1uIMSRxINuZyBrw70gdMOgaSBraG/huqNu?= MyStore
+	<ngocb2005766@student.ctu.edu.vn>
+Date: Sun, 15 Sep 2024 14:51:18 +0700
+Subject: Reset password
+Message-Id: <TT6I0Z5U3OU4.M4FR5PLKJ0DZ@hongngoc>
+Sender: =?utf-8?b?TcOjIHjDoWMgbmjhuq1uIMSRxINuZyBrw70gdMOgaSBraG/huqNu?= MyStore
+	<ngocb2005766@student.ctu.edu.vn>
+To: hoab2005755@student.ctu.edu.vn
+MIME-Version: 1.0
+Content-Type: text/html; charset=utf-8
+
+Your password reset code is: 897783
+535: 5.7.8 Username and Password not accepted. For more information, go to
+5.7.8  https://support.google.com/mail/?p=BadCredentials d2e1a72fcca58-71944a977aesm1847407b3a.25 - gsmtp
