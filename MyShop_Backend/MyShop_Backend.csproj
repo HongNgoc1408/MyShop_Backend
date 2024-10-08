@@ -26,6 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Repositories\ProductSizeRepositories\" />
     <Folder Include="Response\" />
   </ItemGroup>
 

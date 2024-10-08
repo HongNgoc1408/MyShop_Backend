@@ -4,7 +4,5 @@ using MyShop_Backend.Repositories.CommonRepositories;
 namespace MyShop_Backend.Repositories.SizeRepositories
 {
 
-	public interface ISizeRepository : ICommonRepository<Size>
-	{
-	}
+	public interface ISizeRepository : ICommonRepository<Size> { }
 }

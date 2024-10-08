@@ -8,6 +8,7 @@ using MyShop_Backend.Models;
 using MyShop_Backend.Repositories.BrandRepositories;
 using MyShop_Backend.Repositories.CategoryRepositories;
 using MyShop_Backend.Repositories.ImageRepositories;
+using MyShop_Backend.Repositories.SizeRepositories;
 using MyShop_Backend.Repositories.UserRepositories;
 using MyShop_Backend.Repository.ProductRepository;
 using MyShop_Backend.Services.AuthServices;
@@ -16,6 +17,7 @@ using MyShop_Backend.Services.CachingServices;
 using MyShop_Backend.Services.CategoryService;
 using MyShop_Backend.Services.Products;
 using MyShop_Backend.Services.SendMailServices;
+using MyShop_Backend.Services.Sizes;
 using MyShop_Backend.Services.UserServices;
 using MyShop_Backend.Storages;
 using MyStore.Repository.ProductRepository;
@@ -76,6 +78,8 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IBrandService, BrandService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<ISizeService, SizeService>();
+builder.Services.AddScoped<ISizeRepository, SizeRepository>();
 
 // Repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -83,7 +87,7 @@ builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IBrandRepository, BrandRepository>();
 builder.Services.AddScoped<IImageRepository, ImageRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
-
+builder.Services.AddScoped<ISizeRepository, SizeRepository>();
 
 
 // CORS

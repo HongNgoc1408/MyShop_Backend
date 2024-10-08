@@ -24,13 +24,13 @@ namespace MyShop_Backend.Services.Sizes
 		{
 			try
 			{
-				Size Size = new()
+				Models.Size size = new()
 				{
 					Name = name,
 				};
-				await _sizeRepository.AddAsync(Size);
+				await _sizeRepository.AddAsync(size);
 
-				return _mapper.Map<SizeDTO>(Size);
+				return _mapper.Map<SizeDTO>(size);
 			}
 			catch (Exception ex)
 			{
