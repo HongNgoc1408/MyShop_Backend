@@ -18,7 +18,7 @@ builder.Services.AddDbContext<MyShopDbContext>(options =>
 	options.UseSqlServer(builder.Configuration.GetConnectionString("MyShop_Backend")));
 
 // Register AutoMapper
-builder.Services.AddAutoMapper(typeof(Mapper));
+builder.Services.AddAutoMapper(typeof(Mapping));
 
 // Register services
 builder.Services.AddScoped<ICategoryService, CategoryService>();

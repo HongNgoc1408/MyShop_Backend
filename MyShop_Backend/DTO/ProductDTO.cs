@@ -8,30 +8,14 @@ namespace MyShop_Backend.DTO
 	{
 		public int Id { get; set; }
 		public string Name { get; set; }
-		[Range(1000, double.MaxValue)]
 		public double Price { get; set; }
-
-		[Range(0, 100)]
-		public double Discount { get; set; }
 		public string? Description { get; set; }
-		[Range(0, int.MaxValue)]
+		public double Discount { get; set; }
 		public int Quantity { get; set; }
-
-		[Range(0, int.MaxValue)]
-		public int Sold { get; set; }
-		public GenderEnum Gender { get; set; }
 		public bool Enable { get; set; }
-
-		public string? Status { get; set; }
-		public bool Favorite { get; set; }
-		public DateTime CreateAt { get; set; }
-		public DateTime? UpdateAt { get; set; }
-
-		public int CategoryId { get; set; }
-		public Category Category { get; set; }
-
-		public int BrandId { get; set; }
-		public Brand Brand { get; set; }
-		public ICollection<Image> Images { get; } = new HashSet<Image>();
+		public int Sold { get; set; }
+		public string CategoryName { get; set; }
+		public string BrandName { get; set; }
+		public string ImageUrl { get; set; }
 	}
 }

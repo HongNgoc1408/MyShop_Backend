@@ -4,9 +4,9 @@ using MyShop_Backend.Models;
 
 namespace MyShop_Backend.Mappers
 {
-	public class Mapper : Profile
+	public class Mapping : Profile
 	{
-		public Mapper()
+		public Mapping()
 		{
 			CreateMap<CategoryDTO, Category>().ReverseMap();  // ReverseMap hai chieu
 		}

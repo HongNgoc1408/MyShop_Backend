@@ -9,11 +9,11 @@ namespace MyShop_Backend.Services.UserServices
 {
 	public class UserService : IUserService
 	{
-		private readonly UserManager<User> _userManager;
+		private readonly UserManager<Users> _userManager;
 		private readonly IUserRepository _userRepository;
 		private readonly IMapper _mapper;
 
-		public UserService(UserManager<User> userManager, IUserRepository userRepository, IMapper mapper) {
+		public UserService(UserManager<Users> userManager, IUserRepository userRepository, IMapper mapper) {
 			_userManager = userManager;
 			_userRepository = userRepository;
 			_mapper = mapper;
@@ -21,7 +21,7 @@ namespace MyShop_Backend.Services.UserServices
 		public async Task<PagedResponse<UserResponse>> GetAllUserAsync(int page, int pageSize, string? keySearch)
 		{
 			int totalUser;
-			IList<User> users;
+			IList<Users> users;
 			if (keySearch == null)
 			{
 				totalUser = await _userRepository.CountAsync(keySearch);

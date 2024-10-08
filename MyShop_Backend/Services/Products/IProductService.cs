@@ -1,11 +1,10 @@
 ﻿using MyShop_Backend.DTO;
 using MyShop_Backend.Request;
 using MyShop_Backend.Response;
-using static NuGet.Packaging.PackagingConstants;
 
-namespace MyShop_Backend.Services.ProductServices
+namespace MyShop_Backend.Services.Products
 {
-	public interface IProductService 
+	public interface IProductService
 	{
 		Task<PagedResponse<ProductDTO>> GetAllProductAsync(int page, int pageSize, string? search);
 		Task<ProductDTO> CreatedProductAsync(ProductRequest request, IFormFileCollection images);
@@ -13,6 +12,6 @@ namespace MyShop_Backend.Services.ProductServices
 		Task<ProductDTO> UpdateProduct(int id, ProductRequest productRequest, IFormFileCollection images);
 		Task<bool> UpdateProductEnableAsync(int id, UpdateEnableRequest request);
 		Task DeleteProductAsync(int id);
-		//Task<PagedResponse<ProductDTO>> GetFilterProductsAsync(Filters filters);
+		Task<PagedResponse<ProductDTO>> GetFilterProductsAsync(Filters filters);
 	}
 }

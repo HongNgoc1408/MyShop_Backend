@@ -1,12 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MyShop_Backend.Request;
-using MyShop_Backend.Services.ProductServices;
+using MyShop_Backend.Services.Products;
 
 namespace MyShop_Backend.Controllers
 {
-	[Route("api/product")]
+	[Route("api/products")]
 	[ApiController]
 	public class ProductController : ControllerBase
 	{
@@ -15,7 +14,8 @@ namespace MyShop_Backend.Controllers
 		public ProductController(IProductService productService) => _productService = productService;
 
 		[HttpGet]
-		public async Task<IActionResult> GetAllProduct([FromQuery] PagedRequest request)
+		//[Authorize(Roles = "Admin")]
+		public async Task<IActionResult> GetAll([FromQuery] PageRequest request)
 		{
 			try
 			{
@@ -27,7 +27,7 @@ namespace MyShop_Backend.Controllers
 			}
 		}
 
-		[HttpGet("{id}")]
+		[HttpGet("get/{id}")]
 		public async Task<IActionResult> GetById(int id)
 		{
 			try
@@ -45,14 +45,32 @@ namespace MyShop_Backend.Controllers
 			}
 		}
 
-		[HttpPost("add")]
-		//[Authorize(Roles = "Admin")]
-		public async Task<IActionResult> AddProduct([FromForm] ProductRequest request, [FromForm] IFormFileCollection form)
+		[HttpGet("filters")]
+		public async Task<IActionResult> GetFilterProducts([FromQuery] Filters filters)
 		{
 			try
 			{
-				var images = form;
-				var product = await _productService.AddProductAsync(request, images);
+				var result = await _productService.GetFilterProductsAsync(filters);
+				return Ok(result);
+			}
+			catch (ArgumentException ex)
+			{
+				return NotFound(ex.Message);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
+		}
+
+		[HttpPost("create")]
+		[Authorize(Roles = "Admin")]
+		public async Task<IActionResult> Create([FromForm] ProductRequest request, [FromForm] IFormCollection form)
+		{
+			try
+			{
+				var images = form.Files;
+				var product = await _productService.CreatedProductAsync(request, images);
 				return Ok(product);
 			}
 			catch (Exception ex)
@@ -62,7 +80,7 @@ namespace MyShop_Backend.Controllers
 		}
 
 		[HttpPut("update/{id}")]
-		//[Authorize(Roles = "Admin")]
+		[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> Update(int id, [FromForm] ProductRequest request, [FromForm] IFormCollection form)
 		{
 			try
@@ -81,8 +99,27 @@ namespace MyShop_Backend.Controllers
 			}
 		}
 
-		[HttpDelete("delete/{id}")]
+		[HttpPut("updateEnable/{id}")]
 		//[Authorize(Roles = "Admin")]
+		public async Task<IActionResult> UpdateProductEnable(int id, [FromBody] UpdateEnableRequest request)
+		{
+			try
+			{
+				var result = await _productService.UpdateProductEnableAsync(id, request);
+				return Ok(result);
+			}
+			catch (ArgumentException ex)
+			{
+				return NotFound(ex.Message);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
+		}
+
+		[HttpDelete("delete/{id}")]
+		[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> Delete(int id)
 		{
 			try

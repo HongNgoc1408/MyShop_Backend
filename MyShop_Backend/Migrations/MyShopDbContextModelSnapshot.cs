@@ -220,7 +220,33 @@ namespace MyShop_Backend.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("MyShop_Backend.Models.CategoryModel", b =>
+            modelBuilder.Entity("MyShop_Backend.Models.Brand", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ImageURL")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdateAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Brand");
+                });
+
+            modelBuilder.Entity("MyShop_Backend.Models.Category", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -233,9 +259,6 @@ namespace MyShop_Backend.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Status")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("UpdateAt")
@@ -254,36 +277,27 @@ namespace MyShop_Backend.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("CreateAt")
-                        .HasColumnType("datetime2");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ImageURL")
+                    b.Property<string>("ImageUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ProductsId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("UpdateAt")
-                        .HasColumnType("datetime2");
-
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProductsId");
+                    b.HasIndex("ProductId");
 
                     b.ToTable("Images");
                 });
 
-            modelBuilder.Entity("MyShop_Backend.Models.ProductModel", b =>
+            modelBuilder.Entity("MyShop_Backend.Models.Product", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -291,10 +305,13 @@ namespace MyShop_Backend.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("BrandId")
+                        .HasColumnType("int");
+
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("CreateAt")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
@@ -303,11 +320,8 @@ namespace MyShop_Backend.Migrations
                     b.Property<double>("Discount")
                         .HasColumnType("float");
 
-                    b.Property<bool>("Favorite")
+                    b.Property<bool>("Enable")
                         .HasColumnType("bit");
-
-                    b.Property<int>("Inventory")
-                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -316,17 +330,18 @@ namespace MyShop_Backend.Migrations
                     b.Property<double>("Price")
                         .HasColumnType("float");
 
-                    b.Property<int>("QuantitySold")
+                    b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Sold")
+                        .HasColumnType("int");
 
-                    b.Property<DateTime?>("UpdateAt")
+                    b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BrandId");
 
                     b.HasIndex("CategoryId");
 
@@ -386,32 +401,45 @@ namespace MyShop_Backend.Migrations
 
             modelBuilder.Entity("MyShop_Backend.Models.Image", b =>
                 {
-                    b.HasOne("MyShop_Backend.Models.ProductModel", "Products")
+                    b.HasOne("MyShop_Backend.Models.Product", "Product")
                         .WithMany("Images")
-                        .HasForeignKey("ProductsId")
+                        .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Products");
+                    b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("MyShop_Backend.Models.ProductModel", b =>
+            modelBuilder.Entity("MyShop_Backend.Models.Product", b =>
                 {
-                    b.HasOne("MyShop_Backend.Models.CategoryModel", "Category")
+                    b.HasOne("MyShop_Backend.Models.Brand", "Brand")
+                        .WithMany("Products")
+                        .HasForeignKey("BrandId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MyShop_Backend.Models.Category", "Caterory")
                         .WithMany("Products")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Category");
+                    b.Navigation("Brand");
+
+                    b.Navigation("Caterory");
                 });
 
-            modelBuilder.Entity("MyShop_Backend.Models.CategoryModel", b =>
+            modelBuilder.Entity("MyShop_Backend.Models.Brand", b =>
                 {
                     b.Navigation("Products");
                 });
 
-            modelBuilder.Entity("MyShop_Backend.Models.ProductModel", b =>
+            modelBuilder.Entity("MyShop_Backend.Models.Category", b =>
+                {
+                    b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("MyShop_Backend.Models.Product", b =>
                 {
                     b.Navigation("Images");
                 });

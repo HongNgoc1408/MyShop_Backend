@@ -5,14 +5,13 @@ using MyShop_Backend.Enumerations;
 using MyShop_Backend.ErroMessage;
 using MyShop_Backend.Models;
 using MyShop_Backend.Repositories.ImageRepositories;
-using MyShop_Backend.Repositories.ProductRepositories;
 using MyShop_Backend.Request;
 using MyShop_Backend.Response;
 using MyShop_Backend.Storages;
-using static NuGet.Packaging.PackagingConstants;
+using MyStore.Repository.ProductRepository;
 using System.Linq.Expressions;
 
-namespace MyShop_Backend.Services.ProductServices
+namespace MyShop_Backend.Services.Products
 {
 	public class ProductService : IProductService
 	{
@@ -47,7 +46,7 @@ namespace MyShop_Backend.Services.ProductServices
 					var image = new Image()
 					{
 						ProductId = product.Id,
-						ImageURL = Path.Combine(path, name)
+						ImageUrl = Path.Combine(path, name)
 					};
 					return image;
 				});
@@ -58,7 +57,7 @@ namespace MyShop_Backend.Services.ProductServices
 				var image = await _imageRepository.GetFirstImageByProductAsync(product.Id);
 				if (image != null)
 				{
-					res.ImagesUrl = image.ImageURL;
+					res.ImageUrl = image.ImageUrl;
 				}
 				return res;
 			}
@@ -74,7 +73,7 @@ namespace MyShop_Backend.Services.ProductServices
 			if (product != null)
 			{
 				var images = await _imageRepository.GetImageProductAsync(id);
-				_fileStorage.Delete(images.Select(e => e.ImageURL));
+				_fileStorage.Delete(images.Select(e => e.ImageUrl));
 
 				await _productRepository.DeleteAsync(product);
 			}
@@ -244,7 +243,6 @@ namespace MyShop_Backend.Services.ProductServices
 					product.Name = request.Name;
 					product.Price = request.Price;
 					product.Quantity = request.Quantity;
-					product.Quantity = request.Sold;
 					product.Discount = request.Discount;
 					product.Description = request.Description;
 

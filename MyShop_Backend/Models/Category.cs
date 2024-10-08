@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
+﻿
 namespace MyShop_Backend.Models
 {
 	public class Category
