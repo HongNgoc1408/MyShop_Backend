@@ -8,6 +8,8 @@ using MyShop_Backend.Models;
 using MyShop_Backend.Repositories.BrandRepositories;
 using MyShop_Backend.Repositories.CategoryRepositories;
 using MyShop_Backend.Repositories.ImageRepositories;
+using MyShop_Backend.Repositories.ProductColorRepositories;
+using MyShop_Backend.Repositories.ProductSizeRepositories;
 using MyShop_Backend.Repositories.SizeRepositories;
 using MyShop_Backend.Repositories.TransactionRepositories;
 using MyShop_Backend.Repositories.UserRepositories;
@@ -39,7 +41,12 @@ builder.Services.AddDbContext<MyShopDbContext>(options =>
 builder.Services.AddAutoMapper(typeof(Mapping));
 
 // Auth and Identity
-builder.Services.AddIdentity<User, IdentityRole>()
+builder.Services.AddIdentity<User, IdentityRole>(opt =>
+{
+	opt.Password.RequireNonAlphanumeric = false;
+	opt.Password.RequiredLength = 6;
+	opt.User.RequireUniqueEmail = true;
+})
 	.AddEntityFrameworkStores<MyShopDbContext>()
 	.AddTokenProvider("MyShop_Backend", typeof(DataProtectorTokenProvider<User>));
 
@@ -60,12 +67,14 @@ builder.Services.AddAuthentication(option =>
 	option.RequireHttpsMetadata = false;
 	option.TokenValidationParameters = new TokenValidationParameters()
 	{
-		ValidateAudience = true,
 		ValidateIssuer = true,
+		ValidateAudience = true,
 		ValidateLifetime = true,
-		ValidAudience = builder.Configuration.GetSection("JWT:Audience").Value,
-		ValidIssuer = builder.Configuration.GetSection("JWT:Issuer").Value,
-		IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration.GetSection("JWT:Key").Value ?? ""))
+		ValidateIssuerSigningKey = true,
+		ValidIssuer = builder.Configuration["JWT:Issuer"],
+		ValidAudience = builder.Configuration["JWT:Audience"],
+		IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:SecretKey"] ?? "")),
+		ClockSkew = TimeSpan.Zero
 	};
 });
 
@@ -73,15 +82,17 @@ builder.Services.AddAuthentication(option =>
 builder.Services.AddMemoryCache();
 builder.Services.AddSingleton<ICachingService, CachingService>();
 builder.Services.AddScoped<IFileStorage, FileStorage>();
-
+builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IBrandService, BrandService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProductService, ProductService>();
+
 builder.Services.AddScoped<ISizeService, SizeService>();
-builder.Services.AddScoped<ISizeRepository, SizeRepository>();
-builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
+
+
+
 
 
 // Repositories
@@ -89,9 +100,10 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IBrandRepository, BrandRepository>();
 builder.Services.AddScoped<IImageRepository, ImageRepository>();
-builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ISizeRepository, SizeRepository>();
-
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IProductSizeRepository, ProductSizeRepository>();
+builder.Services.AddScoped<IProductColorRepository, ProductColorRepository>();
 
 // CORS
 builder.Services.AddCors(opt =>

@@ -138,7 +138,7 @@ namespace MyShop_Backend.Services.Products
 				IEnumerable<Product> products = [];
 				Expression<Func<Product, bool>> expression = e => e.Enable;
 
-				Expression<Func<Product, double>> priceExp = e => e.Price - (e.Price * (e.DiscountPercent / 100));
+				Expression<Func<Product, double>> priceExp = e => e.Price - (e.Price * (e.Discount / 100));
 
 				if (filters.Sorter > Enum.GetNames(typeof(SortEnum)).Length - 1)
 				{
@@ -147,15 +147,15 @@ namespace MyShop_Backend.Services.Products
 
 				if (filters.MinPrice != null)
 				{
-					expression = CombineExpressions(expression, e => (e.Price - (e.Price * (e.DiscountPercent / 100))) >= filters.MinPrice);
+					expression = CombineExpressions(expression, e => (e.Price - (e.Price * (e.Discount / 100))) >= filters.MinPrice);
 				}
 				if (filters.MaxPrice != null)
 				{
-					expression = CombineExpressions(expression, e => (e.Price - (e.Price * (e.DiscountPercent / 100))) <= filters.MaxPrice);
+					expression = CombineExpressions(expression, e => (e.Price - (e.Price * (e.Discount / 100))) <= filters.MaxPrice);
 				}
 				if (filters.Discount != null && filters.Discount == true)
 				{
-					expression = CombineExpressions(expression, e => e.DiscountPercent > 0);
+					expression = CombineExpressions(expression, e => e.Discount > 0);
 				}
 				if (filters.CategoryIds != null && filters.CategoryIds.Count() > 0)
 				{
@@ -176,23 +176,23 @@ namespace MyShop_Backend.Services.Products
 				{
 					case SortEnum.SOLD:
 						products = await _productRepository
-							.GetPageOrderByDescendingAsync(filters.page, filters.pageSize, expression, e => e.Sold);
+							.GetPageOrderByDescendingAsync(filters.Page, filters.PageSize, expression, e => e.Sold);
 						break;
 					case SortEnum.PRICE_ASC:
 						products = await _productRepository
-							.GetPagedAsync(filters.page, filters.pageSize, expression, priceExp);
+							.GetPagedAsync(filters.Page, filters.PageSize, expression, priceExp);
 						break;
 					case SortEnum.PRICE_DESC:
 						products = await _productRepository
-							.GetPageOrderByDescendingAsync(filters.page, filters.pageSize, expression, priceExp);
+							.GetPageOrderByDescendingAsync(filters.Page, filters.PageSize, expression, priceExp);
 						break;
 					case SortEnum.NEWEST:
 						products = await _productRepository
-							.GetPageOrderByDescendingAsync(filters.page, filters.pageSize, expression, e => e.CreatedAt);
+							.GetPageOrderByDescendingAsync(filters.Page, filters.PageSize, expression, e => e.CreatedAt);
 						break;
 					default:
 						products = await _productRepository
-							.GetPageOrderByDescendingAsync(filters.page, filters.pageSize, expression, e => e.CreatedAt);
+							.GetPageOrderByDescendingAsync(filters.Page, filters.PageSize, expression, e => e.CreatedAt);
 						break;
 				}
 
@@ -210,8 +210,8 @@ namespace MyShop_Backend.Services.Products
 				return new PagedResponse<ProductDTO>
 				{
 					Items = res,
-					Page = filters.page,
-					PageSize = filters.pageSize,
+					Page = filters.Page,
+					PageSize = filters.PageSize,
 					TotalItems = totalProduct
 				};
 			}
@@ -221,13 +221,13 @@ namespace MyShop_Backend.Services.Products
 			}
 		}
 
-		public async Task<ProductDetailResponse> GetProductById(int id)
+		public async Task<ProductDetailsResponse> GetProductById(int id)
 		{
 			var product = await _productRepository.GetProductByIdAsync(id);
 			if (product != null)
 			{
-				var res = _mapper.Map<ProductDetailResponse>(product);
-				res.ImageURLs = product.Images.Select(x => x.ImageUrl);
+				var res = _mapper.Map<ProductDetailsResponse>(product);
+				res.ImageUrls = product.Images.Select(x => x.ImageUrl);
 				return res;
 			}
 			else throw new ArgumentException($"Id {id}" + ErrorMessage.NOT_FOUND);
@@ -243,7 +243,7 @@ namespace MyShop_Backend.Services.Products
 					product.Name = request.Name;
 					product.Price = request.Price;
 					product.Quantity = request.Quantity;
-					product.DiscountPercent = request.DiscountPercent;
+					product.Discount = request.Discount;
 					product.Description = request.Description;
 
 					var oldImgs = await _imageRepository.GetImageProductAsync(id);
@@ -298,6 +298,41 @@ namespace MyShop_Backend.Services.Products
 				return product.Enable;
 			}
 			else throw new ArgumentException($"Id {id} " + ErrorMessage.NOT_FOUND);
+		}
+
+		public Task<ProductDTO> CreateProductAsync(ProductRequest request, IFormFileCollection images)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task<PagedResponse<ProductDTO>> GetProductsAsync(int page, int pageSize, string? keySearch)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task<PagedResponse<ProductDTO>> GetGetFeaturedProductsAsync(int page, int pageSize)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task<PagedResponse<ProductDTO>> GetFilterProductsAsync(ProductFiltersRequest filters)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task<IEnumerable<ProductDTO>> GetSearchProducts(string key)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task<ProductDetailsResponse> GetProductAsync(int id)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task<ProductDTO> UpdateProductAsync(int id, ProductRequest request, IFormFileCollection images)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

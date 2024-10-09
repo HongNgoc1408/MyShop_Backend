@@ -1,7 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
-
-namespace MyShop_Backend.Models
+﻿namespace MyShop_Backend.Models
 {
 	public class ProductColor : IBaseEntity
 	{

@@ -11,7 +11,7 @@ namespace MyShop_Backend.Models
 		public string? Description { get; set; }
 		  
 		[Range(0, 100)]
-		public float DiscountPercent { get; set; }
+		public float Discount { get; set; }
 
 		[Range(1000,double.MaxValue)]
 		public double Price { get; set; }
@@ -21,13 +21,15 @@ namespace MyShop_Backend.Models
 		[Range(0, int.MaxValue)]
 		public int Sold { get; set; }
 		public bool Enable { get; set; }
-		public DateTime CreatedAt { get; set; }
-		public DateTime? UpdatedAt { get; set; }
+		[Range(0, 5)]
+		public float Rating { get; set; }
 		public int CategoryId { get; set; }
 		public Category Caterory { get; set; }
 		public int BrandId { get; set; }
 		public Brand Brand { get; set; }
-
+		public DateTime CreatedAt { get; set; }
+		public DateTime? UpdatedAt { get; set; }
 		public ICollection<Image> Images { get; set; } = new HashSet<Image>();
+		public ICollection<ProductColor> ProductColors { get; } = new HashSet<ProductColor>();
 	}
 }
