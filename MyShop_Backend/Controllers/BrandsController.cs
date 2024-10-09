@@ -1,4 +1,5 @@
 ﻿using Azure.Core;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MyShop_Backend.Request;
@@ -7,21 +8,18 @@ using MyShop_Backend.Services.CategoryService;
 
 namespace MyShop_Backend.Controllers
 {
-	[Route("api/brand")]
+	[Route("api/brands")]
 	[ApiController]
-	public class BrandController : ControllerBase
+	public class BrandsController(IBrandService brandService) : ControllerBase
 	{
-		private readonly IBrandService _brandService;
-
-		public BrandController(IBrandService brandService) => _brandService = brandService;
+		private readonly IBrandService _brandService = brandService;
 
 		[HttpGet]
-		public async Task<IActionResult> GetAllBrand()
+		public async Task<IActionResult> Get()
 		{
 			try
 			{
-				var brand = await _brandService.GetAllBrandAsync();
-				return Ok(brand);
+				return Ok(await _brandService.GetBrandsAsync());
 			}
 			catch (Exception ex)
 			{
@@ -29,12 +27,13 @@ namespace MyShop_Backend.Controllers
 			}
 		}
 
-		[HttpPost("add")]
-		public async Task<IActionResult> AddBrand([FromForm] NameRequest request, [FromForm] IFormFileCollection files)
+		[HttpPost("create")]
+		[Authorize(Roles = "Admin")]
+		public async Task<IActionResult> Create([FromForm] NameRequest request, [FromForm] IFormCollection files)
 		{
 			try
 			{
-				var image = files.First();
+				var image = files.Files.First();
 				var brand = await _brandService.AddBrandAsync(request.Name, image);
 				return Ok(brand);
 			}
@@ -45,11 +44,12 @@ namespace MyShop_Backend.Controllers
 		}
 
 		[HttpPut("update/{id}")]
-		public async Task<IActionResult> UpdateBrand(int id, [FromForm]  NameRequest request,  IFormFile files)
+		[Authorize(Roles = "Admin")]
+		public async Task<IActionResult> Update(int id, [FromForm] NameRequest request, [FromForm] IFormCollection files)
 		{
 			try
 			{
-				var image = files;
+				var image = files.Files.FirstOrDefault();
 				var brand = await _brandService.UpdateBrandAsync(id, request.Name, image);
 				return Ok(brand);
 			}
@@ -63,25 +63,12 @@ namespace MyShop_Backend.Controllers
 			}
 		}
 
-		[HttpGet("{id}")]
-		public async Task<IActionResult> GetByIdBrand(int id)
-		{
-			try
-			{
-				var brand = await _brandService.GetByIdBrandAsync(id);
-				return Ok(brand);
-			}
-			catch (Exception ex)
-			{
-				return StatusCode(500, ex.Message);
-			}
-		}
-
 		[HttpDelete("delete/{id}")]
-		public async Task<IActionResult> DeleteBrand(int id)
+		[Authorize(Roles = "Admin")]
+		public async Task<IActionResult> Delete(int id)
 		{
 			try
-			{	
+			{
 				await _brandService.DeleteBrandAsync(id);
 				return NoContent();
 			}
@@ -94,6 +81,5 @@ namespace MyShop_Backend.Controllers
 				return StatusCode(500, ex.Message);
 			}
 		}
-
 	}
 }

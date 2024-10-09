@@ -9,6 +9,7 @@ using MyShop_Backend.Repositories.BrandRepositories;
 using MyShop_Backend.Repositories.CategoryRepositories;
 using MyShop_Backend.Repositories.ImageRepositories;
 using MyShop_Backend.Repositories.SizeRepositories;
+using MyShop_Backend.Repositories.TransactionRepositories;
 using MyShop_Backend.Repositories.UserRepositories;
 using MyShop_Backend.Repository.ProductRepository;
 using MyShop_Backend.Services.AuthServices;
@@ -80,6 +81,8 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ISizeService, SizeService>();
 builder.Services.AddScoped<ISizeRepository, SizeRepository>();
+builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
+
 
 // Repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -115,8 +118,6 @@ app.UseCors("MyCors");
 app.UseAuthentication();
 
 app.UseAuthorization();
-
-
 
 app.UseStaticFiles();
 

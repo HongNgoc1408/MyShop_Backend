@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MyShop_Backend.Request;
 using MyShop_Backend.Services.UserServices;
@@ -16,7 +17,7 @@ namespace MyShop_Backend.Controllers
 			_userService = userService;
 		}
 		[HttpGet]
-		//[Authorize(Roles = "Admin")]
+		[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> GetAllUser([FromQuery] PageRequest request)
 		{
 			try
