@@ -9,7 +9,7 @@ namespace MyShop_Backend.Models
 		[MaxLength(30)]
 		public string Name { get; set; }
 
-		//public ICollection<ProductSize> ProductSizes { get; } = new HashSet<ProductSize>();
+		public ICollection<ProductSize> ProductSizes { get; } = new HashSet<ProductSize>();
 
 		public DateTime CreatedAt { get; set; }
 		public DateTime? UpdatedAt { get; set; }

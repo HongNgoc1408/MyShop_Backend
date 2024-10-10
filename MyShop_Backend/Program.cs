@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using MyShop_Backend.Data;
 using MyShop_Backend.Mappers;
 using MyShop_Backend.Models;
@@ -31,8 +32,33 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
+//builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(e =>
+{
+	e.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+	{
+		Name = "Authorization",
+		Type = SecuritySchemeType.ApiKey,
+		Scheme = "Bearer",
+		BearerFormat = "JWT",
+		In = ParameterLocation.Header,
+		Description = "Enter 'Bearer' [space] and then your valid token in the text input below.\r\n\r\nExample: \"Bearer abcdef12345\""
+	});
+	e.AddSecurityRequirement(new OpenApiSecurityRequirement
+		{
+			{
+				new OpenApiSecurityScheme
+				{
+					Reference = new OpenApiReference
+					{
+						Type = ReferenceType.SecurityScheme,
+						Id = "Bearer"
+					}
+				},
+				new string[] { }
+			}
+		});
+});	
 // Database connection
 builder.Services.AddDbContext<MyShopDbContext>(options =>
 	options.UseSqlServer(builder.Configuration.GetConnectionString("MyShop_Backend")));
@@ -56,7 +82,7 @@ builder.Services.AddSingleton<ISendMailService, SendMailService>();
 
 
 
-// JWT Authentication
+// JWT Authenticationvar
 builder.Services.AddAuthentication(option =>
 {
 	option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -73,7 +99,7 @@ builder.Services.AddAuthentication(option =>
 		ValidateIssuerSigningKey = true,
 		ValidIssuer = builder.Configuration["JWT:Issuer"],
 		ValidAudience = builder.Configuration["JWT:Audience"],
-		IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:SecretKey"] ?? "")),
+		IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"])),
 		ClockSkew = TimeSpan.Zero
 	};
 });

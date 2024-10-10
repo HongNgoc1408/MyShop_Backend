@@ -5,22 +5,16 @@ using MyShop_Backend.Repository.CommonRepository;
 
 namespace MyShop_Backend.Repositories.ImageRepositories
 {
-	public class ImageRepository : CommonRepository<Image>, IImageRepository
+	public class ImageRepository(MyShopDbContext dbcontext) : CommonRepository<Image>(dbcontext), IImageRepository
 	{
-		private readonly MyShopDbContext _dbContext;
-
-		public ImageRepository(MyShopDbContext dbContext) : base(dbContext) {
-			_dbContext = dbContext;
-		}
+		private readonly MyShopDbContext _dbContext = dbcontext;
 
 		public async Task<Image?> GetFirstImageByProductAsync(long id)
 		{
 			return await _dbContext.Images.FirstOrDefaultAsync(e => e.ProductId == id);
 		}
 
-		public async Task<IEnumerable<Image>> GetImageProductAsync(long ProductId)
-		{
-			return await _dbContext.Images.Where(e => e.ProductId == ProductId).ToListAsync();
-		}
+		public async Task<IEnumerable<Image>> GetImageByProductIdAsync(long productId)
+			=> await _dbContext.Images.Where(e => e.ProductId == productId).ToListAsync();
 	}
 }

@@ -42,7 +42,7 @@ namespace MyShop_Backend.Controllers
 
 		[HttpPut("update/{id}")]
 		[Authorize(Roles = "Admin")]
-		public async Task<IActionResult> Update(int id, [FromForm] NameRequest request)
+		public async Task<IActionResult> Update(long id, [FromForm] NameRequest request)
 		{
 			try
 			{
@@ -61,7 +61,7 @@ namespace MyShop_Backend.Controllers
 
 		[HttpDelete("delete/{id}")]
 		[Authorize(Roles = "Admin")]
-		public async Task<IActionResult> Delete(int id)
+		public async Task<IActionResult> Delete(long id)
 		{
 			try
 			{

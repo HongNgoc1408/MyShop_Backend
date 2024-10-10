@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using MyShop_Backend.DTO;
 using MyShop_Backend.ErroMessage;
+using MyShop_Backend.Models;
 using MyShop_Backend.Repositories.SizeRepositories;
 
 namespace MyShop_Backend.Services.Sizes
@@ -24,9 +25,9 @@ namespace MyShop_Backend.Services.Sizes
 		{
 			try
 			{
-				Models.Size size = new()
+				var size = new Size
 				{
-					Name = name,
+					Name = name
 				};
 				await _sizeRepository.AddAsync(size);
 
@@ -38,7 +39,7 @@ namespace MyShop_Backend.Services.Sizes
 			}
 		}
 
-		public async Task DeleteSizeAsync(int id)
+		public async Task DeleteSizeAsync(long id)
 		{
 			try
 			{
@@ -50,7 +51,7 @@ namespace MyShop_Backend.Services.Sizes
 			}
 		}
 
-		public async Task<SizeDTO> UpdateSizeAsync(int id, string name)
+		public async Task<SizeDTO> UpdateSizeAsync(long id, string name)
 		{
 			var size = await _sizeRepository.FindAsync(id);
 			if (size != null)

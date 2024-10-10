@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MyShop_Backend.Request;
 using MyShop_Backend.Services.CategoryService;
@@ -41,6 +42,7 @@ namespace MyShop_Backend.Controllers
 		}
 
 		[HttpPost("create")]
+		[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> Create([FromBody] NameRequest request)
 		{
 			try
@@ -55,6 +57,7 @@ namespace MyShop_Backend.Controllers
 		}
 
 		[HttpPut("update/{id}")]
+		[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> Update(int id, [FromBody] NameRequest request)
 		{
 			try
@@ -73,6 +76,7 @@ namespace MyShop_Backend.Controllers
 		}
 
 		[HttpDelete("delete/{id}")]
+		[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> Delete(int id)
 		{
 			try

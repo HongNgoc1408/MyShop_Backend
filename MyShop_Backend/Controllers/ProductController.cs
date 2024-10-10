@@ -12,13 +12,11 @@ namespace MyShop_Backend.Controllers
 		private readonly IProductService _productService = productService;
 
 		[HttpGet]
-		[Authorize(Roles = "Admin")]
-		public async Task<IActionResult> Get([FromQuery] PageRequest request)
+		public async Task<IActionResult> GetAll([FromQuery] PageRequest request)
 		{
 			try
 			{
-				var result = await _productService.GetProductsAsync(request.Page, request.PageSize, request.Key);
-				return Ok(result);
+				return Ok( await _productService.GetAllProductsAsync(request.Page, request.PageSize, request.Key));
 			}
 			catch (Exception ex)
 			{
@@ -27,7 +25,7 @@ namespace MyShop_Backend.Controllers
 		}
 
 		[HttpGet("{id}")]
-		public async Task<IActionResult> GetDetail(int id)
+		public async Task<IActionResult> GetDetail(long id)
 		{
 			try
 			{
@@ -94,7 +92,7 @@ namespace MyShop_Backend.Controllers
 
 		[HttpPut("update/{id}")]
 		[Authorize(Roles = "Admin")]
-		public async Task<IActionResult> Update(int id, [FromForm] ProductRequest request, [FromForm] IFormFileCollection images)
+		public async Task<IActionResult> Update(long id, [FromForm] ProductRequest request, [FromForm] IFormFileCollection images)
 		{
 			try
 			{
@@ -113,7 +111,7 @@ namespace MyShop_Backend.Controllers
 
 		[HttpPut("updateEnable/{id}")]
 		[Authorize(Roles = "Admin")]
-		public async Task<IActionResult> UpdateProductEnable(int id, [FromBody] UpdateEnableRequest request)
+		public async Task<IActionResult> UpdateProductEnable(long id, [FromBody] UpdateEnableRequest request)
 		{
 			try
 			{
@@ -132,7 +130,7 @@ namespace MyShop_Backend.Controllers
 
 		[HttpDelete("delete/{id}")]
 		[Authorize(Roles = "Admin")]
-		public async Task<IActionResult> Delete(int id)
+		public async Task<IActionResult> Delete(long id)
 		{
 			try
 			{
@@ -149,135 +147,4 @@ namespace MyShop_Backend.Controllers
 			}
 		}
 	}
-	//public class ProductController : ControllerBase
-	//{
-	//	private readonly IProductService _productService;
-
-	//	public ProductController(IProductService productService) => _productService = productService;
-
-	//	[HttpGet]
-	//	[Authorize(Roles = "Admin")]
-	//	public async Task<IActionResult> GetAll([FromQuery] PageRequest request)
-	//	{
-	//		try
-	//		{
-	//			var result = await _productService.GetProductsAsync(request.Page, request.PageSize, request.Key);
-	//			return Ok(result);
-	//		}
-	//		catch (Exception ex)
-	//		{
-	//			return StatusCode(500, ex.Message);
-	//		}
-	//	}
-
-	//	[HttpGet("{id}")]
-	//	public async Task<IActionResult> GetById(int id)
-	//	{
-	//		try
-	//		{
-	//			var result = await _productService.GetProductById(id);
-	//			return Ok(result);
-	//		}
-	//		catch (ArgumentException ex)
-	//		{
-	//			return NotFound(ex.Message);
-	//		}
-	//		catch (Exception ex)
-	//		{
-	//			return StatusCode(500, ex.Message);
-	//		}
-	//	}
-
-	//	[HttpGet("filters")]
-	//	public async Task<IActionResult> GetFilterProducts([FromQuery] Filters filters)
-	//	{
-	//		try
-	//		{
-	//			var result = await _productService.GetFilterProductsAsync(filters);
-	//			return Ok(result);
-	//		}
-	//		catch (ArgumentException ex)
-	//		{
-	//			return NotFound(ex.Message);
-	//		}
-	//		catch (Exception ex)
-	//		{
-	//			return StatusCode(500, ex.Message);
-	//		}
-	//	}
-
-	//	[HttpPost("create")]
-	//	[Authorize(Roles = "Admin")]
-	//	public async Task<IActionResult> Create([FromForm] ProductRequest request, [FromForm] IFormCollection form)
-	//	{
-	//		try
-	//		{
-	//			var images = form.Files;
-	//			var product = await _productService.CreatedProductAsync(request, images);
-	//			return Ok(product);
-	//		}
-	//		catch (Exception ex)
-	//		{
-	//			return StatusCode(500, ex.Message);
-	//		}
-	//	}
-
-	//	[HttpPut("update/{id}")]
-	//	[Authorize(Roles = "Admin")]
-	//	public async Task<IActionResult> Update(int id, [FromForm] ProductRequest request, [FromForm] IFormCollection form)
-	//	{
-	//		try
-	//		{
-	//			var images = form.Files;
-	//			var result = await _productService.UpdateProduct(id, request, images);
-	//			return Ok(result);
-	//		}
-	//		catch (ArgumentException ex)
-	//		{
-	//			return NotFound(ex.Message);
-	//		}
-	//		catch (Exception ex)
-	//		{
-	//			return StatusCode(500, ex.Message);
-	//		}
-	//	}
-
-	//	[HttpPut("updateEnable/{id}")]
-	//	//[Authorize(Roles = "Admin")]
-	//	public async Task<IActionResult> UpdateProductEnable(int id, [FromBody] UpdateEnableRequest request)
-	//	{
-	//		try
-	//		{
-	//			var result = await _productService.UpdateProductEnableAsync(id, request);
-	//			return Ok(result);
-	//		}
-	//		catch (ArgumentException ex)
-	//		{
-	//			return NotFound(ex.Message);
-	//		}
-	//		catch (Exception ex)
-	//		{
-	//			return StatusCode(500, ex.Message);
-	//		}
-	//	}
-
-	//	[HttpDelete("delete/{id}")]
-	//	[Authorize(Roles = "Admin")]
-	//	public async Task<IActionResult> Delete(int id)
-	//	{
-	//		try
-	//		{
-	//			await _productService.DeleteProductAsync(id);
-	//			return NoContent();
-	//		}
-	//		catch (ArgumentException ex)
-	//		{
-	//			return NotFound(ex.Message);
-	//		}
-	//		catch (Exception ex)
-	//		{
-	//			return StatusCode(500, ex.Message);
-	//		}
-	//	}
-	//}
 }

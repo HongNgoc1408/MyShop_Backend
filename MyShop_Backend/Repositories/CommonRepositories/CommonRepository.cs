@@ -54,7 +54,11 @@ namespace MyShop_Backend.Repository.CommonRepository
 			_context.Remove(entity);
 			await _context.SaveChangesAsync();
 		}
-
+		public virtual async Task DeleteRangeAsync(IEnumerable<T> entities)
+		{
+			_context.RemoveRange(entities);
+			await _context.SaveChangesAsync();
+		}
 		public async Task<T?> FindAsync(params object?[]? keyValues)
 		{
 			return await _context.FindAsync<T>(keyValues);
@@ -109,6 +113,13 @@ namespace MyShop_Backend.Repository.CommonRepository
 		{
 			_context.UpdateRange(entities);
 			await _context.SaveChangesAsync();
+		}
+
+		public async Task<IEnumerable<T>> GetPagedOrderByDescendingAsync<TKey>(int page, int pageSize, Expression<Func<T, bool>>? expression, Expression<Func<T, TKey>> orderByDesc)
+		{
+			return expression == null
+				? await _context.Set<T>().OrderByDescending(orderByDesc).Paginate(page, pageSize).ToArrayAsync()
+				: await _context.Set<T>().Where(expression).OrderByDescending(orderByDesc).Paginate(page, pageSize).ToArrayAsync();
 		}
 	}
 }

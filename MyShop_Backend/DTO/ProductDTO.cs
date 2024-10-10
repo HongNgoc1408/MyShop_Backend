@@ -1,7 +1,4 @@
-﻿using MyShop_Backend.Models;
-using System.ComponentModel.DataAnnotations;
-
-namespace MyShop_Backend.DTO
+﻿namespace MyShop_Backend.DTO
 {
 	public class ProductDTO
 	{
@@ -17,5 +14,7 @@ namespace MyShop_Backend.DTO
 		public string CategoryName { get; set; }
 		public string BrandName { get; set; }
 		public string ImageUrl { get; set; }
+
+		
 	}
 }

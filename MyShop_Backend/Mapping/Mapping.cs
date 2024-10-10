@@ -30,6 +30,7 @@ namespace MyShop_Backend.Mappers
 				.ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Caterory.Name));
 			CreateMap<ProductRequest, Product>();
 			CreateMap<Product, ProductDetailsResponse>();
+
 			CreateMap<ProductColor, ColorSizeResponse>()
 				.ForMember(dest => dest.SizeInStocks, opt => opt.MapFrom(src => src.ProductSizes));
 

@@ -1,4 +1,6 @@
-﻿namespace MyShop_Backend.Request
+﻿using MyShop_Backend.Response;
+
+namespace MyShop_Backend.Request
 {
 	public class ProductDetailsResponse
 	{
@@ -13,8 +15,9 @@
 		public float Rating { get; set; }
 		public int CategoryId { get; set; }
 		public int BrandId { get; set; }
-		public string ImageUrl { get; set; }
+
+		//public string ImageUrl { get; set; }
 		public IEnumerable<string> ImageUrls { get; set; }
-		public IEnumerable<ColorSizeRequest> ColorSizes { get; set; }
+		public IEnumerable<ColorSizeResponse> ColorSizes { get; set; }
 	}
 }

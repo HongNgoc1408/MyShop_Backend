@@ -1,10 +1,7 @@
-﻿using Azure.Core;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MyShop_Backend.Request;
 using MyShop_Backend.Services.BrandServices;
-using MyShop_Backend.Services.CategoryService;
 
 namespace MyShop_Backend.Controllers
 {
@@ -29,12 +26,12 @@ namespace MyShop_Backend.Controllers
 
 		[HttpPost("create")]
 		[Authorize(Roles = "Admin")]
-		public async Task<IActionResult> Create([FromForm] NameRequest request, [FromForm] IFormCollection files)
+		
+		public async Task<IActionResult> Create([FromForm] NameRequest request, [FromForm] IFormFileCollection image)
 		{
 			try
 			{
-				var image = files.Files.First();
-				var brand = await _brandService.AddBrandAsync(request.Name, image);
+				var brand = await _brandService.AddBrandAsync(request.Name, image.First());
 				return Ok(brand);
 			}
 			catch (Exception ex)
