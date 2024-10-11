@@ -12,7 +12,6 @@ namespace MyShop_Backend.Models
 		public long SizeId { get; set; }
 		public Size Size { get; set; }
 
-
 		[Range(0, int.MaxValue)]
 		public int InStock { get; set; }
 

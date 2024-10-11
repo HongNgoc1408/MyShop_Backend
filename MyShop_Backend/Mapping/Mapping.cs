@@ -36,6 +36,7 @@ namespace MyShop_Backend.Mappers
 
 			CreateMap<ProductSize, SizeInStock>()
 				.ForMember(dest => dest.SizeName, opt => opt.MapFrom(src => src.Size.Name));
+
 			//img
 			CreateMap<ImageDTO, Image>().ReverseMap();
 		}

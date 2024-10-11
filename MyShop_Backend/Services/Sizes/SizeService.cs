@@ -62,5 +62,20 @@ namespace MyShop_Backend.Services.Sizes
 			}
 			else throw new ArgumentException(ErrorMessage.NOT_FOUND);
 		}
+
+		public async Task<SizeDTO> GetByIdSizeAsync(long id)
+		{
+			var size = await _sizeRepository.FindAsync(id);
+
+			if (size == null)
+			{
+				throw new ArgumentException($"ID {id}"
+					+ ErrorMessage.NOT_FOUND);
+			}
+			else
+			{
+				return _mapper.Map<SizeDTO>(size);
+			}
+		}
 	}
 }

@@ -24,10 +24,27 @@ namespace MyShop_Backend.Controllers
 				return StatusCode(500, ex.Message);
 			}
 		}
+		[HttpGet("{id}")]
+		public async Task<IActionResult> GetById(long id)
+		{
+			try
+			{
+				var size = await _sizeService.GetByIdSizeAsync(id);
+				return Ok(size);
+			}
+			catch (ArgumentException ex)
+			{
+				return NotFound(ex.Message);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
+		}
 
 		[HttpPost("create")]
 		[Authorize(Roles = "Admin")]
-		public async Task<IActionResult> Create([FromForm] NameRequest request)
+		public async Task<IActionResult> Create([FromBody] NameRequest request)
 		{
 			try
 			{
@@ -42,7 +59,7 @@ namespace MyShop_Backend.Controllers
 
 		[HttpPut("update/{id}")]
 		[Authorize(Roles = "Admin")]
-		public async Task<IActionResult> Update(long id, [FromForm] NameRequest request)
+		public async Task<IActionResult> Update(long id, [FromBody] NameRequest request)
 		{
 			try
 			{
