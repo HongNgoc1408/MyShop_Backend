@@ -74,7 +74,8 @@ builder.Services.AddIdentity<User, IdentityRole>(opt =>
 	opt.User.RequireUniqueEmail = true;
 })
 	.AddEntityFrameworkStores<MyShopDbContext>()
-	.AddTokenProvider("MyShop_Backend", typeof(DataProtectorTokenProvider<User>));
+	//.AddTokenProvider("MyShop_Backend", typeof(DataProtectorTokenProvider<User>))
+	.AddDefaultTokenProviders();
 
 // Email
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
