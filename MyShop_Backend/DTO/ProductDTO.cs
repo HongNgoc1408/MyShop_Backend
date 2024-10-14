@@ -7,7 +7,6 @@
 		public string? Description { get; set; }
 		public float Discount { get; set; }
 		public double Price { get; set; }
-		public int Quantity { get; set; }
 		public int Sold { get; set; }
 		public bool Enable { get; set; }
 		public float Rating { get; set; }

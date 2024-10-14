@@ -7,6 +7,8 @@ namespace MyShop_Backend.Models
 	{
 		[MaxLength(50)]
 		public string? FullName { get; set; }
+		public DeliveryAddress? DeliveryAddress { get; set; }
+		public ICollection<Order> Orders { get; } = new HashSet<Order>();
 		public DateTime CreatedAt { get; set; }
 		public DateTime? UpdatedAt { get; set; }
 	}

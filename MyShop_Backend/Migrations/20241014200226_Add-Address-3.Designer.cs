@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MyShop_Backend.Data;
 
@@ -11,9 +12,11 @@ using MyShop_Backend.Data;
 namespace MyShop_Backend.Migrations
 {
     [DbContext(typeof(MyShopDbContext))]
-    partial class MyShopDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241014200226_Add-Address-3")]
+    partial class AddAddress3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -275,6 +278,10 @@ namespace MyShop_Backend.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("UserId1")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<int?>("Ward_id")
                         .HasColumnType("int");
 
@@ -282,6 +289,8 @@ namespace MyShop_Backend.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("UserId");
+
+                    b.HasIndex("UserId1");
 
                     b.ToTable("DeliveryAddresses");
                 });
@@ -744,8 +753,8 @@ namespace MyShop_Backend.Migrations
             modelBuilder.Entity("MyShop_Backend.Models.DeliveryAddress", b =>
                 {
                     b.HasOne("MyShop_Backend.Models.User", "User")
-                        .WithOne("DeliveryAddress")
-                        .HasForeignKey("MyShop_Backend.Models.DeliveryAddress", "UserId")
+                        .WithMany()
+                        .HasForeignKey("UserId1")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -774,7 +783,7 @@ namespace MyShop_Backend.Migrations
                         .HasForeignKey("PaymentMethodId");
 
                     b.HasOne("MyShop_Backend.Models.User", "User")
-                        .WithMany("Orders")
+                        .WithMany()
                         .HasForeignKey("UserId");
 
                     b.Navigation("PaymentMethod");
@@ -888,13 +897,6 @@ namespace MyShop_Backend.Migrations
             modelBuilder.Entity("MyShop_Backend.Models.Size", b =>
                 {
                     b.Navigation("ProductSizes");
-                });
-
-            modelBuilder.Entity("MyShop_Backend.Models.User", b =>
-                {
-                    b.Navigation("DeliveryAddress");
-
-                    b.Navigation("Orders");
                 });
 #pragma warning restore 612, 618
         }

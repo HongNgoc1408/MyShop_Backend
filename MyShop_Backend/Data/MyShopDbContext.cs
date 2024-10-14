@@ -13,15 +13,20 @@ namespace MyShop_Backend.Data
 		}
 
 		#region DbSet
-		public DbSet<User> Users { get; set; }
-		public DbSet<Brand> Brands { get; set; }
-		public DbSet<Category> Categories { get; set; }
-		
-		public DbSet<Image> Images { get; set; }
-		public DbSet<Size> Sizes { get; set; }
-		public DbSet<Product>? Products { get; set; }
+		public virtual DbSet<User> Users { get; set; }
+		public virtual DbSet<Brand> Brands { get; set; }
+		public virtual DbSet<Category> Categories { get; set; }
+		public virtual DbSet<Image> Images { get; set; }
+		public virtual DbSet<Size> Sizes { get; set; }
+		public virtual DbSet<Product>? Products { get; set; }
 		public virtual DbSet<ProductColor> ProductColors { get; set; }
 		public virtual DbSet<ProductSize> ProductSizes { get; set; }
+		public virtual DbSet<CartItem> CartItems { get; set; }
+		public virtual DbSet<DeliveryAddress> DeliveryAddresses { get; set; }
+		public virtual DbSet<DeliveryStatus> DeliveryStatuses { get; set; }
+		public virtual DbSet<Order> Orders { get; set; }
+		public virtual DbSet<OrderDetail> OrderDetails { get; set; }
+		public virtual DbSet<PaymentMethod> PaymentMethods { get; set; }
 		#endregion
 
 		private void UpdateTimestamps()

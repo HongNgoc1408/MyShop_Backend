@@ -17,8 +17,6 @@ namespace MyShop_Backend.Models
 		public double Price { get; set; }
 
 		[Range(0, int.MaxValue)]
-		public int Quantity { get; set; }
-		[Range(0, int.MaxValue)]
 		public int Sold { get; set; }
 		public bool Enable { get; set; }
 		[Range(0, 5)]

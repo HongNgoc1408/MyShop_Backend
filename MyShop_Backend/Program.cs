@@ -7,7 +7,9 @@ using MyShop_Backend.Data;
 using MyShop_Backend.Mappers;
 using MyShop_Backend.Models;
 using MyShop_Backend.Repositories.BrandRepositories;
+using MyShop_Backend.Repositories.CartItemRepositories;
 using MyShop_Backend.Repositories.CategoryRepositories;
+using MyShop_Backend.Repositories.DeliveryAddressRepositories;
 using MyShop_Backend.Repositories.ImageRepositories;
 using MyShop_Backend.Repositories.ProductColorRepositories;
 using MyShop_Backend.Repositories.ProductSizeRepositories;
@@ -18,6 +20,7 @@ using MyShop_Backend.Repository.ProductRepository;
 using MyShop_Backend.Services.AuthServices;
 using MyShop_Backend.Services.BrandServices;
 using MyShop_Backend.Services.CachingServices;
+using MyShop_Backend.Services.Carts;
 using MyShop_Backend.Services.CategoryService;
 using MyShop_Backend.Services.Products;
 using MyShop_Backend.Services.SendMailServices;
@@ -115,9 +118,8 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IBrandService, BrandService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProductService, ProductService>();
-
 builder.Services.AddScoped<ISizeService, SizeService>();
-
+builder.Services.AddScoped<ICartService, CartService>();
 
 
 
@@ -131,6 +133,8 @@ builder.Services.AddScoped<ISizeRepository, SizeRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IProductSizeRepository, ProductSizeRepository>();
 builder.Services.AddScoped<IProductColorRepository, ProductColorRepository>();
+builder.Services.AddScoped<ICartItemRepository, CartItemRepository>();
+builder.Services.AddScoped<IDeliveryAddressRepository, DeliveryAddressRepository>();
 
 // CORS
 builder.Services.AddCors(opt =>

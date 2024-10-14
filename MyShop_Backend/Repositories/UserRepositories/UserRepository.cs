@@ -8,17 +8,17 @@ namespace MyShop_Backend.Repositories.UserRepositories
 {
 	public class UserRepository : CommonRepository<User>, IUserRepository
 	{
-		private readonly MyShopDbContext _context;
+		private readonly MyShopDbContext _dbContext;
 
-		public UserRepository(MyShopDbContext context) : base(context)
+		public UserRepository(MyShopDbContext dbContext) : base(dbContext)
 		{
-			_context = context;
+			_dbContext = dbContext;
 		}
 
 		
 		public async Task<int> CountAsync(string search)
 		{
-			return await _context.Users
+			return await _dbContext.Users
 			.Where(e => e.Id.ToString().Contains(search)
 					|| (e.UserName != null && e.UserName.Contains(search))
 					|| (e.Email != null && e.Email.Contains(search))
@@ -28,14 +28,14 @@ namespace MyShop_Backend.Repositories.UserRepositories
 
 		public async Task<IEnumerable<User>> GetAllUserAsync(int page, int pageSize)
 		{
-			return (IEnumerable<User>)await _context.Users
+			return (IEnumerable<User>)await _dbContext.Users
 			   .Paginate(page, pageSize)
 			   .ToListAsync();
 		}
 
 		public async Task<IEnumerable<User>> GetAllUserAsync(int page, int pageSize, string search)
 		{
-			return (IEnumerable<User>)await _context.Users
+			return (IEnumerable<User>)await _dbContext.Users
 				.Where(e => e.Id.ToString().Contains(search)
 				|| (e.UserName != null && e.UserName.Contains(search))
 				|| (e.Email != null && e.Email.Contains(search))

@@ -9,7 +9,6 @@ namespace MyShop_Backend.Request
 		public string? Description { get; set; }
 		public float Discount { get; set; } = 0;
 		public double Price { get; set; }
-		public int Quantity { get; set; }
 		public int Sold { get; set; }
 		public bool Enable { get; set; } = true;
 		public float Rating { get; set; }

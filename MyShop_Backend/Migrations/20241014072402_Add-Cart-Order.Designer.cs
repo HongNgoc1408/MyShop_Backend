@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MyShop_Backend.Data;
 
@@ -11,9 +12,11 @@ using MyShop_Backend.Data;
 namespace MyShop_Backend.Migrations
 {
     [DbContext(typeof(MyShopDbContext))]
-    partial class MyShopDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241014072402_Add-Cart-Order")]
+    partial class AddCartOrder
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -275,6 +278,10 @@ namespace MyShop_Backend.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("UserId1")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<int?>("Ward_id")
                         .HasColumnType("int");
 
@@ -283,17 +290,9 @@ namespace MyShop_Backend.Migrations
 
                     b.HasKey("UserId");
 
+                    b.HasIndex("UserId1");
+
                     b.ToTable("DeliveryAddresses");
-                });
-
-            modelBuilder.Entity("MyShop_Backend.Models.DeliveryStatus", b =>
-                {
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Name");
-
-                    b.ToTable("DeliveryStatuses");
                 });
 
             modelBuilder.Entity("MyShop_Backend.Models.Image", b =>
@@ -343,9 +342,6 @@ namespace MyShop_Backend.Migrations
                         .HasMaxLength(160)
                         .HasColumnType("nvarchar(160)");
 
-                    b.Property<string>("DeliveryStatusName")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
 
@@ -380,8 +376,6 @@ namespace MyShop_Backend.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("DeliveryStatusName");
 
                     b.HasIndex("PaymentMethodId");
 
@@ -744,8 +738,8 @@ namespace MyShop_Backend.Migrations
             modelBuilder.Entity("MyShop_Backend.Models.DeliveryAddress", b =>
                 {
                     b.HasOne("MyShop_Backend.Models.User", "User")
-                        .WithOne("DeliveryAddress")
-                        .HasForeignKey("MyShop_Backend.Models.DeliveryAddress", "UserId")
+                        .WithMany()
+                        .HasForeignKey("UserId1")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -765,16 +759,12 @@ namespace MyShop_Backend.Migrations
 
             modelBuilder.Entity("MyShop_Backend.Models.Order", b =>
                 {
-                    b.HasOne("MyShop_Backend.Models.DeliveryStatus", null)
-                        .WithMany("Orders")
-                        .HasForeignKey("DeliveryStatusName");
-
                     b.HasOne("MyShop_Backend.Models.PaymentMethod", "PaymentMethod")
                         .WithMany("Orders")
                         .HasForeignKey("PaymentMethodId");
 
                     b.HasOne("MyShop_Backend.Models.User", "User")
-                        .WithMany("Orders")
+                        .WithMany()
                         .HasForeignKey("UserId");
 
                     b.Navigation("PaymentMethod");
@@ -858,11 +848,6 @@ namespace MyShop_Backend.Migrations
                     b.Navigation("Products");
                 });
 
-            modelBuilder.Entity("MyShop_Backend.Models.DeliveryStatus", b =>
-                {
-                    b.Navigation("Orders");
-                });
-
             modelBuilder.Entity("MyShop_Backend.Models.Order", b =>
                 {
                     b.Navigation("OrderDetails");
@@ -888,13 +873,6 @@ namespace MyShop_Backend.Migrations
             modelBuilder.Entity("MyShop_Backend.Models.Size", b =>
                 {
                     b.Navigation("ProductSizes");
-                });
-
-            modelBuilder.Entity("MyShop_Backend.Models.User", b =>
-                {
-                    b.Navigation("DeliveryAddress");
-
-                    b.Navigation("Orders");
                 });
 #pragma warning restore 612, 618
         }
