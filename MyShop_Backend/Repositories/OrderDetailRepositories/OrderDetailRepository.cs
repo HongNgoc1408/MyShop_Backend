@@ -15,6 +15,7 @@ namespace MyShop_Backend.Repositories.OrderDetailRepositories
             return await _dbContext.OrderDetails
                 .Where(expression)
                 .Include(e => e.Product)
+                    .ThenInclude(e => e != null ? e.Images : null)
                 .ToListAsync();
         }
     }

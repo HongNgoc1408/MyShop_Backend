@@ -6,6 +6,6 @@ namespace MyShop_Backend.Repositories.OrderRepositories
 {
 	public interface IOrderRepository : ICommonRepository<Order>
 	{
-		Task<Order?> SingleOrDefaultAsync(Expression<Func<Order, bool>> expression);
+		Task<Order?> SingleOrDefaultAsyncInclude(Expression<Func<Order, bool>> expression);
 	}
 }

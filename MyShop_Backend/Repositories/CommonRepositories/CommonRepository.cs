@@ -90,12 +90,12 @@ namespace MyShop_Backend.CommonRepository.CommonRepository
 				: await _context.Set<T>().Where(expression).OrderBy(orderBy).Paginate(page, pageSize).ToListAsync();
 		}
 
-		public virtual async Task<IEnumerable<T>> GetPageOrderByDescendingAsync<TKey>(int page, int pageSize, Expression<Func<T, bool>>? expression, Expression<Func<T, TKey>> orderByDesc)
-		{
-			return expression == null
-				? await _context.Set<T>().OrderByDescending(orderByDesc).Paginate(page, pageSize).ToArrayAsync()
-				: await _context.Set<T>().Where(expression).OrderByDescending(orderByDesc).Paginate(page, pageSize).ToArrayAsync();
-		}
+		//public virtual async Task<IEnumerable<T>> GetPagedOrderByDescendingAsync<TKey>(int page, int pageSize, Expression<Func<T, bool>>? expression, Expression<Func<T, TKey>> orderByDesc)
+		//{
+		//	return expression == null
+		//		? await _context.Set<T>().OrderByDescending(orderByDesc).Paginate(page, pageSize).ToArrayAsync()
+		//		: await _context.Set<T>().Where(expression).OrderByDescending(orderByDesc).Paginate(page, pageSize).ToArrayAsync();
+		//}
 
 		public virtual async Task<T?> SingleOrDefaultAsync(Expression<Func<T, bool>> expression)
 			=> await _context.Set<T>().SingleOrDefaultAsync(expression);
@@ -115,7 +115,7 @@ namespace MyShop_Backend.CommonRepository.CommonRepository
 			await _context.SaveChangesAsync();
 		}
 
-		public async Task<IEnumerable<T>> GetPagedOrderByDescendingAsync<TKey>(int page, int pageSize, Expression<Func<T, bool>>? expression, Expression<Func<T, TKey>> orderByDesc)
+		public virtual async Task<IEnumerable<T>> GetPagedOrderByDescendingAsync<TKey>(int page, int pageSize, Expression<Func<T, bool>>? expression, Expression<Func<T, TKey>> orderByDesc)
 		{
 			return expression == null
 				? await _context.Set<T>().OrderByDescending(orderByDesc).Paginate(page, pageSize).ToArrayAsync()

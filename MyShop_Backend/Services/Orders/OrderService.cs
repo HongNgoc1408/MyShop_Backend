@@ -346,7 +346,7 @@ namespace MyShop_Backend.Services.Orders
 
 		public async Task<OrderDetailsResponse> GetOrderDetail(long orderId, string userId)
 		{
-			var order = await _orderRepository.SingleOrDefaultAsync(e => e.Id == orderId);
+			var order = await _orderRepository.SingleOrDefaultAsyncInclude(e => e.Id == orderId && userId == e.UserId);
 			if (order != null)
 			{
 				return _mapper.Map<OrderDetailsResponse>(order);
@@ -356,7 +356,7 @@ namespace MyShop_Backend.Services.Orders
 
 		public async Task<OrderDetailsResponse> GetOrderDetail(long orderId)
 		{
-			var order = await _orderRepository.SingleOrDefaultAsync(e => e.Id == orderId);
+			var order = await _orderRepository.SingleOrDefaultAsyncInclude(e => e.Id == orderId);
 			if (order != null)
 			{
 				return _mapper.Map<OrderDetailsResponse>(order);
