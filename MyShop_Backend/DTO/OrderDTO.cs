@@ -13,6 +13,6 @@ namespace MyShop_Backend.DTO
 		public double AmountPaid { get; set; }
 		public string PaymentMethod { get; set; }
 		public DeliveryStatusEnum OrderStatus { get; set; }
-		public string? PayBackUrl { get; set; }
+		//public string? PayBackUrl { get; set; }
 	}
 }

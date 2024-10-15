@@ -2,11 +2,11 @@
 using MyShop_Backend.Data;
 using MyShop_Backend.Models;
 using MyShop_Backend.Services.PagedServices;
-using MyShop_Backend.Repository.CommonRepository;
+using MyShop_Backend.CommonRepository.CommonRepository;
 using System.Linq.Expressions;
 using MyStore.Repository.ProductRepository;
 
-namespace MyShop_Backend.Repository.ProductRepository
+namespace MyShop_Backend.CommonRepository.ProductRepository
 {
 	public class ProductRepository : CommonRepository<Product>, IProductRepository
 	{

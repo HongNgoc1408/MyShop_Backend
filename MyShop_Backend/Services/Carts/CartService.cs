@@ -8,10 +8,8 @@ using MyShop_Backend.Repositories.ProductColorRepositories;
 using MyShop_Backend.Repositories.ProductSizeRepositories;
 using MyShop_Backend.Repositories.SizeRepositories;
 using MyShop_Backend.Repositories.TransactionRepositories;
-using MyShop_Backend.Repository.ProductRepository;
 using MyShop_Backend.Request;
 using MyShop_Backend.Response;
-using MyStore.Repository.ProductRepository;
 
 namespace MyShop_Backend.Services.Carts
 {
@@ -96,11 +94,6 @@ namespace MyShop_Backend.Services.Carts
 			{
 				throw new Exception(ex.InnerException?.Message ?? ex.Message);
 			}
-		}
-
-		public Task DeleteCartAsync(string userId, IEnumerable<int> productId)
-		{
-			throw new NotImplementedException();
 		}
 
 		public async Task<IEnumerable<CartItemResponse>> GetAllByUserId(string userId)

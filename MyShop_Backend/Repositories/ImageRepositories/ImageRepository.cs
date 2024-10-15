@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MyShop_Backend.Data;
 using MyShop_Backend.Models;
-using MyShop_Backend.Repository.CommonRepository;
+using MyShop_Backend.CommonRepository.CommonRepository;
 
 namespace MyShop_Backend.Repositories.ImageRepositories
 {

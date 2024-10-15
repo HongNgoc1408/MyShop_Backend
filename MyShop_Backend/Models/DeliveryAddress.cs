@@ -20,7 +20,6 @@ namespace MyShop_Backend.Models
 		public int? Ward_id { get; set; }
 		public string? Ward_name { get; set; }
 
-
 		[MaxLength(100)]
 		public string? Detail { get; set; }
 

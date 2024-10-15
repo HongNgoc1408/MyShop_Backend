@@ -5,7 +5,7 @@ using MyShop_Backend.Repositories.CommonRepositories;
 using MyShop_Backend.Services.PagedServices;
 using System.Linq.Expressions;
 
-namespace MyShop_Backend.Repository.CommonRepository
+namespace MyShop_Backend.CommonRepository.CommonRepository
 {
 	public class CommonRepository<T> : ICommonRepository<T> where T : class
 	{

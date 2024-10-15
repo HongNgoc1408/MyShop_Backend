@@ -16,7 +16,7 @@ using MyShop_Backend.Repositories.ProductSizeRepositories;
 using MyShop_Backend.Repositories.SizeRepositories;
 using MyShop_Backend.Repositories.TransactionRepositories;
 using MyShop_Backend.Repositories.UserRepositories;
-using MyShop_Backend.Repository.ProductRepository;
+using MyShop_Backend.CommonRepository.ProductRepository;
 using MyShop_Backend.Services.AuthServices;
 using MyShop_Backend.Services.BrandServices;
 using MyShop_Backend.Services.CachingServices;
@@ -29,6 +29,12 @@ using MyShop_Backend.Services.UserServices;
 using MyShop_Backend.Storages;
 using MyStore.Repository.ProductRepository;
 using System.Text;
+using MyShop_Backend.Services.Orders;
+using MyShop_Backend.Repositories.OrderRepositories;
+using MyShop_Backend.Repositories.OrderDetailRepositories;
+using MyShop_Backend.Repositories.PaymentMethodRepositories;
+using MyShop_Backend.Services.Payments;
+using MyShop_Backend.Library;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -61,10 +67,13 @@ builder.Services.AddSwaggerGen(e =>
 				new string[] { }
 			}
 		});
-});	
+});
 // Database connection
 builder.Services.AddDbContext<MyShopDbContext>(options =>
-	options.UseSqlServer(builder.Configuration.GetConnectionString("MyShop_Backend")));
+	options.UseSqlServer(builder.Configuration.GetConnectionString("MyShop_Backend"))
+	.EnableSensitiveDataLogging()
+	.LogTo(Console.WriteLine)
+	);
 
 // Register AutoMapper
 builder.Services.AddAutoMapper(typeof(Mapping));
@@ -120,8 +129,9 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ISizeService, SizeService>();
 builder.Services.AddScoped<ICartService, CartService>();
-
-
+builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
+builder.Services.AddScoped<IVNPayLibrary, VNPayLibrary>();
 
 
 // Repositories
@@ -135,6 +145,9 @@ builder.Services.AddScoped<IProductSizeRepository, ProductSizeRepository>();
 builder.Services.AddScoped<IProductColorRepository, ProductColorRepository>();
 builder.Services.AddScoped<ICartItemRepository, CartItemRepository>();
 builder.Services.AddScoped<IDeliveryAddressRepository, DeliveryAddressRepository>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
+builder.Services.AddScoped<IPaymentMethodRepository, PaymentMethodRepository>();
 
 // CORS
 builder.Services.AddCors(opt =>
