@@ -71,8 +71,7 @@ builder.Services.AddSwaggerGen(e =>
 // Database connection
 builder.Services.AddDbContext<MyShopDbContext>(options =>
 	options.UseSqlServer(builder.Configuration.GetConnectionString("MyShop_Backend"))
-	.EnableSensitiveDataLogging()
-	.LogTo(Console.WriteLine)
+
 	);
 
 // Register AutoMapper
@@ -154,7 +153,8 @@ builder.Services.AddCors(opt =>
 {
 	opt.AddPolicy("MyCors", opt =>
 	{
-		opt.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+		opt.WithOrigins("http://localhost:3000", "http://localhost:3001").AllowAnyMethod().AllowAnyHeader().AllowCredentials();
+		//opt.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
 	});
 });
 

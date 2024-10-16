@@ -130,7 +130,7 @@ namespace MyShop_Backend.Controllers
 			}
 		}
 
-		[HttpDelete("delete/{id}")]
+		[HttpDelete("cancel/{id}")]
 		public async Task<IActionResult> Cancel(int id)
 		{
 			try
@@ -153,5 +153,23 @@ namespace MyShop_Backend.Controllers
 			}
 		}
 
+		[HttpDelete("delete/{id}")]
+		[Authorize(Roles = "Admin")]
+		public async Task<IActionResult> Delete(long id)
+		{
+			try
+			{
+				await _orderService.DeleteOrder(id);
+				return Ok();
+			}
+			catch (ArgumentException ex)
+			{
+				return NotFound(ex.Message);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
+		}
 	}
 }

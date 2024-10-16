@@ -23,7 +23,6 @@ namespace MyShop_Backend.Data
 		public virtual DbSet<ProductSize> ProductSizes { get; set; }
 		public virtual DbSet<CartItem> CartItems { get; set; }
 		public virtual DbSet<DeliveryAddress> DeliveryAddresses { get; set; }
-		public virtual DbSet<DeliveryStatus> DeliveryStatuses { get; set; }
 		public virtual DbSet<Order> Orders { get; set; }
 		public virtual DbSet<OrderDetail> OrderDetails { get; set; }
 		public virtual DbSet<PaymentMethod> PaymentMethods { get; set; }

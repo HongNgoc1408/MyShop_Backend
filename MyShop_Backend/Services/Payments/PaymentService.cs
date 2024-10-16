@@ -169,6 +169,7 @@ namespace MyShop_Backend.Services.Payments
 				}
 				else throw new ArgumentException("Số tiền " + ErrorMessage.INVALID);
 			}
+			else throw new Exception(ErrorMessage.PAYMENT_FAILED);
 		}
 	}
 }

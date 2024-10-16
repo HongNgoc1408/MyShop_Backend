@@ -47,7 +47,7 @@ namespace MyShop_Backend.Services.Orders
 			IProductRepository productRepository,
 			IPaymentMethodRepository paymentMethodRepository,
 			IPaymentService paymentService,
-			 IVNPayLibrary vnPayLibrary,
+			IVNPayLibrary vnPayLibrary,
 			ITransactionRepository transaction,
 			IPaymentMethodRepository methodRepository,
 			IFileStorage fileStorage,
@@ -189,10 +189,9 @@ namespace MyShop_Backend.Services.Orders
 					Total = request.Total,
 				};
 
-
 				var method = await _paymentMethodRepository
 					.SingleOrDefaultAsync(x => x.Id == request.PaymentMethodId && x.IsActive)
-					?? throw new ArgumentException(ErrorMessage.NOT_FOUND);
+					?? throw new ArgumentException(ErrorMessage.NOT_FOUND + "phương thức thanh toán");
 
 				order.PaymentMethodId = method.Id;
 				order.PaymentMethodName = method.Name;
@@ -262,7 +261,7 @@ namespace MyShop_Backend.Services.Orders
 				await _orderDetailRepository.AddAsync(listDetails);
 				await _cartItemRepository.DeleteRangeAsync(cartItems);
 
-				await transaction.CommitAsync();
+				string? paymentUrl = null;
 
 				if (method.Name == PaymentMethodEnum.VNPay.ToString())
 				{
@@ -276,7 +275,7 @@ namespace MyShop_Backend.Services.Orders
 					};
 					var userIP = "127.0.0.1";
 
-					var paymentUrl = _paymentService.GetVNPayURL(orderInfo, userIP);
+					paymentUrl = _paymentService.GetVNPayURL(orderInfo, userIP);
 					var orderCache = new OrderCache()
 					{
 						OrderId = order.Id,
@@ -288,11 +287,12 @@ namespace MyShop_Backend.Services.Orders
 
 					var cacheOptions = new MemoryCacheEntryOptions
 					{
-						AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(15)
+						AbsoluteExpiration = DateTime.Now.AddMinutes(15)
 					};
 					cacheOptions.RegisterPostEvictionCallback(OnVNPayDeadline, this);
 					_cache.Set("Order " + order.Id, orderCache, cacheOptions);
 
+					await transaction.CommitAsync();
 					return paymentUrl;
 				}
 				else return null;
@@ -303,7 +303,7 @@ namespace MyShop_Backend.Services.Orders
 				throw new Exception(ex.Message);
 			}
 		}
-
+		
 		public async Task DeleteOrder(long id)
 		{
 			var order = await _orderRepository.SingleOrDefaultAsync(e => e.Id == id);
@@ -393,6 +393,9 @@ namespace MyShop_Backend.Services.Orders
 				{
 					order.DeliveryAddress = request.ReceiverInfo;
 				}
+				
+
+
 				await _orderRepository.UpdateAsync(order);
 				return _mapper.Map<OrderDTO>(order);
 			}

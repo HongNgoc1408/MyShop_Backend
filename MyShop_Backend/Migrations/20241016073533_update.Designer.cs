@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MyShop_Backend.Data;
 
@@ -11,9 +12,11 @@ using MyShop_Backend.Data;
 namespace MyShop_Backend.Migrations
 {
     [DbContext(typeof(MyShopDbContext))]
-    partial class MyShopDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241016073533_update")]
+    partial class update
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -286,6 +289,16 @@ namespace MyShop_Backend.Migrations
                     b.ToTable("DeliveryAddresses");
                 });
 
+            modelBuilder.Entity("MyShop_Backend.Models.DeliveryStatus", b =>
+                {
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Name");
+
+                    b.ToTable("DeliveryStatuses");
+                });
+
             modelBuilder.Entity("MyShop_Backend.Models.Image", b =>
                 {
                     b.Property<long>("Id")
@@ -333,6 +346,9 @@ namespace MyShop_Backend.Migrations
                         .HasMaxLength(160)
                         .HasColumnType("nvarchar(160)");
 
+                    b.Property<string>("DeliveryStatusName")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
 
@@ -367,6 +383,8 @@ namespace MyShop_Backend.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DeliveryStatusName");
 
                     b.HasIndex("PaymentMethodId");
 
@@ -750,6 +768,10 @@ namespace MyShop_Backend.Migrations
 
             modelBuilder.Entity("MyShop_Backend.Models.Order", b =>
                 {
+                    b.HasOne("MyShop_Backend.Models.DeliveryStatus", null)
+                        .WithMany("Orders")
+                        .HasForeignKey("DeliveryStatusName");
+
                     b.HasOne("MyShop_Backend.Models.PaymentMethod", "PaymentMethod")
                         .WithMany("Orders")
                         .HasForeignKey("PaymentMethodId");
@@ -837,6 +859,11 @@ namespace MyShop_Backend.Migrations
             modelBuilder.Entity("MyShop_Backend.Models.Category", b =>
                 {
                     b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("MyShop_Backend.Models.DeliveryStatus", b =>
+                {
+                    b.Navigation("Orders");
                 });
 
             modelBuilder.Entity("MyShop_Backend.Models.Order", b =>
