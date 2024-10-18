@@ -44,8 +44,8 @@ namespace MyShop_Backend.Mappers
 
 			//order
 			CreateMap<OrderDTO, Order>().ReverseMap()
-				.ForMember(d => d.PaymentMethod, opt => opt.MapFrom(src => src.PaymentMethodName));
-				
+				.ForMember(d => d.PaymentMethodName, opt => opt.MapFrom(src => src.PaymentMethodName));
+
 			CreateMap<OrderRequest, Order>().ReverseMap();
 			CreateMap<OrderDetail, ProductOrderDetails>();
 

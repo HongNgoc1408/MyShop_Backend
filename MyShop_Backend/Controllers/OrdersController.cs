@@ -50,6 +50,48 @@ namespace MyShop_Backend.Controllers
 			}
 		}
 
+		[HttpDelete("delete/{id}")]
+		[Authorize(Roles = "Admin")]
+		public async Task<IActionResult> Delete(long id)
+		{
+			try
+			{
+				await _orderService.DeleteOrder(id);
+				return Ok();
+			}
+			catch (ArgumentException ex)
+			{
+				return NotFound(ex.Message);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
+		}
+
+		[HttpPut("shipping/{orderId}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Shipping(long orderId, [FromBody] OrderToShippingRequest request)
+        {
+            try
+            {
+                await _orderService.OrderToShipping(orderId, request);
+                return Ok();
+            }
+            catch (InvalidDataException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
 		///User
 		[HttpGet]
 		public async Task<IActionResult> GetOrdersByUserId([FromQuery] PageRequest request)
@@ -177,23 +219,6 @@ namespace MyShop_Backend.Controllers
 			}
 		}
 
-		[HttpDelete("delete/{id}")]
-		[Authorize(Roles = "Admin")]
-		public async Task<IActionResult> Delete(long id)
-		{
-			try
-			{
-				await _orderService.DeleteOrder(id);
-				return Ok();
-			}
-			catch (ArgumentException ex)
-			{
-				return NotFound(ex.Message);
-			}
-			catch (Exception ex)
-			{
-				return StatusCode(500, ex.Message);
-			}
-		}
+		
 	}
 }

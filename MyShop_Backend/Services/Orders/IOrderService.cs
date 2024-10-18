@@ -12,7 +12,11 @@ namespace MyShop_Backend.Services.Orders
 		Task<OrderDTO> UpdateOrder(long orderId, UpdateStatusOrderRequest request);
 		//Task<OrderDTO> UpdateStatusOrder(long orderId, string userId, UpdateOrderRequest request);
 		Task CancelOrder(long orderId, string userId);
+		Task CancelOrder(long orderId);
 		Task<string?> CreateOrder(string userId, OrderRequest request);
+
+		Task NextOrderStatus(long orderId);
+		Task OrderToShipping(long orderId, OrderToShippingRequest request);
 
 		//Task Review(long orderId, string userId, IEnumerable<ReviewRequest> reviews);
 
