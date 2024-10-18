@@ -97,6 +97,7 @@ namespace MyShop_Backend.Services.Orders
 			}
 			else throw new ArgumentException($"Id {orderId} " + ErrorMessage.NOT_FOUND);
 		}
+		
 
 		private async void OnVNPayDeadline(object key, object? value, EvictionReason reason, object? state)
 		{
@@ -393,8 +394,26 @@ namespace MyShop_Backend.Services.Orders
 				{
 					order.DeliveryAddress = request.ReceiverInfo;
 				}
-				
 
+				await _orderRepository.UpdateAsync(order);
+				return _mapper.Map<OrderDTO>(order);
+			}
+			else throw new ArgumentException($"Id {id} " + ErrorMessage.NOT_FOUND);
+
+			
+			
+		}
+
+		public async Task<OrderDTO> UpdateOrder(long id, UpdateStatusOrderRequest request)
+		{
+			var order = await _orderRepository.SingleOrDefaultAsync(e => e.Id == id);
+			if (order != null)
+			{
+				
+				if (request.OrderStatus != null)
+				{
+					order.OrderStatus = request.OrderStatus;
+				}
 
 				await _orderRepository.UpdateAsync(order);
 				return _mapper.Map<OrderDTO>(order);

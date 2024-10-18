@@ -9,6 +9,8 @@ namespace MyShop_Backend.Services.Orders
 		Task<PagedResponse<OrderDTO>> GetOrdersByUserId(string userId, PageRequest request);
 		Task<OrderDetailsResponse> GetOrderDetail(long orderId, string userId);
 		Task<OrderDTO> UpdateOrder(long orderId, string userId, UpdateOrderRequest request);
+		Task<OrderDTO> UpdateOrder(long orderId, UpdateStatusOrderRequest request);
+		//Task<OrderDTO> UpdateStatusOrder(long orderId, string userId, UpdateOrderRequest request);
 		Task CancelOrder(long orderId, string userId);
 		Task<string?> CreateOrder(string userId, OrderRequest request);
 

@@ -14,6 +14,7 @@ namespace MyShop_Backend.Controllers
 	{
 		private readonly IOrderService _orderService = orderService;
 
+		//Admin
 		[HttpGet("get-all")]
 		[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> GetAll([FromQuery] PageRequest request)
@@ -28,6 +29,28 @@ namespace MyShop_Backend.Controllers
 			}
 		}
 
+		
+
+		[HttpPut("updateStatus/{id}")]
+		[Authorize(Roles = "Admin")]
+		public async Task<IActionResult> UpdateStatus(int id, [FromBody] UpdateStatusOrderRequest request)
+		{
+			try
+			{
+				var orders = await _orderService.UpdateOrder(id, request);
+				return Ok(orders);
+			}
+			catch (ArgumentException ex)
+			{
+				return NotFound(ex.Message);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
+		}
+
+		///User
 		[HttpGet]
 		public async Task<IActionResult> GetOrdersByUserId([FromQuery] PageRequest request)
 		{
@@ -130,6 +153,7 @@ namespace MyShop_Backend.Controllers
 			}
 		}
 
+		
 		[HttpDelete("cancel/{id}")]
 		public async Task<IActionResult> Cancel(int id)
 		{
