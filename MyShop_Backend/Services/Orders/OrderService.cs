@@ -188,6 +188,9 @@ namespace MyShop_Backend.Services.Orders
 					UserId = userId,
 					Receiver = request.Receiver,
 					Total = request.Total,
+					District_Id = request.District_Id,
+					Ward_Id = request.Ward_Id,
+					
 				};
 
 				var method = await _paymentMethodRepository
@@ -277,6 +280,7 @@ namespace MyShop_Backend.Services.Orders
 					var userIP = "127.0.0.1";
 
 					paymentUrl = _paymentService.GetVNPayURL(orderInfo, userIP);
+
 					var orderCache = new OrderCache()
 					{
 						OrderId = order.Id,
@@ -292,11 +296,9 @@ namespace MyShop_Backend.Services.Orders
 					};
 					cacheOptions.RegisterPostEvictionCallback(OnVNPayDeadline, this);
 					_cache.Set("Order " + order.Id, orderCache, cacheOptions);
-
-					await transaction.CommitAsync();
-					return paymentUrl;
 				}
-				else return null;
+				await transaction.CommitAsync();
+				return paymentUrl;
 			}
 			catch (Exception ex)
 			{
@@ -419,6 +421,120 @@ namespace MyShop_Backend.Services.Orders
 				return _mapper.Map<OrderDTO>(order);
 			}
 			else throw new ArgumentException($"Id {id} " + ErrorMessage.NOT_FOUND);
+		}
+
+		public async Task CancelOrder(long orderId)
+		{
+			var order = await _orderRepository.SingleOrDefaultAsync(e => e.Id == orderId);
+			if (order != null)
+			{
+				if (order.OrderStatus.Equals(DeliveryStatusEnum.Processing)
+					|| order.OrderStatus.Equals(DeliveryStatusEnum.Confirmed))
+				{
+					order.OrderStatus = DeliveryStatusEnum.Canceled;
+					_cache.Remove("Order " + orderId);
+					await _orderRepository.UpdateAsync(order);
+				}
+				else throw new InvalidDataException(ErrorMessage.CANNOT_CANCEL);
+			}
+			else throw new InvalidOperationException(ErrorMessage.ORDER_NOT_FOUND);
+		}
+
+		public async Task NextOrderStatus(long orderId)
+		{
+			var order = await _orderRepository.FindAsync(orderId);
+			if (order != null)
+			{
+				if (!order.OrderStatus.Equals(DeliveryStatusEnum.Received) || !order.OrderStatus.Equals(DeliveryStatusEnum.Canceled))
+				{
+					order.OrderStatus += 1;
+					await _orderRepository.UpdateAsync(order);
+				}
+				else throw new InvalidDataException(ErrorMessage.BAD_REQUEST);
+			}
+			else throw new InvalidOperationException(ErrorMessage.ORDER_NOT_FOUND);
+		}
+
+		public async Task OrderToShipping(long orderId, OrderToShippingRequest request)
+		{
+			var order = await _orderRepository.SingleOrDefaultAsyncInclude(e => e.Id == orderId)
+			   ?? throw new InvalidOperationException(ErrorMessage.ORDER_NOT_FOUND);
+
+			if (order.OrderStatus != DeliveryStatusEnum.Confirmed)
+			{
+				throw new InvalidDataException(ErrorMessage.BAD_REQUEST);
+			}
+
+			var token = _configuration["GHN:Token"];
+			var shopId = _configuration["GHN:ShopId"];
+			var url = _configuration["GHN:Url"] + "/create";
+			//var shopName = _configuration["Store:Name"];
+			//var from_phone = _configuration["Store:PhoneNumber"];
+
+			//var from_address = _configuration["Store:Address"];
+			//var from_ward_name = _configuration["Store:WardName"];
+			//var from_district_name = _configuration["Store:DistrictName"];
+			//var from_provice_name = _configuration["Store:ProvinceName"];
+
+			var receiver = order.Receiver.Split("-").Select(e => e?.Trim()).ToArray();
+			var to_name = receiver[0];
+			var to_phone = receiver[1];
+
+
+			if (token == null || shopId == null || url == null
+				|| to_name == null || to_phone == null)
+			{
+				throw new ArgumentNullException(ErrorMessage.ARGUMENT_NULL);
+			}
+
+			var to_address = order.DeliveryAddress;
+			var to_ward_code = order.Ward_Id;
+			var to_district_id = order.District_Id;
+
+			var items = order.OrderDetails.Select(e => new
+			{
+				name = e.ProductName,
+				quantity = e.Quantity,
+				price = (int)Math.Floor(e.Price)
+			}).ToArray();
+
+			var cod_amount = order.AmountPaid < order.Total ? order.Total : 0;
+
+			var data = new
+			{
+				cod_amount,
+				to_name,
+				to_phone,
+				to_address,
+				to_ward_code,
+				to_district_id,
+				service_type_id = 2,
+				payment_type_id = 1,
+				weight = request.Weight,
+				length = request.Length,
+				width = request.Width,
+				height = request.Height,
+				required_note = request.RequiredNote.ToString(),
+				items,
+			};
+
+			using var httpClient = new HttpClient();
+
+			httpClient.DefaultRequestHeaders.Add("ShopId", shopId);
+			httpClient.DefaultRequestHeaders.Add("Token", token);
+
+			var res = await httpClient.PostAsJsonAsync(url , data);
+			var dataResponse = await res.Content.ReadFromJsonAsync<GHNResponse>();
+			if (!res.IsSuccessStatusCode)
+			{
+				throw new InvalidDataException(dataResponse?.Message ?? ErrorMessage.BAD_REQUEST);
+			}
+
+			order.ShippingCode = dataResponse?.Data?.Order_code;
+			order.Expected_delivery_time = dataResponse?.Data?.Expected_delivery_time;
+
+			order.OrderStatus = DeliveryStatusEnum.AwaitingPickup;
+			await _orderRepository.UpdateAsync(order);
 		}
 	}
 }

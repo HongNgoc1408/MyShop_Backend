@@ -14,12 +14,17 @@ namespace MyShop_Backend.Models
 		public double ShippingCost { get; set; }
 
 		public DateTime OrderDate { get; set; }
+		public DateTime? ReceivedDate { get; set; }
 
 		[MaxLength(160)]
 		public string DeliveryAddress { get; set; }
 
 		[MaxLength(100)]
 		public string Receiver { get; set; }
+		public string Ward_Id { get; set; } //GHN -> WardCode
+		public int District_Id { get; set; }
+		public string? ShippingCode { get; set; }
+		public DateTime? Expected_delivery_time { get; set; }
 
 		public double AmountPaid { get; set; }
 
