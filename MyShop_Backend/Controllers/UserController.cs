@@ -76,7 +76,7 @@ namespace MyShop_Backend.Controllers
 		{
 			try
 			{
-				var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)
+				var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 				if(userId == null)
 				{
 					return Unauthorized();

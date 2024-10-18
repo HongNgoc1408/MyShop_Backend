@@ -21,8 +21,9 @@ namespace MyShop_Backend.Mappers
 
 
 			//user
-			CreateMap<User, UserDTO>().ReverseMap();
 			CreateMap<User, UserResponse>();
+			CreateMap<User, UserDTO>().ReverseMap();
+
 			CreateMap<DeliveryAddress, AddressDTO>().ReverseMap();
 			//product
 			CreateMap<Product, ProductDTO>().ReverseMap();
