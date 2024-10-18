@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using MyShop_Backend.DTO;
+using MyShop_Backend.ErroMessage;
 using MyShop_Backend.Models;
 using MyShop_Backend.Repositories.DeliveryAddressRepositories;
 using MyShop_Backend.Repositories.UserRepositories;
@@ -15,7 +16,8 @@ namespace MyShop_Backend.Services.UserServices
 		private readonly IDeliveryAddressRepository _deliveryAddressRepository;
 		private readonly IMapper _mapper;
 
-		public UserService(UserManager<User> userManager, IUserRepository userRepository, IDeliveryAddressRepository deliveryAdressRepository, IMapper mapper) {
+		public UserService(UserManager<User> userManager, IUserRepository userRepository, IDeliveryAddressRepository deliveryAdressRepository, IMapper mapper)
+		{
 			_userManager = userManager;
 			_userRepository = userRepository;
 			_deliveryAddressRepository = deliveryAdressRepository;
@@ -72,7 +74,36 @@ namespace MyShop_Backend.Services.UserServices
 			}
 			return null;
 		}
-		
+		private string MaskEmail(string email)
+		{
+			var emailParts = email.Split('@');
+			if (emailParts.Length != 2)
+			{
+				throw new ArgumentException("Email không hợp lệ");
+			}
+
+			string name = emailParts[0];
+			string domain = emailParts[1];
+
+			int visibleChars = name.Length < 5 ? 2 : 5;
+			string maskedName = name[..visibleChars].PadRight(name.Length, '*');
+
+			return $"{maskedName}@{domain}";
+		}
+		public async Task<UserDTO> GetUserInfo(string userId)
+		{
+			var user = await _userManager.FindByIdAsync(userId);
+			if (user != null)
+			{
+				var res = _mapper.Map<UserDTO>(user);
+				res.Email = res.Email != null ? MaskEmail(res.Email) : "";
+				return res;
+			}
+			throw new InvalidOperationException(ErrorMessage.USER_NOT_FOUND);
+		}
+
+
+
 		public async Task<AddressDTO?> UpdateUserAddress(string userId, AddressDTO address)
 		{
 			var delivery = await _deliveryAddressRepository.SingleOrDefaultAsync(e => e.UserId == userId);

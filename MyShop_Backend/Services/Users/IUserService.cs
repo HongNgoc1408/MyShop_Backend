@@ -8,5 +8,7 @@ namespace MyShop_Backend.Services.UserServices
 		Task<PagedResponse<UserResponse>> GetAllUserAsync(int page, int pageSize, string? keySearch);
 		Task<AddressDTO?> GetUserAddress(string userId);
 		Task<AddressDTO?> UpdateUserAddress(string userId, AddressDTO address);
+
+		Task<UserDTO> GetUserInfo(string userId);
 	}
 }

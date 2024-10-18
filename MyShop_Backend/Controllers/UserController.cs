@@ -70,5 +70,32 @@ namespace MyShop_Backend.Controllers
 				return StatusCode(500, ex.Message);
 			}
 		}
+
+		[HttpGet("profile")]
+		public async Task<IActionResult> GetProfile()
+		{
+			try
+			{
+				var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)
+				if(userId == null)
+				{
+					return Unauthorized();
+				}
+				var address = await _userService.GetUserInfo(userId);
+				return Ok(address);
+			}
+			catch (InvalidOperationException ex)
+			{
+				return NotFound(ex.Message);
+			}
+			catch (ArgumentException ex)
+			{
+				return BadRequest(ex.Message);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
+		}
 	}
 };
