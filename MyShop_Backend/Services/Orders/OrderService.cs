@@ -462,7 +462,7 @@ namespace MyShop_Backend.Services.Orders
 
 			if (order.OrderStatus != DeliveryStatusEnum.Confirmed)
 			{
-				throw new InvalidDataException(ErrorMessage.BAD_REQUEST);
+				throw new InvalidDataException(ErrorMessage.BAD_REQUEST + ".Xem lại trạng thái đơn đặt hàng");
 			}
 
 			var token = _configuration["GHN:Token"];
