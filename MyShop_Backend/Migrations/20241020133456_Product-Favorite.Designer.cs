@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MyShop_Backend.Data;
 
@@ -11,9 +12,11 @@ using MyShop_Backend.Data;
 namespace MyShop_Backend.Migrations
 {
     [DbContext(typeof(MyShopDbContext))]
-    partial class MyShopDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241020133456_Product-Favorite")]
+    partial class ProductFavorite
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -850,13 +853,13 @@ namespace MyShop_Backend.Migrations
             modelBuilder.Entity("MyShop_Backend.Models.ProductFavorite", b =>
                 {
                     b.HasOne("MyShop_Backend.Models.Product", "Product")
-                        .WithMany("ProductFavorites")
+                        .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("MyShop_Backend.Models.User", "User")
-                        .WithMany("ProductFavorites")
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -910,8 +913,6 @@ namespace MyShop_Backend.Migrations
                     b.Navigation("Images");
 
                     b.Navigation("ProductColors");
-
-                    b.Navigation("ProductFavorites");
                 });
 
             modelBuilder.Entity("MyShop_Backend.Models.ProductColor", b =>
@@ -929,8 +930,6 @@ namespace MyShop_Backend.Migrations
                     b.Navigation("DeliveryAddress");
 
                     b.Navigation("Orders");
-
-                    b.Navigation("ProductFavorites");
                 });
 #pragma warning restore 612, 618
         }

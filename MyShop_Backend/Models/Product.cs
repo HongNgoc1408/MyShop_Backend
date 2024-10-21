@@ -29,6 +29,6 @@ namespace MyShop_Backend.Models
 		public DateTime? UpdatedAt { get; set; }
 		public ICollection<Image> Images { get; set; } = new HashSet<Image>();
 		public ICollection<ProductColor> ProductColors { get; } = new HashSet<ProductColor>();
-
+		public ICollection<ProductFavorite> ProductFavorites { get; } = new HashSet<ProductFavorite>();
 	}
 }

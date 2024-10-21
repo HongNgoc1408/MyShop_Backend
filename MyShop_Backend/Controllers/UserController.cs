@@ -29,6 +29,22 @@ namespace MyShop_Backend.Controllers
 				return StatusCode(500, ex.Message);
 			}
 		}
+
+		[HttpPut("lock-out/{id}")]
+		[Authorize(Roles = "Admin")]
+		public async Task<IActionResult> LockOut(string id, [FromBody] LockOutRequest request)
+		{
+			try
+			{
+				await _userService.LockOut(id, request.EndDate);
+				return NoContent();
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
+		}
+
 		[HttpGet("address")]
 		public async Task<IActionResult> GetAddress()
 		{
@@ -97,5 +113,87 @@ namespace MyShop_Backend.Controllers
 				return StatusCode(500, ex.Message);
 			}
 		}
+
+		[HttpGet("favorite")]
+		public async Task<IActionResult> GetFavorite()
+		{
+			try {
+				var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+				if( userId == null)
+				{
+					return Unauthorized();
+				}
+				var favorites = await _userService.GetFavorites(userId);
+				return Ok(favorites);
+			}catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
+		}
+		[HttpGet("favorite/products")]
+		public async Task<IActionResult> ProductFavorites([FromQuery] PageRequest request)
+		{
+			try
+			{
+				var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+				if (userId == null)
+				{
+					return Unauthorized();
+				}
+				var pFavorites = await _userService.GetProductsFavorite(userId, request);
+				return Ok(pFavorites);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
+		}
+
+		[HttpPost("favorite")]
+		public async Task<IActionResult> AddFavorie([FromBody] IdRequest<long> request)
+		{
+			try
+			{
+				var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+				if(userId == null)
+				{
+					return Unauthorized();
+				}
+				await _userService.AddProductFavorite(userId, request.Id);
+				return Created();
+			}
+			catch (Exception ex) 
+			{
+				return StatusCode(500, ex.Message);
+			}
+
+
+		}
+
+		[HttpDelete("favorite/{id}")]
+		public async Task<IActionResult> DeleteFavorite(long id) {
+			try
+			{
+				var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+				if (userId == null)
+				{
+					return Unauthorized();
+					
+				}
+				await _userService.DeleteProductFavorite(userId, id);
+				return NoContent();
+			}
+			catch (ArgumentException ex)
+			{
+				return NotFound(ex.Message);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
+
+		}
+
+		
 	}
 };

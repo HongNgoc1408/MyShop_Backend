@@ -29,6 +29,7 @@ namespace MyShop_Backend.CommonRepository.ProductRepository
 				.Where(e => e.Name.Contains(search) || e.Id.ToString().Equals(search))
 				.Include(e => e.Brand)
 				.Include(e => e.Caterory)
+				.Include(e => e.Images)
 				.OrderByDescending(e => e.CreatedAt)
 				.Paginate(page, pageSize)
 				.ToListAsync();
@@ -49,6 +50,7 @@ namespace MyShop_Backend.CommonRepository.ProductRepository
 			return await _dbContext.Products
 					.Include(e => e.Caterory)
 					.Include(e => e.Brand)
+					.Include(e => e.Images)
 					.Paginate(page, pageSize)
 					.ToListAsync();
 		}
@@ -61,33 +63,36 @@ namespace MyShop_Backend.CommonRepository.ProductRepository
 			   .SingleOrDefaultAsync(expression);
 		}
 
-		//public override async Task<IEnumerable<Product>> GetPagedAsync<TKey>(int page, int pageSize, Expression<Func<Product, bool>>? expression, Expression<Func<Product, TKey>> orderBy)
-		//{
-		//	return expression == null
-		//		? await _dbContext.Products
-		//			.Include(e => e.Brand)
-		//			.Include(e => e.Caterory).OrderBy(orderBy).Paginate(page, pageSize).ToListAsync()
-		//		: await _dbContext.Products
-		//			.Include(e => e.Brand)
-		//			.Include(e => e.Caterory).Where(expression).OrderBy(orderBy).Paginate(page, pageSize).ToListAsync();
-		//}
+		public override async Task<IEnumerable<Product>> GetPagedAsync<TKey>(int page, int pageSize, Expression<Func<Product, bool>>? expression, Expression<Func<Product, TKey>> orderBy)
+		{
+			return expression == null
+				? await _dbContext.Products
+					.Include(e => e.Brand)
+					.Include(e => e.Images)
+					.Include(e => e.Caterory).OrderBy(orderBy).Paginate(page, pageSize).ToListAsync()
+				: await _dbContext.Products.Where(expression)
+					.Include(e => e.Brand)
+					.Include(e => e.Images)
+					.Include(e => e.Caterory).OrderBy(orderBy).Paginate(page, pageSize).ToListAsync();
+		}
 
-		//public override async Task<IEnumerable<Product>> GetPageOrderByDescendingAsync<TKey>(int page, int pageSize, Expression<Func<Product, bool>>? expression, Expression<Func<Product, TKey>> orderByDesc)
-		//{
-		//	return expression == null
-		//		? await _dbContext.Products
-		//			.Include(e => e.Brand)
-		//			.Include(e => e.Caterory)
-		//			.OrderBy(orderByDesc)
-		//			.Paginate(page, pageSize)
-		//			.ToListAsync()
-		//		: await _dbContext.Products
-		//			.Include(e => e.Brand)
-		//			.Include(e => e.Caterory)
-		//			.Where(expression).
-		//			OrderBy(orderByDesc)
-		//			.Paginate(page, pageSize)
-		//			.ToListAsync();
-		//}
+		public override async Task<IEnumerable<Product>> GetPagedOrderByDescendingAsync<TKey>(int page, int pageSize, Expression<Func<Product, bool>>? expression, Expression<Func<Product, TKey>> orderByDesc)
+		{
+			return expression == null
+				? await _dbContext.Products
+					.Include(e => e.Brand)
+					.Include(e => e.Caterory)
+					.Include(e => e.Images)
+					.OrderBy(orderByDesc)
+					.Paginate(page, pageSize)
+					.ToListAsync()
+				: await _dbContext.Products.Where(expression)
+					.Include(e => e.Brand)
+					.Include(e => e.Caterory)
+					.Include(e => e.Images)
+					.OrderBy(orderByDesc)
+					.Paginate(page, pageSize)
+					.ToListAsync();
+		}
 	}
 }

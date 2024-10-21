@@ -206,7 +206,7 @@ namespace MyShop_Backend.Services.Products
 				totalProduct = await _productRepository.CountAsync(expression);
 				Expression<Func<Product, double>> priceExp = e => e.Price - (e.Price * (e.Discount / 100.0));
 
-				products = filters.Sorter switch
+				 products = filters.Sorter switch
 				{
 					SortEnum.SOLD => await _productRepository
 											   .GetPagedOrderByDescendingAsync(filters.Page, filters.PageSize, expression, e => e.Sold),

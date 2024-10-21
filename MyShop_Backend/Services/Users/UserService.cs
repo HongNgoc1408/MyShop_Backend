@@ -4,7 +4,9 @@ using MyShop_Backend.DTO;
 using MyShop_Backend.ErroMessage;
 using MyShop_Backend.Models;
 using MyShop_Backend.Repositories.DeliveryAddressRepositories;
+using MyShop_Backend.Repositories.ProductFavoriteRepositories;
 using MyShop_Backend.Repositories.UserRepositories;
+using MyShop_Backend.Request;
 using MyShop_Backend.Response;
 
 namespace MyShop_Backend.Services.UserServices
@@ -14,14 +16,17 @@ namespace MyShop_Backend.Services.UserServices
 		private readonly UserManager<User> _userManager;
 		private readonly IUserRepository _userRepository;
 		private readonly IDeliveryAddressRepository _deliveryAddressRepository;
+		private readonly IProductFavoriteRepository _productFavoriteRepository;
 		private readonly IMapper _mapper;
 
-		public UserService(UserManager<User> userManager, IUserRepository userRepository, IDeliveryAddressRepository deliveryAdressRepository, IMapper mapper)
+		public UserService(UserManager<User> userManager, IUserRepository userRepository, IDeliveryAddressRepository deliveryAdressRepository, IProductFavoriteRepository productFavoriteRepository, IMapper mapper)
 		{
 			_userManager = userManager;
 			_userRepository = userRepository;
 			_deliveryAddressRepository = deliveryAdressRepository;
+			_productFavoriteRepository = productFavoriteRepository;
 			_mapper = mapper;
+
 
 		}
 		public async Task<PagedResponse<UserResponse>> GetAllUserAsync(int page, int pageSize, string? keySearch)
@@ -128,5 +133,65 @@ namespace MyShop_Backend.Services.UserServices
 			return _mapper.Map<AddressDTO?>(delivery);
 		}
 
+		public async Task<IEnumerable<long>> GetFavorites(string userId)
+		{
+			var favorites = await _productFavoriteRepository.GetAsync(e => e.UserId == userId);
+			return favorites.Select(e => e.ProductId);
+		}
+
+		public async Task<PagedResponse<ProductDTO>> GetProductsFavorite(string userId, PageRequest page)
+		{
+			var favorites = await _productFavoriteRepository.GetPagedAsync(page.Page, page.PageSize, e => e.UserId == userId, e => e.CreatedAt);
+
+			var total = await _productFavoriteRepository.CountAsync(e => e.UserId == userId);
+
+			var products = favorites.Select(e => e.Product).ToList();
+
+			var items = _mapper.Map<IEnumerable<ProductDTO>>(products).Select(x =>
+			{
+				var image = products.Single(e => e.Id == x.Id).Images.FirstOrDefault();
+				if (image != null)
+				{
+					x.ImageUrl = image.ImageUrl;
+				}
+				return x;
+			});
+			return new PagedResponse<ProductDTO>
+			{
+				Items = items,
+				Page = page.Page,
+				PageSize = page.PageSize,
+				TotalItems = total,
+			};
+		}
+
+		public async Task AddProductFavorite(string userId, long productId)
+		{
+			var favorites = new ProductFavorite
+			{
+				UserId = userId,
+				ProductId = productId,
+			};
+			await _productFavoriteRepository.AddAsync(favorites);
+		}
+		
+		public async Task DeleteProductFavorite(string userId, long productId)
+		=> await _productFavoriteRepository.DeleteAsync(userId, productId);
+
+		public async Task LockOut(string userId, DateTimeOffset? endDate)
+		{
+			var user = await _userManager.FindByIdAsync(userId);
+			if (user != null)
+			{
+				if (endDate != null)
+				{
+					user.LockoutEnd = endDate.Value.AddDays(1);
+				}
+				else user.LockoutEnd = endDate;
+
+				await _userManager.UpdateAsync(user);
+			}
+			else throw new ArgumentException($"Id {userId} " + ErrorMessage.NOT_FOUND);     
+		}
 	}
 }

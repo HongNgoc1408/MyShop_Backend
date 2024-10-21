@@ -18,9 +18,10 @@ namespace MyShop_Backend.Data
 		public virtual DbSet<Category> Categories { get; set; }
 		public virtual DbSet<Image> Images { get; set; }
 		public virtual DbSet<Size> Sizes { get; set; }
-		public virtual DbSet<Product>? Products { get; set; }
+		public virtual DbSet<Product> Products { get; set; }
 		public virtual DbSet<ProductColor> ProductColors { get; set; }
 		public virtual DbSet<ProductSize> ProductSizes { get; set; }
+		public virtual DbSet<ProductFavorite> ProductFavorites { get; set; }
 		public virtual DbSet<CartItem> CartItems { get; set; }
 		public virtual DbSet<DeliveryAddress> DeliveryAddresses { get; set; }
 		public virtual DbSet<Order> Orders { get; set; }

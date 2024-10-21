@@ -47,7 +47,7 @@ namespace MyShop_Backend.Controllers
 		{
 			try
 			{
-				var result = await _productService.GetFilterProductsAsync(filters);
+			var result = await _productService.GetFilterProductsAsync(filters);
 				return Ok(result);
 			}
 			catch (ArgumentException ex)
