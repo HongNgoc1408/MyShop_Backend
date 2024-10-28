@@ -19,7 +19,5 @@ namespace MyShop_Backend.Request
 		public int PaymentMethodId { get; set; }
 
 		public string? UserIP { get; set; }
-
-
 	}
 }

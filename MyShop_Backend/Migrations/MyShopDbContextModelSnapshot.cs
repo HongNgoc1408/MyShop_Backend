@@ -314,6 +314,75 @@ namespace MyShop_Backend.Migrations
                     b.ToTable("Images");
                 });
 
+            modelBuilder.Entity("MyShop_Backend.Models.Import", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("EntryDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Note")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("Total")
+                        .HasColumnType("float");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Imports");
+                });
+
+            modelBuilder.Entity("MyShop_Backend.Models.ImportDetail", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("ColorId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("ImportId")
+                        .HasColumnType("bigint");
+
+                    b.Property<double>("Price")
+                        .HasColumnType("float");
+
+                    b.Property<long>("ProductId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<long>("SizeId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ImportId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ImportDetails");
+                });
+
             modelBuilder.Entity("MyShop_Backend.Models.Order", b =>
                 {
                     b.Property<long>("Id")
@@ -785,6 +854,34 @@ namespace MyShop_Backend.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("MyShop_Backend.Models.Import", b =>
+                {
+                    b.HasOne("MyShop_Backend.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("MyShop_Backend.Models.ImportDetail", b =>
+                {
+                    b.HasOne("MyShop_Backend.Models.Import", "Import")
+                        .WithMany("ImportDetails")
+                        .HasForeignKey("ImportId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MyShop_Backend.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Import");
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("MyShop_Backend.Models.Order", b =>
                 {
                     b.HasOne("MyShop_Backend.Models.PaymentMethod", "PaymentMethod")
@@ -893,6 +990,11 @@ namespace MyShop_Backend.Migrations
             modelBuilder.Entity("MyShop_Backend.Models.Category", b =>
                 {
                     b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("MyShop_Backend.Models.Import", b =>
+                {
+                    b.Navigation("ImportDetails");
                 });
 
             modelBuilder.Entity("MyShop_Backend.Models.Order", b =>

@@ -7,6 +7,8 @@ namespace MyShop_Backend.Data
 {
 	public class MyShopDbContext : IdentityDbContext<User>
 	{
+		internal readonly IEnumerable<object> ImportDetail;
+
 		public MyShopDbContext(DbContextOptions<MyShopDbContext> options) : base(options)
 		{
 
@@ -27,6 +29,10 @@ namespace MyShop_Backend.Data
 		public virtual DbSet<Order> Orders { get; set; }
 		public virtual DbSet<OrderDetail> OrderDetails { get; set; }
 		public virtual DbSet<PaymentMethod> PaymentMethods { get; set; }
+
+		public virtual DbSet<Import> Imports { get; set; }
+		public virtual DbSet<ImportDetail> ImportDetails { get; set; }
+
 		#endregion
 
 		private void UpdateTimestamps()

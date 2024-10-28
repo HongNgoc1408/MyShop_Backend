@@ -57,6 +57,10 @@ namespace MyShop_Backend.Mappers
 			//Payment Method
 			CreateMap<PaymentMethod, PaymentMethodDTO>().ReverseMap();
 
+			//Import 
+			CreateMap<Import, ImportDTO>().ReverseMap();
+			CreateMap<ImportDetail, ImportDetailResponse>()
+				.ForMember(d => d.ProductName, opt => opt.MapFrom(src => src.Product.Name));
 		}
 	}
 }

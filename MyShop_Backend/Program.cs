@@ -36,6 +36,9 @@ using MyShop_Backend.Repositories.PaymentMethodRepositories;
 using MyShop_Backend.Services.Payments;
 using MyShop_Backend.Library;
 using MyShop_Backend.Repositories.ProductFavoriteRepositories;
+using MyShop_Backend.Repositories.ImportDetailRepositories;
+using MyShop_Backend.Repositories.ImportRepositories;
+using MyShop_Backend.Services.Imports;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -132,6 +135,7 @@ builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<IVNPayLibrary, VNPayLibrary>();
+builder.Services.AddScoped<IImportService, ImportService>();
 
 
 // Repositories
@@ -149,6 +153,8 @@ builder.Services.AddScoped<IDeliveryAddressRepository, DeliveryAddressRepository
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
 builder.Services.AddScoped<IPaymentMethodRepository, PaymentMethodRepository>();
+builder.Services.AddScoped<IImportRepository, ImportRepository>();
+builder.Services.AddScoped<IImportDetailRepository, ImportDetailRepository>();
 
 // CORS
 builder.Services.AddCors(opt =>
