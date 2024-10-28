@@ -30,9 +30,13 @@ namespace MyShop_Backend.Mappers
 			CreateMap<Product, ProductDTO>()
 				.ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.Images.FirstOrDefault() != null ? src.Images.FirstOrDefault()!.ImageUrl : null))
 				.ForMember(dest => dest.BrandName, opt => opt.MapFrom(src => src.Brand.Name))
-				.ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Caterory.Name));
+				.ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Caterory.Name))
+				.ForMember(dest => dest.Rating, opt => opt.MapFrom(src => Math.Round(src.Rating, 1))); ;
+
 			CreateMap<ProductRequest, Product>();
-			CreateMap<Product, ProductDetailsResponse>();
+			CreateMap<Product, ProductDetailsResponse>()
+				.ForMember(dest => dest.ColorSizes, opt => opt.MapFrom(src => src.ProductColors))
+				.ForMember(dest => dest.Rating, opt => opt.MapFrom(src => Math.Round(src.Rating, 1))); ;
 
 			CreateMap<ProductColor, ColorSizeResponse>()
 				.ForMember(dest => dest.SizeInStocks, opt => opt.MapFrom(src => src.ProductSizes));
@@ -61,6 +65,10 @@ namespace MyShop_Backend.Mappers
 			CreateMap<Import, ImportDTO>().ReverseMap();
 			CreateMap<ImportDetail, ImportDetailResponse>()
 				.ForMember(d => d.ProductName, opt => opt.MapFrom(src => src.Product.Name));
+
+			//review
+			CreateMap<ProductReview, ReviewDTO>()
+				.ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.User != null ? src.User.FullName : null));
 		}
 	}
 }

@@ -17,11 +17,10 @@ namespace MyShop_Backend.Services.Orders
 
 		Task NextOrderStatus(long orderId);
 		Task OrderToShipping(long orderId, OrderToShippingRequest request);
-
-		//Task Review(long orderId, string userId, IEnumerable<ReviewRequest> reviews);
-
 		Task<PagedResponse<OrderDTO>> GetAll(int page, int pageSize, string? keySearch);
 		Task<OrderDetailsResponse> GetOrderDetail(long orderId);
 		Task DeleteOrder(long orderId);
+
+		Task Review(long orderId, string userId, IEnumerable<ReviewRequest> reviews);
 	}
 }

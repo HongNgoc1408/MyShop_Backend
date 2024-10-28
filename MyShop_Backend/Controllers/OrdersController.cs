@@ -219,6 +219,31 @@ namespace MyShop_Backend.Controllers
 			}
 		}
 
-		
+		[HttpPost("review/{id}")]
+		public async Task<IActionResult> Review(long id, [FromForm] IEnumerable<ReviewRequest> reviews)
+		{
+			try
+			{
+				var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+				if (userId == null)
+				{
+					return Unauthorized();
+				}
+				await _orderService.Review(id, userId, reviews);
+				return Ok();
+			}
+			catch (InvalidOperationException ex)
+			{
+				return NotFound(ex.Message);
+			}
+			catch (InvalidDataException ex)
+			{
+				return BadRequest(ex.Message);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.InnerException?.Message ?? ex.Message);
+			}
+		}
 	}
 }

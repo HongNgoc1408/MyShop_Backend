@@ -11,6 +11,8 @@ namespace MyShop_Backend.DTO
 		public double ShippingCost { get; set; }
 		public DateTime OrderDate { get; set; }
 		public DateTime? ReceivedDate { get; set; }
+
+		public bool Reviewed { get; set; }
 		public double AmountPaid { get; set; }
 		public string PaymentMethodName { get; set; }
 		public DeliveryStatusEnum OrderStatus { get; set; }

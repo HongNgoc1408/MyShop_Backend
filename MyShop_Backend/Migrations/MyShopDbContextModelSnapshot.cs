@@ -432,6 +432,9 @@ namespace MyShop_Backend.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<bool>("Reviewed")
+                        .HasColumnType("bit");
+
                     b.Property<string>("ShippingCode")
                         .HasColumnType("nvarchar(max)");
 
@@ -571,6 +574,9 @@ namespace MyShop_Backend.Migrations
                     b.Property<float>("Rating")
                         .HasColumnType("real");
 
+                    b.Property<long>("RatingCount")
+                        .HasColumnType("bigint");
+
                     b.Property<int>("Sold")
                         .HasColumnType("int");
 
@@ -637,6 +643,50 @@ namespace MyShop_Backend.Migrations
                     b.HasIndex("ProductId");
 
                     b.ToTable("ProductFavorites");
+                });
+
+            modelBuilder.Entity("MyShop_Backend.Models.ProductReview", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ColorName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("ImagesUrlsJson")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long?>("ProductId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("SizeName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Star")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ProductReviews");
                 });
 
             modelBuilder.Entity("MyShop_Backend.Models.ProductSize", b =>
@@ -963,6 +1013,21 @@ namespace MyShop_Backend.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("MyShop_Backend.Models.ProductReview", b =>
+                {
+                    b.HasOne("MyShop_Backend.Models.Product", "Product")
+                        .WithMany("ProductReviews")
+                        .HasForeignKey("ProductId");
+
+                    b.HasOne("MyShop_Backend.Models.User", "User")
+                        .WithMany("ProductReviews")
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("Product");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("MyShop_Backend.Models.ProductSize", b =>
                 {
                     b.HasOne("MyShop_Backend.Models.ProductColor", "ProductColor")
@@ -1014,6 +1079,8 @@ namespace MyShop_Backend.Migrations
                     b.Navigation("ProductColors");
 
                     b.Navigation("ProductFavorites");
+
+                    b.Navigation("ProductReviews");
                 });
 
             modelBuilder.Entity("MyShop_Backend.Models.ProductColor", b =>
@@ -1033,6 +1100,8 @@ namespace MyShop_Backend.Migrations
                     b.Navigation("Orders");
 
                     b.Navigation("ProductFavorites");
+
+                    b.Navigation("ProductReviews");
                 });
 #pragma warning restore 612, 618
         }

@@ -15,6 +15,7 @@ namespace MyShop_Backend.Models
 
 		public DateTime OrderDate { get; set; }
 		public DateTime? ReceivedDate { get; set; }
+		public bool Reviewed { get; set; }
 
 		[MaxLength(160)]
 		public string DeliveryAddress { get; set; }
@@ -34,9 +35,6 @@ namespace MyShop_Backend.Models
 		public string PaymentMethodName { get; set; }
 
 		public PaymentMethod? PaymentMethod { get; set; }
-
-
-		//public string? OrderStatusName { get; set; } = DeliveryStatusEnum.Proccessing.ToString();
 
 		public DeliveryStatusEnum? OrderStatus { get; set; } = DeliveryStatusEnum.Processing;
 

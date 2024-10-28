@@ -19,8 +19,10 @@ namespace MyShop_Backend.Models
 		[Range(0, int.MaxValue)]
 		public int Sold { get; set; }
 		public bool Enable { get; set; }
+
 		[Range(0, 5)]
 		public float Rating { get; set; }
+		public long RatingCount { get; set; }
 		public int CategoryId { get; set; }
 		public Category Caterory { get; set; }
 		public int BrandId { get; set; }
@@ -30,5 +32,6 @@ namespace MyShop_Backend.Models
 		public ICollection<Image> Images { get; set; } = new HashSet<Image>();
 		public ICollection<ProductColor> ProductColors { get; } = new HashSet<ProductColor>();
 		public ICollection<ProductFavorite> ProductFavorites { get; } = new HashSet<ProductFavorite>();
+		public ICollection<ProductReview> ProductReviews { get; } = new HashSet<ProductReview>();
 	}
 }

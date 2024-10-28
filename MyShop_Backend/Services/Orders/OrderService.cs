@@ -10,6 +10,7 @@ using MyShop_Backend.Repositories.CartItemRepositories;
 using MyShop_Backend.Repositories.OrderDetailRepositories;
 using MyShop_Backend.Repositories.OrderRepositories;
 using MyShop_Backend.Repositories.PaymentMethodRepositories;
+using MyShop_Backend.Repositories.ProductReviewRepositories;
 using MyShop_Backend.Repositories.ProductSizeRepositories;
 using MyShop_Backend.Repositories.TransactionRepositories;
 using MyShop_Backend.Request;
@@ -29,6 +30,7 @@ namespace MyShop_Backend.Services.Orders
 		private readonly IOrderDetailRepository _orderDetailRepository;
 		private readonly IProductSizeRepository _productSizeRepository;
 		private readonly IProductRepository _productRepository;
+		private readonly IProductReviewRepository _productReviewRepository;
 		private readonly IPaymentMethodRepository _paymentMethodRepository;
 		private readonly IPaymentService _paymentService;
 		private readonly IVNPayLibrary _vnPayLibrary;
@@ -39,12 +41,13 @@ namespace MyShop_Backend.Services.Orders
 		private readonly IServiceScopeFactory _serviceScopeFactory;
 		private readonly ICachingService _cache;
 		private readonly IMapper _mapper;
-
+		private readonly string pathReviewImages = "assets/images/reviews";
 		public OrderService(IOrderRepository orderRepository,
 			ICartItemRepository cartItemRepository,
 			IOrderDetailRepository orderDetailRepository,
 			IProductSizeRepository productSizeRepository,
 			IProductRepository productRepository,
+			IProductReviewRepository productReviewRepository,
 			IPaymentMethodRepository paymentMethodRepository,
 			IPaymentService paymentService,
 			IVNPayLibrary vnPayLibrary,
@@ -61,6 +64,7 @@ namespace MyShop_Backend.Services.Orders
 			_orderDetailRepository = orderDetailRepository;
 			_productSizeRepository = productSizeRepository;
 			_productRepository = productRepository;
+			_productReviewRepository = productReviewRepository;
 			_paymentMethodRepository = paymentMethodRepository;
 			_paymentService = paymentService;
 			_vnPayLibrary = vnPayLibrary;
@@ -97,7 +101,7 @@ namespace MyShop_Backend.Services.Orders
 			}
 			else throw new ArgumentException($"Id {orderId} " + ErrorMessage.NOT_FOUND);
 		}
-		
+
 
 		private async void OnVNPayDeadline(object key, object? value, EvictionReason reason, object? state)
 		{
@@ -190,7 +194,7 @@ namespace MyShop_Backend.Services.Orders
 					Total = request.Total,
 					District_Id = request.District_Id,
 					Ward_Id = request.Ward_Id,
-					
+
 				};
 
 				var method = await _paymentMethodRepository
@@ -306,7 +310,7 @@ namespace MyShop_Backend.Services.Orders
 				throw new Exception(ex.Message);
 			}
 		}
-		
+
 		public async Task DeleteOrder(long id)
 		{
 			var order = await _orderRepository.SingleOrDefaultAsync(e => e.Id == id);
@@ -402,8 +406,8 @@ namespace MyShop_Backend.Services.Orders
 			}
 			else throw new ArgumentException($"Id {id} " + ErrorMessage.NOT_FOUND);
 
-			
-			
+
+
 		}
 
 		public async Task<OrderDTO> UpdateOrder(long id, UpdateStatusOrderRequest request)
@@ -411,7 +415,7 @@ namespace MyShop_Backend.Services.Orders
 			var order = await _orderRepository.SingleOrDefaultAsync(e => e.Id == id);
 			if (order != null)
 			{
-				
+
 				if (request.OrderStatus != null)
 				{
 					order.OrderStatus = request.OrderStatus;
@@ -523,7 +527,7 @@ namespace MyShop_Backend.Services.Orders
 			httpClient.DefaultRequestHeaders.Add("ShopId", shopId);
 			httpClient.DefaultRequestHeaders.Add("Token", token);
 
-			var res = await httpClient.PostAsJsonAsync(url , data);
+			var res = await httpClient.PostAsJsonAsync(url, data);
 			var dataResponse = await res.Content.ReadFromJsonAsync<GHNResponse>();
 			if (!res.IsSuccessStatusCode)
 			{
@@ -535,6 +539,75 @@ namespace MyShop_Backend.Services.Orders
 
 			order.OrderStatus = DeliveryStatusEnum.AwaitingPickup;
 			await _orderRepository.UpdateAsync(order);
+		}
+
+		public async Task Review(long orderId, string userId, IEnumerable<ReviewRequest> reviews)
+		{
+			using var transaction = await _transaction.BeginTransactionAsync();
+			try
+			{
+				var order = await _orderRepository.SingleOrDefaultAsyncInclude(e => e.Id == orderId && e.UserId == userId) ??  throw new InvalidOperationException(ErrorMessage.NOT_FOUND);
+				
+				if(order.OrderStatus != DeliveryStatusEnum.Received)
+				{
+					throw new InvalidOperationException("Chưa thể đánh giá đơn hàng này.");
+				}
+				List<ProductReview> pReviews = new();
+				List<Product> products = new();
+
+				foreach (var review in reviews) 
+				{
+					var productPath = pathReviewImages + "/" + review.ProductId;
+					List<string>? pathNames = null;
+
+					if(review.Images != null)
+					{
+						pathNames = new();
+						var imgNames = review.Images.Select(image =>
+						{
+							var name = Guid.NewGuid().ToString() + Path.GetExtension(image.FileName);
+							pathNames.Add(Path.Combine(productPath, name));
+							return name;
+						}).ToList();
+						await _fileStorage.SaveAsync(productPath, review.Images, imgNames);
+					}
+
+					var product = await _productRepository.FindAsync(review.ProductId);
+                    if (product != null)
+                    {
+						var currentStar = product.Rating * product.RatingCount;
+						product.Rating = (currentStar + review.Star) / (product.RatingCount + 1);
+						product.RatingCount += 1;
+
+						var orderDetails = order.OrderDetails.SingleOrDefault(x => x.ProductId == review.ProductId);
+						var colorName = orderDetails?.ColorName ?? "";
+						var sizeName = orderDetails?.SizeName ?? "";
+						products.Add(product);
+						pReviews.Add(new ProductReview
+						{
+
+							ProductId = review.ProductId,
+							UserId = userId,
+							Star = review.Star,
+							Description = review.Description,
+							ImagesUrls = pathNames,
+							ColorName = colorName,
+							SizeName = sizeName,
+						});
+					}
+                }
+
+				await _productReviewRepository.AddAsync(pReviews);
+				await _productRepository.UpdateAsync(products);
+				order.Reviewed = true;
+				await _orderRepository.UpdateAsync(order);
+				await transaction.CommitAsync();
+			}
+			catch (Exception)
+			{
+				await transaction.RollbackAsync();
+				throw;
+			}
 		}
 	}
 }

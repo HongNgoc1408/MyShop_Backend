@@ -14,6 +14,7 @@ using MyStore.Repository.ProductRepository;
 using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 using System.Text;
+using MyShop_Backend.Repositories.ProductReviewRepositories;
 
 namespace MyShop_Backend.Services.Products
 {
@@ -26,14 +27,16 @@ namespace MyShop_Backend.Services.Products
 		private readonly IFileStorage _fileStorage;
 		private readonly string path = "assets/images/products";
 		private readonly IProductColorRepository _productColorRepository;
+		private readonly IProductReviewRepository _productReviewRepository;
 		private readonly ITransactionRepository _transactionRepository;
 
 		public ProductService(IProductRepository productRepository, IProductSizeRepository productSizeRepository,
-			IProductColorRepository productColorRepository, IImageRepository imageRepository, ITransactionRepository transactionRepository, IMapper mapper, IFileStorage fileStorage)
+			IProductColorRepository productColorRepository, IProductReviewRepository productReviewRepository, IImageRepository imageRepository, ITransactionRepository transactionRepository, IMapper mapper, IFileStorage fileStorage)
 		{
 			_productRepository = productRepository;
 			_productSizeRepository = productSizeRepository;
 			_productColorRepository = productColorRepository;
+			_productReviewRepository = productReviewRepository;
 			_transactionRepository = transactionRepository;
 			_imageRepository = imageRepository;
 			_mapper = mapper;
@@ -521,6 +524,41 @@ namespace MyShop_Backend.Services.Products
 				return product.Enable;
 			}
 			else throw new ArgumentException($"Id {id} " + ErrorMessage.NOT_FOUND);
+		}
+
+		private string MaskUsername(string username)
+		{
+			var words = username.Split(" ");
+			return string.Join(" ", words.Select(x =>
+			{
+				var trimmedWord = x.Trim();
+				if (trimmedWord.Length > 1)
+				{
+					return $"{trimmedWord[0]}{new string('*', trimmedWord.Length - 1)}";
+				}
+				return trimmedWord;
+			}));
+		}
+		public async Task<PagedResponse<ReviewDTO>> GetReviews(long id, PageRequest request)
+		{
+			var reviews = await _productReviewRepository
+				.GetPagedOrderByDescendingAsync(request.Page, request.PageSize, e => e.ProductId == id, e => e.CreatedAt);
+
+			var total = await _productReviewRepository.CountAsync(e => e.ProductId == id);
+
+			var items = _mapper.Map<IEnumerable<ReviewDTO>>(reviews).Select(x =>
+			{
+				x.Username = MaskUsername(x.Username);
+				return x;
+			});
+
+			return new PagedResponse<ReviewDTO>
+			{
+				Items = items,
+				TotalItems = total,
+				Page = request.Page,
+				PageSize = request.PageSize,
+			};
 		}
 	}
 }

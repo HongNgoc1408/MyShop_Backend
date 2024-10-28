@@ -39,6 +39,7 @@ using MyShop_Backend.Repositories.ProductFavoriteRepositories;
 using MyShop_Backend.Repositories.ImportDetailRepositories;
 using MyShop_Backend.Repositories.ImportRepositories;
 using MyShop_Backend.Services.Imports;
+using MyShop_Backend.Repositories.ProductReviewRepositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -148,6 +149,7 @@ builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IProductSizeRepository, ProductSizeRepository>();
 builder.Services.AddScoped<IProductColorRepository, ProductColorRepository>();
 builder.Services.AddScoped<IProductFavoriteRepository, ProductFavoriteRepository>();
+builder.Services.AddScoped<IProductReviewRepository, ProductReviewRepository>();
 builder.Services.AddScoped<ICartItemRepository, CartItemRepository>();
 builder.Services.AddScoped<IDeliveryAddressRepository, DeliveryAddressRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();

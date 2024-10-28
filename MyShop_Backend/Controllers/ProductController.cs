@@ -146,5 +146,19 @@ namespace MyShop_Backend.Controllers
 				return StatusCode(500, ex.Message);
 			}
 		}
+
+		[HttpGet("{id}/reviews")]
+		public async Task<IActionResult> GetReviewProducts(long id, [FromQuery] PageRequest request)
+		{
+			try
+			{
+				var result = await _productService.GetReviews(id, request);
+				return Ok(result);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
+		}
 	}
 }

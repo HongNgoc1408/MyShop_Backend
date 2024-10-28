@@ -10,6 +10,7 @@
 		public int Sold { get; set; }
 		public bool Enable { get; set; }
 		public float Rating { get; set; }
+		public long RatingCount { get; set; }
 		public string CategoryName { get; set; }
 		public string BrandName { get; set; }
 		public string ImageUrl { get; set; }

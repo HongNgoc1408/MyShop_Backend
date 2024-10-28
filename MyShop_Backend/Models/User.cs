@@ -12,5 +12,6 @@ namespace MyShop_Backend.Models
 		public DateTime CreatedAt { get; set; }
 		public DateTime? UpdatedAt { get; set; }
 		public ICollection<ProductFavorite> ProductFavorites { get; } = new HashSet<ProductFavorite>();
+		public ICollection<ProductReview> ProductReviews { get; } = new HashSet<ProductReview>();
 	}
 }

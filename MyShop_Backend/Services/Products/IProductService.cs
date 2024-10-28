@@ -18,5 +18,7 @@ namespace MyShop_Backend.Services.Products
 		Task<ProductDTO> UpdateProductAsync(long id, ProductRequest request, IFormFileCollection images);
 		Task<bool> UpdateProductEnableAsync(long id, UpdateEnableRequest request);
 		Task DeleteProductAsync(long id);
+
+		Task<PagedResponse<ReviewDTO>> GetReviews(long id, PageRequest request);
 	}
 }

@@ -24,6 +24,7 @@ namespace MyShop_Backend.Data
 		public virtual DbSet<ProductColor> ProductColors { get; set; }
 		public virtual DbSet<ProductSize> ProductSizes { get; set; }
 		public virtual DbSet<ProductFavorite> ProductFavorites { get; set; }
+		public virtual DbSet<ProductReview> ProductReviews { get; set; }
 		public virtual DbSet<CartItem> CartItems { get; set; }
 		public virtual DbSet<DeliveryAddress> DeliveryAddresses { get; set; }
 		public virtual DbSet<Order> Orders { get; set; }
