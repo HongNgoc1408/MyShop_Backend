@@ -29,6 +29,7 @@ namespace MyShop_Backend.Services.Imports
 			_importDetailRepository = importDetailRepository;
 			_productRepository = productRepository;
 			_productSizeRepository = productSizeRepository;
+			_productColorRepository = productColorRepository;
 			_mapper = mapper;
 		}
 		public async Task<ImportDTO> CreateImport(string userId, ImportRequest request)
@@ -55,18 +56,22 @@ namespace MyShop_Backend.Services.Imports
 					{
 						product.InStock += item.Quantity;
 						listProductSizeUpdate.Add(product);
-					}
+						
+						var importDetail = new ImportDetail
+						{
+							ImportId = import.Id,
+							ProductId = item.ProductId,
+							ColorId = item.ColorId,
+							ColorName = product.ProductColor.ColorName,
+							SizeId = item.SizeId,
+							SizeName = product.Size.Name,
+							Quantity = item.Quantity,
+							Price = item.Price,
 
-					var importDetail = new ImportDetail
-					{
-						ImportId = import.Id,
-						ProductId = item.ProductId,
-						ColorId = item.ColorId,
-						SizeId = item.SizeId,
-						Quantity = item.Quantity,
-						Price = item.Price,
-					};
-					listImportDetail.Add(importDetail);
+
+						};
+						listImportDetail.Add(importDetail);
+					}
 				}
 				await _productSizeRepository.UpdateAsync(listProductSizeUpdate);
 				await _importDetailRepository.AddAsync(listImportDetail);
@@ -117,15 +122,20 @@ namespace MyShop_Backend.Services.Imports
 
 		}
 
-		public async Task<IEnumerable<ImportDetailResponse>> GetDetails(long Id)
+		public async Task<IEnumerable<ImportDetailResponse>> GetDetails(long id)
 		{
-			var import = await _importDetailRepository.GetAsync(e=> e.Id == Id);
+			var import = await _importDetailRepository.GetAsync(e=> e.ImportId == id);
 			if(import != null)
 			{
-				return _mapper.Map<IEnumerable<ImportDetailResponse>>(import);
+				var res = _mapper.Map<IEnumerable<ImportDetailResponse>>(import);
+				//foreach (var item in res)
+				//{
+				//	item.ColorName = (await _productColorRepository.SingleOrDefaultAsync(e => e.Id == item.ColorId))?.ColorName ?? "";
+				//}
 
+				return res;
 			}
-			throw new InvalidOperationException(ErrorMessage.NOT_FOUND);
+			else throw new InvalidOperationException(ErrorMessage.NOT_FOUND);
 		}
 	}
 }

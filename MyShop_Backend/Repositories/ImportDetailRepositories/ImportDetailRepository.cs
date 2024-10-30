@@ -2,7 +2,6 @@
 using MyShop_Backend.CommonRepository.CommonRepository;
 using MyShop_Backend.Data;
 using MyShop_Backend.Models;
-using System.Linq;
 using System.Linq.Expressions;
 
 namespace MyShop_Backend.Repositories.ImportDetailRepositories
@@ -16,6 +15,8 @@ namespace MyShop_Backend.Repositories.ImportDetailRepositories
 			return await _dbcontext.ImportDetails
 				.Where(expression)
 				.Include(e => e.Product)
+				//.Include(e => e.ProductColors)
+				//.Include(e => e.ProductSize)
 				.ToListAsync();
 		}
 	}

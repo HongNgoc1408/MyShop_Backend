@@ -329,7 +329,6 @@ namespace MyShop_Backend.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Note")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("Total")
@@ -359,6 +358,10 @@ namespace MyShop_Backend.Migrations
                     b.Property<long>("ColorId")
                         .HasColumnType("bigint");
 
+                    b.Property<string>("ColorName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<long>("ImportId")
                         .HasColumnType("bigint");
 
@@ -373,6 +376,10 @@ namespace MyShop_Backend.Migrations
 
                     b.Property<long>("SizeId")
                         .HasColumnType("bigint");
+
+                    b.Property<string>("SizeName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -611,6 +618,9 @@ namespace MyShop_Backend.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<long?>("ImportDetailId")
+                        .HasColumnType("bigint");
+
                     b.Property<long>("ProductId")
                         .HasColumnType("bigint");
 
@@ -618,6 +628,8 @@ namespace MyShop_Backend.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ImportDetailId");
 
                     b.HasIndex("ProductId");
 
@@ -985,6 +997,10 @@ namespace MyShop_Backend.Migrations
 
             modelBuilder.Entity("MyShop_Backend.Models.ProductColor", b =>
                 {
+                    b.HasOne("MyShop_Backend.Models.ImportDetail", null)
+                        .WithMany("ProductColors")
+                        .HasForeignKey("ImportDetailId");
+
                     b.HasOne("MyShop_Backend.Models.Product", "Product")
                         .WithMany("ProductColors")
                         .HasForeignKey("ProductId")
@@ -1060,6 +1076,11 @@ namespace MyShop_Backend.Migrations
             modelBuilder.Entity("MyShop_Backend.Models.Import", b =>
                 {
                     b.Navigation("ImportDetails");
+                });
+
+            modelBuilder.Entity("MyShop_Backend.Models.ImportDetail", b =>
+                {
+                    b.Navigation("ProductColors");
                 });
 
             modelBuilder.Entity("MyShop_Backend.Models.Order", b =>

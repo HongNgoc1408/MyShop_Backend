@@ -33,5 +33,7 @@ namespace MyShop_Backend.Models
 		public ICollection<ProductColor> ProductColors { get; } = new HashSet<ProductColor>();
 		public ICollection<ProductFavorite> ProductFavorites { get; } = new HashSet<ProductFavorite>();
 		public ICollection<ProductReview> ProductReviews { get; } = new HashSet<ProductReview>();
+
+		//public ICollection<ImportDetail> ImportDetails { get; } = new HashSet<ImportDetail>();
 	}
 }

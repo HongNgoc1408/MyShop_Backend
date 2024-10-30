@@ -364,3 +364,4 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 
+/MyShop_Backend/Migrations/20241020155926_Product-Favorite_2.cs

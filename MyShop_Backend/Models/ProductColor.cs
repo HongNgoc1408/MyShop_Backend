@@ -10,9 +10,8 @@
 
 		public string ImageUrl { get; set; }
 
-		public ICollection<ProductSize> ProductSizes { get; } = new HashSet<ProductSize>();
-
 		public DateTime CreatedAt { get; set; }
 		public DateTime? UpdatedAt { get; set; }
+		public ICollection<ProductSize> ProductSizes { get; } = new HashSet<ProductSize>();
 	}
 }

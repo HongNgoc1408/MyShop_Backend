@@ -62,7 +62,10 @@ namespace MyShop_Backend.Mappers
 			CreateMap<PaymentMethod, PaymentMethodDTO>().ReverseMap();
 
 			//Import 
-			CreateMap<Import, ImportDTO>().ReverseMap();
+			//CreateMap<Import, ImportDTO>().ReverseMap();
+			CreateMap<Import, ImportDTO>()
+				.ForMember(dest => dest.Creator, opt => opt.MapFrom(src => src.User.FullName));
+
 			CreateMap<ImportDetail, ImportDetailResponse>()
 				.ForMember(d => d.ProductName, opt => opt.MapFrom(src => src.Product.Name));
 
