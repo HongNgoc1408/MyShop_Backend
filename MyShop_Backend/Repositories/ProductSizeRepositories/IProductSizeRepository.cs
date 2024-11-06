@@ -7,5 +7,6 @@ namespace MyShop_Backend.Repositories.ProductSizeRepositories
 	public interface IProductSizeRepository: ICommonRepository<ProductSize>
 	{
 		Task<ProductSize> SingleAsyncInclude(Expression<Func<ProductSize, bool>> expression);
+		Task<IEnumerable<ProductSize>> GetSizeProductAsync(long ColorId);
 	}
 }

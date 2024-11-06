@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using MyShop_Backend.Enumerations;
 using MyShop_Backend.Request;
 using MyShop_Backend.Services.Orders;
 using System.Security.Claims;
@@ -91,7 +92,39 @@ namespace MyShop_Backend.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-
+		[HttpGet("status/{status}")]
+		[Authorize(Roles = "Admin")]
+		public async Task<IActionResult> GetWithOrderStatus(DeliveryStatusEnum status, [FromQuery] PageRequest request)
+		{
+			try
+			{
+				var result = await _orderService.GetWithOrderStatus(status, request);
+				return Ok(result);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
+		}
+		[HttpGet("user/{status}")]
+		[Authorize(Roles = "Admin")]
+		public async Task<IActionResult> GetWithOrderStatusUser(DeliveryStatusEnum status, [FromQuery] PageRequest request)
+		{
+			try
+			{
+				var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+				if (userId == null)
+				{
+					return Unauthorized();
+				}
+				var result = await _orderService.GetWithOrderStatusUser(userId, status, request);
+				return Ok(result);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
+		}
 		///User
 		[HttpGet]
 		public async Task<IActionResult> GetOrdersByUserId([FromQuery] PageRequest request)
@@ -195,7 +228,29 @@ namespace MyShop_Backend.Controllers
 			}
 		}
 
-		
+		[HttpPut("received/{id}")]
+		public async Task<IActionResult> Received(int id, [FromBody] UpdateStatusOrderRequest request)
+		{
+			try
+			{
+				var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+				if (userId == null)
+				{
+					return Unauthorized();
+				}
+				await _orderService.ReceivedOrder(id, userId, request);
+				return Ok();
+			}
+			catch (ArgumentException ex)
+			{
+				return NotFound(ex.Message);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
+		}
+
 		[HttpDelete("cancel/{id}")]
 		public async Task<IActionResult> Cancel(int id)
 		{
@@ -219,6 +274,7 @@ namespace MyShop_Backend.Controllers
 			}
 		}
 
+		
 		[HttpPost("review/{id}")]
 		public async Task<IActionResult> Review(long id, [FromForm] IEnumerable<ReviewRequest> reviews)
 		{

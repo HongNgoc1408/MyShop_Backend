@@ -560,5 +560,23 @@ namespace MyShop_Backend.Services.Products
 				PageSize = request.PageSize,
 			};
 		}
+
+		public async Task<IEnumerable<NameDTO>> GetNameProduct()
+		{
+			var nameProduct = await _productRepository.GetAllAsync();
+			return _mapper.Map<IEnumerable<NameDTO>>(nameProduct);
+		}
+
+		public async Task<IEnumerable<ColorDTO>> GetColorById(long id)
+		{
+			var color = await _productColorRepository.GetColorProductAsync(id);
+			return _mapper.Map<IEnumerable<ColorDTO>>(color);
+		}
+
+		public async Task<IEnumerable<SizeDTO>> GetSizeById(long id)
+		{
+			var size = await _productSizeRepository.GetSizeProductAsync(id);
+			return _mapper.Map<IEnumerable<SizeDTO>>(size);
+		}
 	}
 }

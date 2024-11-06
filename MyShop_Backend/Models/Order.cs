@@ -12,18 +12,18 @@ namespace MyShop_Backend.Models
 
 		[Range(0, double.MaxValue)]
 		public double ShippingCost { get; set; }
-
 		public DateTime OrderDate { get; set; }
-		public DateTime? ReceivedDate { get; set; }
-		public bool Reviewed { get; set; }
-
-		[MaxLength(160)]
-		public string DeliveryAddress { get; set; }
+		public DateTime ReceivedDate { get; set; }
 
 		[MaxLength(100)]
 		public string Receiver { get; set; }
-		public string Ward_Id { get; set; } //GHN -> WardCode
+
+		[MaxLength(160)]
+		public string DeliveryAddress { get; set; }
+		public string PhoneNumber { get; set; }
 		public int District_Id { get; set; }
+		public string Ward_Id { get; set; } //GHN -> WardCode
+
 		public string? ShippingCode { get; set; }
 		public DateTime? Expected_delivery_time { get; set; }
 
@@ -35,12 +35,11 @@ namespace MyShop_Backend.Models
 		public string PaymentMethodName { get; set; }
 
 		public PaymentMethod? PaymentMethod { get; set; }
-
+		public bool Reviewed { get; set; }
 		public DeliveryStatusEnum? OrderStatus { get; set; } = DeliveryStatusEnum.Processing;
 
 		public string? UserId { get; set; }
 		public User? User { get; set; }
-
 		public DateTime CreatedAt { get; set; }
 		public DateTime? UpdatedAt { get; set; }
 

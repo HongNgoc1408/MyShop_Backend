@@ -431,7 +431,11 @@ namespace MyShop_Backend.Migrations
                     b.Property<string>("PaymentTranId")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("ReceivedDate")
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ReceivedDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Receiver")

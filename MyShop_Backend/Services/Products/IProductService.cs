@@ -8,11 +8,14 @@ namespace MyShop_Backend.Services.Products
 	{
 		Task<ProductDTO> CreateProductAsync(ProductRequest request, IFormFileCollection images);
 		Task<PagedResponse<ProductDTO>> GetAllProductsAsync(int page, int pageSize, string? keySearch);
-		
+
 		Task<PagedResponse<ProductDTO>> GetFeaturedProductsAsync(int page, int pageSize);
 		Task<PagedResponse<ProductDTO>> GetFilterProductsAsync(ProductFiltersRequest filters);
 
 		Task<IEnumerable<ProductDTO>> GetSearchProducts(string key);
+		Task<IEnumerable<ColorDTO>> GetColorById(long id);
+		Task<IEnumerable<SizeDTO>> GetSizeById(long id);
+		Task<IEnumerable<NameDTO>> GetNameProduct();
 
 		Task<ProductDetailsResponse> GetProductAsync(long id);
 		Task<ProductDTO> UpdateProductAsync(long id, ProductRequest request, IFormFileCollection images);

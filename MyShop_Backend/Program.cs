@@ -40,6 +40,7 @@ using MyShop_Backend.Repositories.ImportDetailRepositories;
 using MyShop_Backend.Repositories.ImportRepositories;
 using MyShop_Backend.Services.Imports;
 using MyShop_Backend.Repositories.ProductReviewRepositories;
+using MyShop_Backend.Services.Statistices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -137,6 +138,7 @@ builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<IVNPayLibrary, VNPayLibrary>();
 builder.Services.AddScoped<IImportService, ImportService>();
+builder.Services.AddScoped<IStatisticService, StatisticService>();
 
 
 // Repositories

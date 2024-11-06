@@ -75,6 +75,50 @@ namespace MyShop_Backend.Controllers
 			}
 		}
 
+		[HttpGet("name")]
+		[Authorize(Roles = "Admin")]
+		public async Task<IActionResult> GetName()
+		{
+			try
+			{
+				return Ok(await _productService.GetNameProduct());
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
+		}
+
+		[HttpGet("color/{id}")]
+		[Authorize(Roles = "Admin")]
+		public async Task<IActionResult> GetColorById(long id)
+		{
+			try
+			{
+				var res = await _productService.GetColorById(id);
+				return Ok(res);
+			}
+			catch (ArgumentException ex)
+			{
+				return NotFound(ex.Message);
+			}
+		}
+
+		[HttpGet("size/{id}")]
+		[Authorize(Roles = "Admin")]
+		public async Task<IActionResult> GetSizeById(long id)
+		{
+			try
+			{
+				var res = await _productService.GetSizeById(id);
+				return Ok(res);
+			}
+			catch (ArgumentException ex)
+			{
+				return NotFound(ex.Message);
+			}
+		}
+
 		[HttpPost("create")]
 		[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> Create([FromForm] ProductRequest request, [FromForm] IFormFileCollection images)

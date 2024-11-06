@@ -6,7 +6,6 @@
 		Confirmed,
 		AwaitingPickup,
 		Shipping,
-		BeingDelivered,
 		Received,
 		Canceled,
 	}
