@@ -390,6 +390,78 @@ namespace MyShop_Backend.Migrations
                     b.ToTable("ImportDetails");
                 });
 
+            modelBuilder.Entity("MyShop_Backend.Models.LogImport", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("EntryDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long>("ImportId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("Total")
+                        .HasColumnType("float");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("LogImports");
+                });
+
+            modelBuilder.Entity("MyShop_Backend.Models.LogImportDetail", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("ColorName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("LogId")
+                        .HasColumnType("bigint");
+
+                    b.Property<double>("Price")
+                        .HasColumnType("float");
+
+                    b.Property<string>("ProductName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SizeName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LogId");
+
+                    b.ToTable("LogImportDetails");
+                });
+
             modelBuilder.Entity("MyShop_Backend.Models.Order", b =>
                 {
                     b.Property<long>("Id")
@@ -948,6 +1020,26 @@ namespace MyShop_Backend.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("MyShop_Backend.Models.LogImport", b =>
+                {
+                    b.HasOne("MyShop_Backend.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("MyShop_Backend.Models.LogImportDetail", b =>
+                {
+                    b.HasOne("MyShop_Backend.Models.LogImport", "Log")
+                        .WithMany("LogDetails")
+                        .HasForeignKey("LogId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Log");
+                });
+
             modelBuilder.Entity("MyShop_Backend.Models.Order", b =>
                 {
                     b.HasOne("MyShop_Backend.Models.PaymentMethod", "PaymentMethod")
@@ -1085,6 +1177,11 @@ namespace MyShop_Backend.Migrations
             modelBuilder.Entity("MyShop_Backend.Models.ImportDetail", b =>
                 {
                     b.Navigation("ProductColors");
+                });
+
+            modelBuilder.Entity("MyShop_Backend.Models.LogImport", b =>
+                {
+                    b.Navigation("LogDetails");
                 });
 
             modelBuilder.Entity("MyShop_Backend.Models.Order", b =>

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using MyShop_Backend.Models;
 using MyShop_Backend.Request;
 using MyShop_Backend.Services.Imports;
 using System.Security.Claims;
@@ -27,9 +28,25 @@ namespace MyShop_Backend.Controllers
 				}
 				return Ok(await _importService.CreateImport(userId, request));
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
-				throw;
+				return StatusCode(500, ex.Message);
+			}
+		}
+
+		[HttpPut("{id}")]
+		[Authorize(Roles = "Admin")]
+
+		public async Task<IActionResult> Update(long id, [FromBody] ImportRequest request)
+		{
+			try
+			{
+				var result = await _importService.UpdateImport(id, request);
+				return Ok(result);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
 			}
 		}
 
@@ -37,8 +54,14 @@ namespace MyShop_Backend.Controllers
 		[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> GetAll([FromQuery] PageRequest request)
 		{
-			var result = await _importService.GetAll(request.Page, request.PageSize, request.Key);
-			return Ok(result);
+			try
+			{
+				var result = await _importService.GetAll(request.Page, request.PageSize, request.Key);
+				return Ok(result);
+			}
+			catch (Exception ex) {
+				return StatusCode(500, ex.Message);
+			}
 		}
 
 		[HttpGet("{id}")]

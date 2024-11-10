@@ -41,6 +41,10 @@ using MyShop_Backend.Repositories.ImportRepositories;
 using MyShop_Backend.Services.Imports;
 using MyShop_Backend.Repositories.ProductReviewRepositories;
 using MyShop_Backend.Services.Statistices;
+using MyShop_Backend.Repositories.LogRepositories;
+using MyShop_Backend.Repositories.LogDetailRepositories;
+using MyShop_Backend.Services.Log;
+using MyShop_Backend.Services.LogImports;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -138,6 +142,7 @@ builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<IVNPayLibrary, VNPayLibrary>();
 builder.Services.AddScoped<IImportService, ImportService>();
+builder.Services.AddScoped<ILogImportService, LogImportService>();
 builder.Services.AddScoped<IStatisticService, StatisticService>();
 
 
@@ -159,6 +164,9 @@ builder.Services.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
 builder.Services.AddScoped<IPaymentMethodRepository, PaymentMethodRepository>();
 builder.Services.AddScoped<IImportRepository, ImportRepository>();
 builder.Services.AddScoped<IImportDetailRepository, ImportDetailRepository>();
+builder.Services.AddScoped<ILogImportDetailRepository, LogImportDetailRepository>();
+builder.Services.AddScoped<ILogImportRepository, LogImportRepository>();
+
 
 // CORS
 builder.Services.AddCors(opt =>

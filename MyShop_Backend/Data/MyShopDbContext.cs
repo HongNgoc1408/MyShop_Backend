@@ -33,6 +33,8 @@ namespace MyShop_Backend.Data
 
 		public virtual DbSet<Import> Imports { get; set; }
 		public virtual DbSet<ImportDetail> ImportDetails { get; set; }
+		public virtual DbSet<LogImport> LogImports { get; set; }
+		public virtual DbSet<LogImportDetail> LogImportDetails { get; set; }
 
 		#endregion
 

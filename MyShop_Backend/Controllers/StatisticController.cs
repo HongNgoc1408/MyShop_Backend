@@ -85,7 +85,7 @@ namespace MyShop_Backend.Controllers
 				return BadRequest(ex.Message);
 			}
 		}
-		[HttpGet("totalSpending-by-year")]
+		[HttpGet("totalSpendingYear")]
 		[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> GetTotalSpendingByYear(int year, int? month)
 		{
@@ -115,7 +115,7 @@ namespace MyShop_Backend.Controllers
 			}
 		}
 
-		[HttpGet("totalSold-by-year")]
+		[HttpGet("totalSoldYear")]
 		[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> GetTotalSoldByYear(int year, int? month)
 		{
@@ -145,13 +145,28 @@ namespace MyShop_Backend.Controllers
 			}
 		}
 
-		[HttpGet("totalRevenue")]
+		[HttpGet("totalRevenueYear")]
 		[Authorize(Roles = "Admin")]
-		public async Task<IActionResult> GetTotalRevenue(int year, int? month)
+		public async Task<IActionResult> GetTotalRevenueYear(int year, int? month)
 		{
 			try
 			{
-				var res = await _statisticService.GetRevenue(year, month);
+				var res = await _statisticService.GetRevenueByYear(year, month);
+				return Ok(res);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
+		}
+
+		[HttpGet("totalRevenue")]
+		[Authorize(Roles = "Admin")]
+		public async Task<IActionResult> GetTotalRevenue(DateTime dateFrom, DateTime dateTo)
+		{
+			try
+			{
+				var res = await _statisticService.GetRevenue(dateFrom, dateTo);
 				return Ok(res);
 			}
 			catch (Exception ex)

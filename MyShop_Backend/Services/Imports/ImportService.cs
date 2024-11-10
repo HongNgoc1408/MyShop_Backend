@@ -8,6 +8,7 @@ using MyShop_Backend.Repositories.ProductColorRepositories;
 using MyShop_Backend.Repositories.ProductSizeRepositories;
 using MyShop_Backend.Request;
 using MyShop_Backend.Response;
+using MyShop_Backend.Services.LogImports;
 using MyStore.Repository.ProductRepository;
 using System.Globalization;
 using System.Linq.Expressions;
@@ -19,11 +20,12 @@ namespace MyShop_Backend.Services.Imports
 		private readonly IImportRepository _importRepository;
 		private readonly IImportDetailRepository _importDetailRepository;
 		private readonly IProductRepository _productRepository;
-		private readonly IProductColorRepository _productColorRepository;
 		private readonly IProductSizeRepository _productSizeRepository;
+		private readonly IProductColorRepository _productColorRepository;
 		private readonly IMapper _mapper;
+		private readonly ILogImportService _logImportService;
 
-		public ImportService(IImportRepository importRepository, IImportDetailRepository importDetailRepository, IProductRepository productRepository, IProductColorRepository productColorRepository, IProductSizeRepository productSizeRepository, IMapper mapper)
+		public ImportService(IImportRepository importRepository, IImportDetailRepository importDetailRepository, IProductRepository productRepository, IProductColorRepository productColorRepository, IProductSizeRepository productSizeRepository, ILogImportService logImportService, IMapper mapper)
 		{
 			_importRepository = importRepository;
 			_importDetailRepository = importDetailRepository;
@@ -31,6 +33,7 @@ namespace MyShop_Backend.Services.Imports
 			_productSizeRepository = productSizeRepository;
 			_productColorRepository = productColorRepository;
 			_mapper = mapper;
+			_logImportService = logImportService;
 		}
 		public async Task<ImportDTO> CreateImport(string userId, ImportRequest request)
 		{
@@ -56,7 +59,7 @@ namespace MyShop_Backend.Services.Imports
 					{
 						product.InStock += item.Quantity;
 						listProductSizeUpdate.Add(product);
-						
+
 						var importDetail = new ImportDetail
 						{
 							ImportId = import.Id,
@@ -83,7 +86,69 @@ namespace MyShop_Backend.Services.Imports
 				throw;
 			}
 		}
+		public async Task<ImportDTO> UpdateImport(long importId, ImportRequest request)
+		{
+			try
+			{
+				var import = await _importRepository.FindAsync(importId) ?? throw new ArgumentException(ErrorMessage.NOT_FOUND);
 
+				var logImport = new LogImportRequest
+				{
+					Note = import.Note,
+					UserId = import.UserId,
+					Total = import.Total,
+					EntryDate = import.EntryDate,
+					ImportId = import.Id,
+					LogImportProducts = (await _importDetailRepository.GetAsync(e => e.ImportId == importId)).Select(x => new LogImportProduct
+					{
+						ProductName = x.Product.Name,
+						ColorName = x.ColorName,
+						SizeName = x.SizeName,
+						Quantity = x.Quantity,
+						Price = x.Price,
+					}).ToList()
+				};
+
+				await _logImportService.CreatedLog(logImport);
+
+				import.Note = request.Note;
+				import.Total = request.Total;
+				import.EntryDate = request.EntryDate;
+
+				await _importRepository.UpdateAsync(import);
+
+				var importDetail = await _importDetailRepository.GetAsync(e => e.ImportId == importId);
+
+				var listProductSizeUpdate = new List<ProductSize>();
+				var listImportDetail = new List<ImportDetail>();
+
+				foreach (var item in request.ImportProducts)
+				{
+					int oldQuantity = 0;
+					var detail = importDetail.FirstOrDefault(d => d.ProductId == item.ProductId && d.ColorId == item.ColorId && d.SizeId == item.SizeId);
+					var product = await _productSizeRepository.SingleAsyncInclude(e => e.ProductColorId == item.ColorId && e.SizeId == item.SizeId);
+
+					if (detail != null) 
+					{
+						oldQuantity = detail.Quantity;
+						product.InStock += (item.Quantity - detail.Quantity);
+						listProductSizeUpdate.Add(product);
+
+						detail.Quantity = item.Quantity;
+						detail.Price = item.Price;
+						listImportDetail.Add(detail);
+					}
+
+				}
+				await _importDetailRepository.UpdateAsync(listImportDetail);
+
+				return _mapper.Map<ImportDTO>(import);
+			}
+			catch (Exception)
+			{
+				throw ;
+			}
+		}
 		public async Task<PagedResponse<ImportDTO>> GetAll(int page, int pageSize, string? search)
 		{
 			int total;
@@ -124,8 +189,8 @@ namespace MyShop_Backend.Services.Imports
 
 		public async Task<IEnumerable<ImportDetailResponse>> GetDetails(long id)
 		{
-			var import = await _importDetailRepository.GetAsync(e=> e.ImportId == id);
-			if(import != null)
+			var import = await _importDetailRepository.GetAsync(e => e.ImportId == id);
+			if (import != null)
 			{
 				var res = _mapper.Map<IEnumerable<ImportDetailResponse>>(import);
 				//foreach (var item in res)
@@ -137,5 +202,7 @@ namespace MyShop_Backend.Services.Imports
 			}
 			else throw new InvalidOperationException(ErrorMessage.NOT_FOUND);
 		}
+
+
 	}
 }
