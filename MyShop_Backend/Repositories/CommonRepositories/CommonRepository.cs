@@ -118,8 +118,16 @@ namespace MyShop_Backend.CommonRepository.CommonRepository
 		public virtual async Task<IEnumerable<T>> GetPagedOrderByDescendingAsync<TKey>(int page, int pageSize, Expression<Func<T, bool>>? expression, Expression<Func<T, TKey>> orderByDesc)
 		{
 			return expression == null
-				? await _context.Set<T>().OrderByDescending(orderByDesc).Paginate(page, pageSize).ToArrayAsync()
-				: await _context.Set<T>().Where(expression).OrderByDescending(orderByDesc).Paginate(page, pageSize).ToArrayAsync();
+				? await _context.Set<T>()
+				.OrderByDescending(orderByDesc)
+				.Paginate(page, pageSize)
+				.ToArrayAsync()
+				: await _context.Set<T>()
+				.Where(expression)
+				.OrderByDescending(orderByDesc)
+				.Paginate(page, pageSize)
+				.ToArrayAsync();
 		}
+		
 	}
 }
