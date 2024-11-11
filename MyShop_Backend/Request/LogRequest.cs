@@ -1,6 +1,6 @@
 ﻿namespace MyShop_Backend.Request
 {
-	public class LogImportRequest
+	public class LogRequest
 	{
 		public string? UserId { get; set; }
 		public double Total { get; set; }

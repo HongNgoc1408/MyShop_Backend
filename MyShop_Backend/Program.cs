@@ -142,7 +142,7 @@ builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<IVNPayLibrary, VNPayLibrary>();
 builder.Services.AddScoped<IImportService, ImportService>();
-builder.Services.AddScoped<ILogImportService, LogImportService>();
+builder.Services.AddScoped<ILogImportService, LogService>();
 builder.Services.AddScoped<IStatisticService, StatisticService>();
 
 
@@ -164,8 +164,8 @@ builder.Services.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
 builder.Services.AddScoped<IPaymentMethodRepository, PaymentMethodRepository>();
 builder.Services.AddScoped<IImportRepository, ImportRepository>();
 builder.Services.AddScoped<IImportDetailRepository, ImportDetailRepository>();
-builder.Services.AddScoped<ILogImportDetailRepository, LogImportDetailRepository>();
-builder.Services.AddScoped<ILogImportRepository, LogImportRepository>();
+builder.Services.AddScoped<ILogDetailRepository, LogDetailRepository>();
+builder.Services.AddScoped<ILogRepository, LogRepository>();
 
 
 // CORS

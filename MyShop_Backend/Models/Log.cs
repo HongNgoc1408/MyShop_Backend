@@ -1,6 +1,6 @@
 ﻿namespace MyShop_Backend.Models
 {
-	public class LogImport
+	public class Log
 	{
 		public long Id { get; set; }
 		public string? Note { get; set; }
@@ -13,6 +13,6 @@
 		public DateTime? UpdatedAt { get; set; }
 		public long ImportId { get; set; }
 
-		public ICollection<LogImportDetail> LogDetails { get; } = new HashSet<LogImportDetail>();
+		public ICollection<LogDetail> LogDetails { get; } = new HashSet<LogDetail>();
 	}
 }

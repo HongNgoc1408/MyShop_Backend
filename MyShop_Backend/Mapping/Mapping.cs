@@ -72,8 +72,12 @@ namespace MyShop_Backend.Mappers
 
 			CreateMap<ImportDetail, ImportDetailResponse>()
 				.ForMember(d => d.ProductName, opt => opt.MapFrom(src => src.Product.Name));
+
 			//LogImport
-			CreateMap<LogImport, ImportDTO>();
+			CreateMap<Log, ImportDTO>();
+			CreateMap<Log, LogDTO>()
+				.ForMember(dest => dest.Creator, opt => opt.MapFrom(src => src.User != null ? src.User.FullName : null));
+
 			//review
 			CreateMap<ProductReview, ReviewDTO>()
 				.ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.User != null ? src.User.FullName : null));

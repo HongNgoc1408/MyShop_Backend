@@ -61,7 +61,7 @@ namespace MyShop_Backend.DataSeeding
 
 			if (!context.Users.Any(u => u.UserName == user.UserName))
 			{
-				var result = await userManager.CreateAsync(user, "Ngoc@123");
+				var result = await userManager.CreateAsync(user, "Ngoc123@");
 				if (result.Succeeded)
 				{
 					await userManager.AddToRolesAsync(user, roles);

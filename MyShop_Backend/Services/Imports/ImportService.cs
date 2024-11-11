@@ -92,7 +92,7 @@ namespace MyShop_Backend.Services.Imports
 			{
 				var import = await _importRepository.FindAsync(importId) ?? throw new ArgumentException(ErrorMessage.NOT_FOUND);
 
-				var logImport = new LogImportRequest
+				var logImport = new LogRequest
 				{
 					Note = import.Note,
 					UserId = import.UserId,

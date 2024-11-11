@@ -30,11 +30,10 @@ namespace MyShop_Backend.Data
 		public virtual DbSet<Order> Orders { get; set; }
 		public virtual DbSet<OrderDetail> OrderDetails { get; set; }
 		public virtual DbSet<PaymentMethod> PaymentMethods { get; set; }
-
 		public virtual DbSet<Import> Imports { get; set; }
 		public virtual DbSet<ImportDetail> ImportDetails { get; set; }
-		public virtual DbSet<LogImport> LogImports { get; set; }
-		public virtual DbSet<LogImportDetail> LogImportDetails { get; set; }
+		public virtual DbSet<Log> Logs { get; set; }
+		public virtual DbSet<LogDetail> LogDetails { get; set; }
 
 		#endregion
 

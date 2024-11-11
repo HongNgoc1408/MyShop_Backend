@@ -8,9 +8,10 @@ namespace MyShop_Backend.Models
 		[MaxLength(50)]
 		public string? FullName { get; set; }
 		public DeliveryAddress? DeliveryAddress { get; set; }
-		public ICollection<Order> Orders { get; } = new HashSet<Order>();
+		public string? ImageUrl { get; set; }
 		public DateTime CreatedAt { get; set; }
 		public DateTime? UpdatedAt { get; set; }
+		public ICollection<Order> Orders { get; } = new HashSet<Order>();
 		public ICollection<ProductFavorite> ProductFavorites { get; } = new HashSet<ProductFavorite>();
 		public ICollection<ProductReview> ProductReviews { get; } = new HashSet<ProductReview>();
 	}

@@ -4,7 +4,7 @@ using MyShop_Backend.Models;
 
 namespace MyShop_Backend.Repositories.LogDetailRepositories
 {
-	public class LogImportDetailRepository(MyShopDbContext dbContext) : CommonRepository<LogImportDetail>(dbContext), ILogImportDetailRepository
+	public class LogDetailRepository(MyShopDbContext dbContext) : CommonRepository<LogDetail>(dbContext), ILogDetailRepository
 	{
 		private readonly MyShopDbContext _dbContext = dbContext;
 	}

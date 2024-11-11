@@ -4,7 +4,7 @@ using MyShop_Backend.Repositories.CommonRepositories;
 
 namespace MyShop_Backend.Repositories.LogRepositories
 {
-	public interface ILogImportRepository : ICommonRepository<LogImport>
+	public interface ILogRepository : ICommonRepository<Log>
 	{
 	}
 }

@@ -390,7 +390,7 @@ namespace MyShop_Backend.Migrations
                     b.ToTable("ImportDetails");
                 });
 
-            modelBuilder.Entity("MyShop_Backend.Models.LogImport", b =>
+            modelBuilder.Entity("MyShop_Backend.Models.Log", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -423,10 +423,10 @@ namespace MyShop_Backend.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("LogImports");
+                    b.ToTable("Logs");
                 });
 
-            modelBuilder.Entity("MyShop_Backend.Models.LogImportDetail", b =>
+            modelBuilder.Entity("MyShop_Backend.Models.LogDetail", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -459,7 +459,7 @@ namespace MyShop_Backend.Migrations
 
                     b.HasIndex("LogId");
 
-                    b.ToTable("LogImportDetails");
+                    b.ToTable("LogDetails");
                 });
 
             modelBuilder.Entity("MyShop_Backend.Models.Order", b =>
@@ -851,6 +851,9 @@ namespace MyShop_Backend.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
 
@@ -1020,7 +1023,7 @@ namespace MyShop_Backend.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("MyShop_Backend.Models.LogImport", b =>
+            modelBuilder.Entity("MyShop_Backend.Models.Log", b =>
                 {
                     b.HasOne("MyShop_Backend.Models.User", "User")
                         .WithMany()
@@ -1029,9 +1032,9 @@ namespace MyShop_Backend.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("MyShop_Backend.Models.LogImportDetail", b =>
+            modelBuilder.Entity("MyShop_Backend.Models.LogDetail", b =>
                 {
-                    b.HasOne("MyShop_Backend.Models.LogImport", "Log")
+                    b.HasOne("MyShop_Backend.Models.Log", "Log")
                         .WithMany("LogDetails")
                         .HasForeignKey("LogId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1179,7 +1182,7 @@ namespace MyShop_Backend.Migrations
                     b.Navigation("ProductColors");
                 });
 
-            modelBuilder.Entity("MyShop_Backend.Models.LogImport", b =>
+            modelBuilder.Entity("MyShop_Backend.Models.Log", b =>
                 {
                     b.Navigation("LogDetails");
                 });

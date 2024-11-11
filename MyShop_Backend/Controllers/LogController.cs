@@ -7,12 +7,12 @@ using MyShop_Backend.Services.LogImports;
 
 namespace MyShop_Backend.Controllers
 {
-	[Route("api/logImport")]
+	[Route("api/log")]
 	[ApiController]
 	[Authorize]
-	public class LogImportController(ILogImportService logImportService) : ControllerBase
+	public class LogController(ILogImportService logService) : ControllerBase
 	{
-		private readonly ILogImportService _logImportService = logImportService;
+		private readonly ILogImportService _logService = logService;
 
 		[HttpGet]
 		[Authorize(Roles = "Admin")]
@@ -20,7 +20,7 @@ namespace MyShop_Backend.Controllers
 		{
 			try
 			{
-				var res = await _logImportService.GetAll(request.Page, request.PageSize, request.Key);
+				var res = await _logService.GetAll(request.Page, request.PageSize, request.Key);
 				return Ok(res);
 			}
 			catch (Exception ex)
@@ -35,7 +35,7 @@ namespace MyShop_Backend.Controllers
 		{
 			try
 			{
-				var res = await _logImportService.GetById(id);
+				var res = await _logService.GetById(id);
 				return Ok(res);
 			}
 			catch (Exception ex)

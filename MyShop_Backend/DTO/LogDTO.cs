@@ -1,6 +1,6 @@
 ﻿namespace MyShop_Backend.DTO
 {
-	public class LogImportDTO
+	public class LogDTO
 	{
 		public long Id { get; set; }
 		public long ReceiptId { get; set; }

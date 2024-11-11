@@ -7,18 +7,18 @@ using System.Linq.Expressions;
 
 namespace MyShop_Backend.Repositories.LogRepositories
 {
-	public class LogImportRepository(MyShopDbContext dbContext) : CommonRepository<LogImport>(dbContext), ILogImportRepository
+	public class LogRepository(MyShopDbContext dbContext) : CommonRepository<Log>(dbContext), ILogRepository
 	{
 		private readonly MyShopDbContext _dbContext = dbContext;
 
-		public override async Task<IEnumerable<LogImport>> GetPagedOrderByDescendingAsync<TKey>(int page, int pageSize, Expression<Func<LogImport, bool>>? expression, Expression<Func<LogImport, TKey>> orderByDesc)
+		public override async Task<IEnumerable<Log>> GetPagedOrderByDescendingAsync<TKey>(int page, int pageSize, Expression<Func<Log, bool>>? expression, Expression<Func<Log, TKey>> orderByDesc)
 		=> expression == null
-			? await _dbContext.LogImports
+			? await _dbContext.Logs
 				.Paginate(page, pageSize)
 				.OrderByDescending(orderByDesc)
 				.Include(e => e.User)
 				.ToArrayAsync()
-			: await _dbContext.LogImports
+			: await _dbContext.Logs
 				.Where(expression)
 				.Paginate(page, pageSize)
 				.OrderByDescending(orderByDesc)
