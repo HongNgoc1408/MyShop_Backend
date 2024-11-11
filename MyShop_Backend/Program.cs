@@ -80,9 +80,7 @@ builder.Services.AddSwaggerGen(e =>
 });
 // Database connection
 builder.Services.AddDbContext<MyShopDbContext>(options =>
-	options.UseSqlServer(builder.Configuration.GetConnectionString("MyShop_Backend"))
-
-	);
+	options.UseSqlServer(builder.Configuration.GetConnectionString("MyShop_Backend")));
 
 // Register AutoMapper
 builder.Services.AddAutoMapper(typeof(Mapping));
@@ -176,6 +174,12 @@ builder.Services.AddCors(opt =>
 		opt.WithOrigins("http://localhost:3000", "http://localhost:3001").AllowAnyMethod().AllowAnyHeader().AllowCredentials();
 		//opt.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
 	});
+});
+
+// Configure Kestrel to increase the max request body size (30MB to 50MB as example)
+builder.WebHost.ConfigureKestrel(options =>
+{
+	options.Limits.MaxRequestBodySize = 50 * 1024 * 1024; // Set to 50MB (in bytes)
 });
 
 var app = builder.Build();
