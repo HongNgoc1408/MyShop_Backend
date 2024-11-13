@@ -5,5 +5,6 @@ namespace MyShop_Backend.Repositories.ProductReviewRepositories
 {
 	public interface IProductReviewRepository : ICommonRepository<ProductReview>
 	{
+
 	}
 }

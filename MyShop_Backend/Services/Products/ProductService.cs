@@ -81,7 +81,7 @@ namespace MyShop_Backend.Services.Products
 						{
 							ProductColorId = productColor.Id,
 							SizeId = size.SizeId,
-							InStock = size.InStock,
+							InStock = size.InStock
 						};
 					});
 					productSizes.AddRange(sizes);

@@ -16,7 +16,6 @@ namespace MyShop_Backend.DTO
 		public DateTime ReceivedDate { get; set; }
 		public string PaymentMethodName { get; set; }
 		public DeliveryStatusEnum OrderStatus { get; set; }
-
 		public string? PayBackUrl { get; set; }
 		public DateTime? Expected_delivery_time { get; set; }
 		

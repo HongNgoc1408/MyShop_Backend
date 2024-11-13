@@ -4,7 +4,5 @@
 	{
 		COD,
 		VNPay,
-		PayOS,
-		MoMo,
 	}
 }

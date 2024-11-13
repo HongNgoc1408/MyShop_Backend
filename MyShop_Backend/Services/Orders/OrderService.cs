@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Caching.Memory;
 using MyShop_Backend.DTO;
 using MyShop_Backend.Enumerations;
@@ -97,7 +98,6 @@ namespace MyShop_Backend.Services.Orders
 					DeliveryAddress = request.DeliveryAddress,
 					District_Id = request.District_Id,
 					Ward_Id = request.Ward_Id,
-					PhoneNumber = request.PhoneNumber,
 					OrderDate = now,
 					Total = request.Total,
 				};
@@ -235,10 +235,12 @@ namespace MyShop_Backend.Services.Orders
 			}
 			else
 			{
+				bool isLong = long.TryParse(keySearch, out long idSearch);
+
 				Expression<Func<Order, bool>> expression =
-					e => e.Id.ToString().Contains(keySearch)
-						|| (e.OrderStatus != null && e.OrderStatus.Value.ToString().Contains(keySearch));
-				//|| (e.PaymentMethodName != null && e.PaymentMethodName.Contains(keySearch)
+				e => e.Id.Equals(idSearch)
+					|| (!isLong && e.PaymentMethodName != null && e.PaymentMethodName.Contains(keySearch));
+
 
 				totalOrder = await _orderRepository.CountAsync(expression);
 				orders = await _orderRepository.GetPagedOrderByDescendingAsync(page, pageSize, expression, e => e.CreatedAt);
@@ -713,8 +715,7 @@ namespace MyShop_Backend.Services.Orders
 					if (order.OrderStatus.Equals(DeliveryStatusEnum.Shipping))
 					{
 						order.OrderStatus = DeliveryStatusEnum.Received;
-					order.ReceivedDate = now;
-
+						order.ReceivedDate = now;
 					await _orderRepository.UpdateAsync(order);
 					}
 					else throw new Exception(ErrorMessage.CANNOT_RECEIVED);

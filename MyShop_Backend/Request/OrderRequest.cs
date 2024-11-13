@@ -15,7 +15,6 @@ namespace MyShop_Backend.Request
 		public string DeliveryAddress { get; set; }
 		public string Ward_Id { get; set; }
 		public int District_Id { get; set; }
-		public string PhoneNumber { get; set; }
 		public IEnumerable<string> CartIds { get; set; }
 		public int PaymentMethodId { get; set; }
 		public string? UserIP { get; set; }

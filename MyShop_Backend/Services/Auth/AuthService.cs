@@ -76,6 +76,8 @@ namespace MyShop_Backend.Services.AuthServices
 						Access_token = accessToken,
 						Refresh_token = refreshToken,
 						FullName = user.FullName,
+						Email = user.Email,
+						PhoneNumber = user.PhoneNumber,
 						Roles = roles,
 
 					};

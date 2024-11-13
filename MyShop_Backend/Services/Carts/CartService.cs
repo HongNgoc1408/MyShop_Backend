@@ -75,25 +75,13 @@ namespace MyShop_Backend.Services.Carts
 
 			}
 			catch (Exception ex) { throw new Exception(ex.Message); }
-
 		}
 
-		public async Task<int> CountCart(string userId)
+		public async Task<IEnumerable<string>> GetCountProdutctId(string userId)
 		{
-			return await _cartItemRepository.CountAsync(e => e.UserId
-			== userId);
-		}
-
-		public async Task DeleteCartAsync(string userId, IEnumerable<long> productId)
-		{
-			try
-			{
-				await _cartItemRepository.DeleteByCartId(userId, productId);
-			}
-			catch (Exception ex)
-			{
-				throw new Exception(ex.InnerException?.Message ?? ex.Message);
-			}
+			var items = await _cartItemRepository.GetAsync(e => e.UserId == userId);
+			var res = items.Select(e => e.Id);
+			return res;
 		}
 
 		public async Task<IEnumerable<CartItemResponse>> GetAllByUserId(string userId)
@@ -172,6 +160,26 @@ namespace MyShop_Backend.Services.Carts
 			{
 				throw new Exception(ex.Message);
 			}
+		}
+		public async Task DeleteCartAsync(string userId, IEnumerable<long> productId)
+		{
+			try
+			{
+				await _cartItemRepository.DeleteByCartId(userId, productId);
+			}
+			catch (Exception ex)
+			{
+				throw new Exception(ex.InnerException?.Message ?? ex.Message);
+			}
+		}
+		public async Task DeleteCartItem(string cartId, string userId)
+		{
+			var cartItem = await _cartItemRepository.SingleOrDefaultAsync(e => e.Id == cartId && e.UserId == userId);
+			if (cartItem != null)
+			{
+				await _cartItemRepository.DeleteAsync(cartItem);
+			}
+			else throw new ArgumentException($"Id {cartId} " + ErrorMessage.NOT_FOUND);
 		}
 	}
 }

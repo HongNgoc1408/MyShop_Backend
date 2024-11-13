@@ -37,7 +37,7 @@ namespace MyShop_Backend.Controllers
 		}
 
 		[HttpGet("count")]
-		public async Task<IActionResult> CountCart()
+		public async Task<IActionResult> GetCount()
 		{
 			try
 			{
@@ -46,14 +46,13 @@ namespace MyShop_Backend.Controllers
 				{
 					return Unauthorized();
 				}
-				var quantity = await _cartService.CountCart(userId);
-				return Ok(quantity);
+				var carts = await _cartService.GetCountProdutctId(userId);
+				return Ok(carts);
 			}
 			catch (Exception ex)
 			{
 				return StatusCode(500, ex.Message);
 			}
-
 		}
 
 		[HttpPost("create")]
@@ -117,6 +116,30 @@ namespace MyShop_Backend.Controllers
 			{
 				return StatusCode(500, ex.Message);
 			}
+		}
+
+		[HttpDelete("{id}")]
+		public async Task<IActionResult> Detete(string id)
+		{
+			try
+			{
+				var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+				if (userId == null)
+				{
+					return Unauthorized();
+				}
+				await _cartService.DeleteCartItem(id, userId);
+				return Ok();
+			}
+			catch (ArgumentException ex)
+			{
+				return NotFound(ex.Message);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
+
 		}
 	}
 }

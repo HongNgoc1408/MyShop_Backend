@@ -16,7 +16,6 @@ namespace MyShop_Backend.Services.Products
 		Task<IEnumerable<ColorDTO>> GetColorById(long id);
 		Task<IEnumerable<SizeDTO>> GetSizeById(long id);
 		Task<IEnumerable<NameDTO>> GetNameProduct();
-
 		Task<ProductDetailsResponse> GetProductAsync(long id);
 		Task<ProductDTO> UpdateProductAsync(long id, ProductRequest request, IFormFileCollection images);
 		Task<bool> UpdateProductEnableAsync(long id, UpdateEnableRequest request);
