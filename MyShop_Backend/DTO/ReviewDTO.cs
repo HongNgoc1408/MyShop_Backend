@@ -8,6 +8,7 @@
 		public string Username { get; set; }
 		public string SizeName { get; set; }
 		public string ColorName { get; set; }
+		public string? ImageURL { get; set; }
 		public List<string>? ImagesUrls { get; set; } = new List<string>();
 		public DateTime CreatedAt { get; set; }
 	}

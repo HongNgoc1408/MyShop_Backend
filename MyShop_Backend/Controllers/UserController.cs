@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MyShop_Backend.DTO;
+using MyShop_Backend.Enumerations;
 using MyShop_Backend.Request;
 using MyShop_Backend.Services.UserServices;
 using System.Security.Claims;
@@ -17,11 +18,41 @@ namespace MyShop_Backend.Controllers
 
 		[HttpGet]
 		[Authorize(Roles = "Admin")]
+		public async Task<IActionResult> GetAll([FromQuery] PageRequest request, RolesEnum role)
+		{
+			try
+			{
+				var users = await _userService.GetAllAsync(request.Page, request.PageSize, request.Key, role);
+				return Ok(users);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
+		}
+
+		[HttpGet("users")]
+		[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> GetAllUser([FromQuery] PageRequest request)
 		{
 			try
 			{
 				var users = await _userService.GetAllUserAsync(request.Page, request.PageSize, request.Key);
+				return Ok(users);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
+		}
+
+		[HttpGet("staffs")]
+		[Authorize(Roles = "Admin")]
+		public async Task<IActionResult> GetAllStaff([FromQuery] PageRequest request)
+		{
+			try
+			{
+				var users = await _userService.GetAllStaffAsync(request.Page, request.PageSize, request.Key);
 				return Ok(users);
 			}
 			catch (Exception ex)
@@ -108,6 +139,47 @@ namespace MyShop_Backend.Controllers
 			catch (ArgumentException ex)
 			{
 				return BadRequest(ex.Message);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
+		}
+
+		[HttpGet("avatar")]
+		public async Task<IActionResult> GetAvatar()
+		{
+			try
+			{
+				var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+				if (userId == null)
+				{
+					return Unauthorized();
+				}
+				var result = await _userService.GetAvatar(userId);
+				return Ok(result);
+
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
+		}
+
+		[HttpPut("avatar")]
+		public async Task<IActionResult> UpdateAvatar([FromForm] IFormCollection file )
+		{
+			try
+			{
+				var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+				if (userId == null)
+				{
+					return Unauthorized();
+				}
+				var image = file.Files.FirstOrDefault();
+				var result = await _userService.UpdateAvatar(userId, image);
+				return Ok(result);
+
 			}
 			catch (Exception ex)
 			{

@@ -10,7 +10,6 @@ namespace MyShop_Backend.Services.Carts
 		Task AddToCart(string userId, CartRequest cartRequest);
 		Task<CartItemResponse> UpdateCartItem(string cartId, string userId, UpdateCartItemRequest cartRequest);
 		Task DeleteCartItem(string cartId, string userId);
-
 		Task DeleteCartAsync(string userId, IEnumerable<long> productId);
 	}
 }

@@ -7,7 +7,7 @@ namespace MyShop_Backend.Services.AuthServices
 {
 	public interface IAuthService
 	{
-		Task<JwtResponse?> Login(LoginRequest request);
+		Task<JwtResponse> Login(LoginRequest request);
 		Task<IdentityResult> Register(RegisterRequest request);
 		Task<Token> RefreshToken(Token token);
 		Task Logout(string userID);

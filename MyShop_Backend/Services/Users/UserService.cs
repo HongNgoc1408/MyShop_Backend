@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using MyShop_Backend.DTO;
+using MyShop_Backend.Enumerations;
 using MyShop_Backend.ErroMessage;
 using MyShop_Backend.Models;
 using MyShop_Backend.Repositories.DeliveryAddressRepositories;
@@ -8,6 +10,8 @@ using MyShop_Backend.Repositories.ProductFavoriteRepositories;
 using MyShop_Backend.Repositories.UserRepositories;
 using MyShop_Backend.Request;
 using MyShop_Backend.Response;
+using MyShop_Backend.Storages;
+using System.Linq.Expressions;
 
 namespace MyShop_Backend.Services.UserServices
 {
@@ -17,19 +21,137 @@ namespace MyShop_Backend.Services.UserServices
 		private readonly IUserRepository _userRepository;
 		private readonly IDeliveryAddressRepository _deliveryAddressRepository;
 		private readonly IProductFavoriteRepository _productFavoriteRepository;
+		private readonly IFileStorage _fileStorage;
+		private readonly string path = "assets/images/avatars";
 		private readonly IMapper _mapper;
 
-		public UserService(UserManager<User> userManager, IUserRepository userRepository, IDeliveryAddressRepository deliveryAdressRepository, IProductFavoriteRepository productFavoriteRepository, IMapper mapper)
+		public UserService(UserManager<User> userManager, IUserRepository userRepository, IDeliveryAddressRepository deliveryAdressRepository, IProductFavoriteRepository productFavoriteRepository, IFileStorage fileStorage, IMapper mapper)
 		{
 			_userManager = userManager;
 			_userRepository = userRepository;
 			_deliveryAddressRepository = deliveryAdressRepository;
 			_productFavoriteRepository = productFavoriteRepository;
+			_fileStorage = fileStorage;
 			_mapper = mapper;
-
-
 		}
-		public async Task<PagedResponse<UserResponse>> GetAllUserAsync(int page, int pageSize, string? keySearch)
+
+
+		public async Task<PagedResponse<UserResponse>> GetAllAsync(int page, int pageSize, string? key, RolesEnum role)
+		{
+			int totalUser;
+			IEnumerable<User> users;
+
+			if (string.IsNullOrEmpty(key))
+			{
+				totalUser = await _userRepository.CountAsync(e =>
+					e.UserRoles.Any(e => !string.IsNullOrEmpty(e.Role.Name) && e.Role.Name.Equals(role.ToString())));
+				users = await _userRepository.GetPagedOrderByDescendingAsync(page, pageSize,
+					e => e.UserRoles.Any(e => !string.IsNullOrEmpty(e.Role.Name) && e.Role.Name.Equals(role.ToString())),
+					e => e.CreatedAt);
+			}
+			else
+			{
+				Expression<Func<User, bool>> expression = e => (e.Id.Contains(key)
+					|| (e.FullName != null && e.FullName.Contains(key))
+					|| (e.Email != null && e.Email.Contains(key))
+					|| e.PhoneNumber != null && e.PhoneNumber.Contains(key))
+					&& e.UserRoles.Any(e => !string.IsNullOrEmpty(e.Role.Name) && e.Role.Name.Equals(role.ToString()));
+
+				totalUser = await _userRepository.CountAsync(expression);
+				users = await _userRepository.GetPagedOrderByDescendingAsync(page, pageSize, expression, e => e.CreatedAt);
+			}
+
+			//var items = _mapper.Map<IEnumerable<UserResponse>>(users).Select(e =>
+			//{
+			//    e.LockedOut = e.LockoutEnd > DateTime.Now;
+			//    e.LockoutEnd = e.LockoutEnd > DateTime.Now ? e.LockoutEnd : null;
+			//    return e;
+			//});
+
+			//var roles = await _userManager.GetUsersInRoleAsync("User");
+			var items = _mapper.Map<IEnumerable<UserResponse>>(users);
+
+			return new PagedResponse<UserResponse>
+			{
+				Items = items,
+				TotalItems = totalUser,
+				Page = page,
+				PageSize = pageSize,
+			};
+		}
+		public async Task<PagedResponse<UserResponse>> GetAllUserAsync(int page, int pageSize, string? key)
+		{
+			{
+				int totalUser;
+				IEnumerable<User> users;
+				if (string.IsNullOrEmpty(key))
+				{
+					totalUser = await _userRepository.CountAsync(e => e.UserRoles.Any(e => e.Role.Name == "Employee"));
+					users = await _userRepository.GetPagedOrderByDescendingAsync(page, pageSize,
+						e => e.UserRoles.Any(e => e.Role.Name == "Employee"), e => e.CreatedAt);
+				}
+				else
+				{
+					Expression<Func<User, bool>> expression = e => (e.Id.Contains(key)
+						|| (e.FullName != null && e.FullName.Contains(key))
+					|| (e.Email != null && e.Email.Contains(key))
+						|| e.PhoneNumber != null && e.PhoneNumber.Contains(key))
+						&& e.UserRoles.Any(e => e.Role.Name == "User");
+					totalUser = await _userRepository.CountAsync(expression);
+					users = await _userRepository.GetPagedOrderByDescendingAsync(page, pageSize, expression, e => e.CreatedAt);
+				}
+				//var items = _mapper.Map<IEnumerable<UserResponse>>(users).Select(e =>
+				//{
+				//    e.LockedOut = e.LockoutEnd > DateTime.Now;
+				//    e.LockoutEnd = e.LockoutEnd > DateTime.Now ? e.LockoutEnd : null;
+				//    return e;
+				//});
+				//var roles = await _userManager.GetUsersInRoleAsync("User");
+				var items = _mapper.Map<IEnumerable<UserResponse>>(users);
+				return new PagedResponse<UserResponse>
+				{
+					Items = items,
+					TotalItems = totalUser,
+					Page = page,
+					PageSize = pageSize,
+				};
+			}
+			//int totalUser;
+			//IList<User> users;
+			//if (keySearch == null)
+			//{
+			//	totalUser = await _userRepository.CountAsync(keySearch);
+			//	users = (await _userRepository.GetAllUserAsync(page, pageSize)).ToList();
+			//}
+			//else
+			//{
+			//	totalUser = await _userRepository.CountAsync(keySearch);
+			//	users = (await _userRepository.GetAllUserAsync(page, pageSize, keySearch)).ToList();
+			//}
+
+			//var items = new List<UserResponse>();
+
+			//foreach (var user in users)
+			//{
+			//	var roles = await _userManager.GetRolesAsync(user);
+
+			//	if (roles.Count == 0)
+			//	{
+			//		var userResponse = _mapper.Map<UserResponse>(user);
+			//		items.Add(userResponse);
+			//	}
+			//}
+
+
+			//return new PagedResponse<UserResponse>
+			//{
+			//	TotalItems = totalUser,
+			//	Items = items,
+			//	Page = page,
+			//	PageSize = pageSize
+			//};
+		}
+		public async Task<PagedResponse<UserResponse>> GetAllStaffAsync(int page, int pageSize, string? keySearch)
 		{
 			int totalUser;
 			IList<User> users;
@@ -43,23 +165,21 @@ namespace MyShop_Backend.Services.UserServices
 				totalUser = await _userRepository.CountAsync(keySearch);
 				users = (await _userRepository.GetAllUserAsync(page, pageSize, keySearch)).ToList();
 			}
-			//var items = users
-			//    .Select(x => new UserResponse
-			//    {
-			//        Id = x.Id,
-			//        FullName = x.FullName,
-			//        Email = x.Email,
-			//        PhoneNumber = x.PhoneNumber,
-			//    });
-			var items = _mapper.Map<IList<UserResponse>>(users);
-			for (int i = 0; i < users.Count(); i++)
+
+			var items = new List<UserResponse>();
+
+			foreach (var user in users)
 			{
-				var roles = await _userManager.GetRolesAsync(users[i]);
-				if (roles != null)
+				var roles = await _userManager.GetRolesAsync(user);
+
+				if (roles.Count > 0)
 				{
-					items[i].Roles = roles;
+					var userResponse = _mapper.Map<UserResponse>(user);
+					userResponse.Roles = roles;
+					items.Add(userResponse);
 				}
 			}
+
 
 			return new PagedResponse<UserResponse>
 			{
@@ -106,8 +226,6 @@ namespace MyShop_Backend.Services.UserServices
 			}
 			throw new InvalidOperationException(ErrorMessage.USER_NOT_FOUND);
 		}
-
-
 
 		public async Task<AddressDTO?> UpdateUserAddress(string userId, AddressDTO address)
 		{
@@ -192,6 +310,37 @@ namespace MyShop_Backend.Services.UserServices
 				await _userManager.UpdateAsync(user);
 			}
 			else throw new ArgumentException($"Id {userId} " + ErrorMessage.NOT_FOUND);     
+		}
+
+		public async Task<UserDTO> UpdateAvatar(string userId, IFormFile image)
+		{
+			var user = await _userManager.FindByIdAsync(userId);
+			if (user != null) {
+				if(user.ImageURL != null)
+				{
+					_fileStorage.Delete(user.ImageURL);
+				}
+				string fileName = Guid.NewGuid().ToString() + Path.GetExtension(image.FileName);
+				user.ImageURL = Path.Combine(path, fileName);
+
+				await _fileStorage.SaveAsync(path, image, fileName);
+				await _userManager.UpdateAsync(user);
+				return _mapper.Map<UserDTO>(user);
+			}
+			else { throw new ArgumentException(ErrorMessage.NOT_FOUND); }
+		}
+
+		public async Task<ImageDTO> GetAvatar(string userId)
+		{
+			var user = await _userManager.FindByIdAsync(userId);
+			if (user != null) { 
+				return _mapper.Map<ImageDTO>(user); 
+			}
+			else
+			{
+				throw new ArgumentException(ErrorMessage.NOT_FOUND);
+			}
+
 		}
 	}
 }

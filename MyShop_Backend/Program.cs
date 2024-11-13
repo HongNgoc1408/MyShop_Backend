@@ -45,6 +45,7 @@ using MyShop_Backend.Repositories.LogRepositories;
 using MyShop_Backend.Repositories.LogDetailRepositories;
 using MyShop_Backend.Services.Log;
 using MyShop_Backend.Services.LogImports;
+using MyShop_Backend.DataSeeding;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -86,14 +87,13 @@ builder.Services.AddDbContext<MyShopDbContext>(options =>
 builder.Services.AddAutoMapper(typeof(Mapping));
 
 // Auth and Identity
-builder.Services.AddIdentity<User, IdentityRole>(opt =>
+builder.Services.AddIdentity<User, Role>(opt =>
 {
 	opt.Password.RequireNonAlphanumeric = false;
 	opt.Password.RequiredLength = 6;
 	opt.User.RequireUniqueEmail = true;
 })
 	.AddEntityFrameworkStores<MyShopDbContext>()
-	//.AddTokenProvider("MyShop_Backend", typeof(DataProtectorTokenProvider<User>))
 	.AddDefaultTokenProviders();
 
 // Email
@@ -183,6 +183,9 @@ builder.WebHost.ConfigureKestrel(options =>
 });
 
 var app = builder.Build();
+
+DataSeeding.Initialize(app.Services).Wait();
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

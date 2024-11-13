@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using MyShop_Backend.ErroMessage;
 using MyShop_Backend.Models;
@@ -19,11 +20,15 @@ namespace MyShop_Backend.Services.AuthServices
 		private readonly IConfiguration _config;
 		private readonly ISendMailService _emailSender;
 		private readonly ICachingService _cachingService;
+		private readonly IMapper _mapper;
 
-		public AuthService(SignInManager<User> signInManager, UserManager<User> userManager,
+		public AuthService(
+			SignInManager<User> signInManager,
+			UserManager<User> userManager,
 			IConfiguration config,
 			ISendMailService emailSender,
-			ICachingService cachingService
+			ICachingService cachingService,
+			IMapper mapper
 			)
 		{
 			_signInManager = signInManager;
@@ -31,7 +36,9 @@ namespace MyShop_Backend.Services.AuthServices
 			_config = config;
 			_emailSender = emailSender;
 			_cachingService = cachingService;
+			_mapper = mapper;
 		}
+
 		private async Task<string> CreateJWT(User user, bool isRefreshToken = false)
 		{
 			var roles = await _userManager.GetRolesAsync(user);
@@ -93,7 +100,7 @@ namespace MyShop_Backend.Services.AuthServices
 
 			if (isTokenValid)
 			{
-				var User = new User()
+				var user = new User()
 				{
 					Email = request.Email,
 					NormalizedEmail = request.Email,
@@ -104,7 +111,14 @@ namespace MyShop_Backend.Services.AuthServices
 					SecurityStamp = Guid.NewGuid().ToString(),
 					ConcurrencyStamp = Guid.NewGuid().ToString()
 				};
-				return await _userManager.CreateAsync(User, request.Password);
+				//return await _userManager.CreateAsync(User, request.Password);
+				var result = await _userManager.CreateAsync(user, request.Password);
+				if (!result.Succeeded)
+				{
+					throw new Exception(ErrorMessage.INVALID);
+				}
+				await _userManager.AddToRoleAsync(user, "User");
+				return IdentityResult.Success;
 			}
 			else throw new Exception("Invalid reset token.");
 		}
@@ -181,5 +195,6 @@ namespace MyShop_Backend.Services.AuthServices
 		{
 			throw new NotImplementedException();
 		}
+
 	}
 }

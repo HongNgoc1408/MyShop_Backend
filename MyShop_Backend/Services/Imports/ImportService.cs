@@ -170,7 +170,7 @@ namespace MyShop_Backend.Services.Imports
 					DateTimeStyles.None,
 					out dateSearch);
 
-				Expression<Func<Import, bool>> expression = e => e.Id.Equals(isSearch) || (!isLong && isDate && e.CreatedAt.Date == dateSearch.Date);
+				Expression<Func<Import, bool>> expression = e => e.Id.Equals(isSearch) || (!isLong && isDate && e.CreatedAt.Date == dateSearch.Date) || (!isLong && isDate && e.EntryDate.Date == dateSearch.Date);
 
 				total = await _importRepository.CountAsync(expression);
 				import = await _importRepository.GetPagedOrderByDescendingAsync(page, pageSize, expression, e => e.CreatedAt);
@@ -193,10 +193,6 @@ namespace MyShop_Backend.Services.Imports
 			if (import != null)
 			{
 				var res = _mapper.Map<IEnumerable<ImportDetailResponse>>(import);
-				//foreach (var item in res)
-				//{
-				//	item.ColorName = (await _productColorRepository.SingleOrDefaultAsync(e => e.Id == item.ColorId))?.ColorName ?? "";
-				//}
 
 				return res;
 			}

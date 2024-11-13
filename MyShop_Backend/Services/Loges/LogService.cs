@@ -7,6 +7,8 @@ using MyShop_Backend.Repositories.LogRepositories;
 using MyShop_Backend.Request;
 using MyShop_Backend.Response;
 using MyShop_Backend.Services.LogImports;
+using System.Globalization;
+using System.Linq.Expressions;
 
 namespace MyShop_Backend.Services.Log
 {
@@ -60,19 +62,31 @@ namespace MyShop_Backend.Services.Log
 		public async Task<PagedResponse<LogDTO>> GetAll(int page, int pageSize, string? key)
 		{
 			int total = 0;
-            IEnumerable<Models.Log> logImports;
+            IEnumerable<Models.Log> logs;
 			if (string.IsNullOrEmpty(key))
 			{
 				total = await _logRepository.CountAsync();
-				logImports = await _logRepository.GetPagedOrderByDescendingAsync(page, pageSize, null, e => e.CreatedAt);
+				logs = await _logRepository.GetPagedOrderByDescendingAsync(page, pageSize, null, x => x.CreatedAt);
 			}
 			else
 			{
-				total = await _logRepository.CountAsync();
-				logImports = await _logRepository.GetPagedOrderByDescendingAsync(page, pageSize, e => e.ImportId == long.Parse(key), e => e.CreatedAt);
+				bool isLong = long.TryParse(key, out long isSearch);
+				DateTime dateSearch;
+				bool isDate = DateTime.TryParseExact(
+					key,
+					"HH:mm:ss dd/MM/yyyy",
+					CultureInfo.InvariantCulture,
+					DateTimeStyles.None,
+					out dateSearch);
+
+				Expression<Func<Models.Log, bool>> expression = e => e.ImportId.Equals(isSearch) || (!isLong && isDate && e.CreatedAt.Date == dateSearch.Date) || (!isLong && isDate && e.EntryDate.Date == dateSearch.Date);
+
+				total = await _logRepository.CountAsync(expression);
+				logs = await _logRepository.GetPagedOrderByDescendingAsync(page, pageSize, expression, e => e.CreatedAt);
 			}
 
-			var items = _mapper.Map<IEnumerable<LogDTO>>(logImports);
+			var items = _mapper.Map<IEnumerable<LogDTO>>(logs);
+
 			return new PagedResponse<LogDTO>
 			{
 				Items = items,
@@ -80,6 +94,26 @@ namespace MyShop_Backend.Services.Log
 				PageSize = pageSize,
 				TotalItems = total
 			};
+
+			//if (string.IsNullOrEmpty(key))
+			//{
+			//	total = await _logRepository.CountAsync();
+			//	logImports = await _logRepository.GetPagedOrderByDescendingAsync(page, pageSize, null, e => e.CreatedAt);
+			//}
+			//else
+			//{
+			//	total = await _logRepository.CountAsync();
+			//	logImports = await _logRepository.GetPagedOrderByDescendingAsync(page, pageSize, e => e.ImportId == long.Parse(key), e => e.CreatedAt);
+			//}
+
+			//var items = _mapper.Map<IEnumerable<LogDTO>>(logImports);
+			//return new PagedResponse<LogDTO>
+			//{
+			//	Items = items,
+			//	Page = page,
+			//	PageSize = pageSize,
+			//	TotalItems = total
+			//};
 		}
 
 		public async Task<IEnumerable<ImportDetailResponse>> GetById(long id)

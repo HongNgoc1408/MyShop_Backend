@@ -1,11 +1,13 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using MyShop_Backend.Models;
 
 namespace MyShop_Backend.Data
 {
-	public class MyShopDbContext : IdentityDbContext<User>
+	public class MyShopDbContext : IdentityDbContext<User, Role, string, IdentityUserClaim<string>, UserRole,
+		IdentityUserLogin<string>, IdentityRoleClaim<string>, IdentityUserToken<string>>
 	{
 		internal readonly IEnumerable<object> ImportDetail;
 
@@ -36,6 +38,26 @@ namespace MyShop_Backend.Data
 		public virtual DbSet<LogDetail> LogDetails { get; set; }
 
 		#endregion
+
+		protected override void OnModelCreating(ModelBuilder builder)
+		{
+			base.OnModelCreating(builder);
+			builder.Entity<User>(e =>
+			{
+				e.HasMany(x => x.UserRoles)
+				.WithOne(x => x.User)
+				.HasForeignKey(x => x.UserId)
+				.IsRequired();
+			});
+			builder.Entity<Role>(e =>
+			{
+				e.HasMany(x => x.UserRoles)
+				.WithOne(x => x.Role)
+				.HasForeignKey(x => x.RoleId)
+				.IsRequired();
+			});
+
+		}
 
 		private void UpdateTimestamps()
 		{

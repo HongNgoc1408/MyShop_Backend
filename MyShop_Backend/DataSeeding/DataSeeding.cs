@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MyShop_Backend.Data;
+using MyShop_Backend.Enumerations;
 using MyShop_Backend.Models;
 
 namespace MyShop_Backend.DataSeeding
@@ -22,51 +23,97 @@ namespace MyShop_Backend.DataSeeding
 					}
 					await InitialRoles(scope.ServiceProvider, context);
 				}
-				catch (Exception ex)
+				catch (Exception)
 				{
 					throw;
 				}
 			}
 		}
+
 		private static async Task InitialRoles(IServiceProvider serviceProvider, MyShopDbContext context)
 		{
-			var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+			var roleManager = serviceProvider.GetRequiredService<RoleManager<Role>>();
 
-			string[] roles = { "Admin" };
-
-			foreach (string role in roles)
+			foreach (string role in Enum.GetNames(typeof(RolesEnum)))
 			{
 				if (!context.Roles.Any(r => r.Name == role))
 				{
-					await roleManager.CreateAsync(new IdentityRole(role));
+					await roleManager.CreateAsync(new Role
+					{
+						Name = role,
+						NormalizedName = role.ToUpper(),
+					});
 				}
 			}
-			await InitialUsers(serviceProvider, context, roles);
+			await InitialUsers(serviceProvider, context);
 		}
 
-		private static async Task InitialUsers(IServiceProvider serviceProvider, MyShopDbContext context, string[] roles)
+		private static async Task InitialUsers(IServiceProvider serviceProvider, MyShopDbContext context)
 		{
 			var userManager = serviceProvider.GetRequiredService<UserManager<User>>();
-			var user = new User
+			var adminEmail = "ngocb2005766@student.ctu.edu.vn";
+			var admin = new User
 			{
-				FullName = "Hồng Ngọc",
-				Email = "lengoc14082002@gmail.com",
-				NormalizedEmail = "lengoc14082002@gmail.com",
-				UserName = "lengoc14082002@gmail.com",
-				NormalizedUserName = "lengoc14082002@gmail.com",
+				FullName = "Hong Ngoc",
+				Email = adminEmail,
+				NormalizedEmail = adminEmail.ToUpper(),
+				UserName = adminEmail,
+				NormalizedUserName = adminEmail.ToUpper(),
 				PhoneNumber = "0946633248",
-				//PhoneNumberConfirmed = true,
+				PhoneNumberConfirmed = true,
+				SecurityStamp = Guid.NewGuid().ToString(),
+			};
+			var staffEmail = "lengoc14082002@gmail.com";
+			var staff = new User
+			{
+				FullName = "Le Ngoc",
+				Email = staffEmail,
+				NormalizedEmail = staffEmail.ToUpper(),
+				UserName = staffEmail,
+				NormalizedUserName = staffEmail.ToUpper(),
+				PhoneNumber = "0901089182",
+				PhoneNumberConfirmed = true,
 				SecurityStamp = Guid.NewGuid().ToString(),
 			};
 
-			if (!context.Users.Any(u => u.UserName == user.UserName))
+			var inventorierEmail = "minhnhat012340@gmail.com";
+			var inventorier = new User
 			{
-				var result = await userManager.CreateAsync(user, "Ngoc123@");
+				FullName = "Minh Nhật",
+				Email = inventorierEmail,
+				NormalizedEmail = inventorierEmail.ToUpper(),
+				UserName = inventorierEmail,
+				NormalizedUserName = inventorierEmail.ToUpper(),
+				PhoneNumber = "0358103707",
+				PhoneNumberConfirmed = true,
+				SecurityStamp = Guid.NewGuid().ToString(),
+			};
+
+			if (!context.Users.Any(u => u.UserName == admin.UserName))
+			{
+				var result = await userManager.CreateAsync(admin, "Ngoc123@");
 				if (result.Succeeded)
 				{
-					await userManager.AddToRolesAsync(user, roles);
+					await userManager.AddToRoleAsync(admin, RolesEnum.Admin.ToString());
 				}
 			}
+			if (!context.Users.Any(u => u.UserName == staff.UserName))
+			{
+				var result = await userManager.CreateAsync(staff, "Ngoc123@");
+				if (result.Succeeded)
+				{
+					await userManager.AddToRoleAsync(staff, RolesEnum.Staff.ToString());
+				}
+			}
+			if (!context.Users.Any(u => u.UserName == inventorier.UserName))
+			{
+				var result = await userManager.CreateAsync(inventorier, "Ngoc123@");
+				if (result.Succeeded)
+				{
+					await userManager.AddToRoleAsync(inventorier, RolesEnum.Inventorier.ToString());
+				}
+			}
+
 		}
 	}
 }
