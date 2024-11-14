@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using MyShop_Backend.DTO;
 using MyShop_Backend.Enumerations;
 using MyShop_Backend.Request;
@@ -16,6 +15,52 @@ namespace MyShop_Backend.Controllers
 	{
 		private readonly IUserService _userService = userService;
 
+		[HttpPost]
+		[Authorize(Roles = "Admin")]
+		public async Task<IActionResult> Create([FromBody] UserCreateDTO user)
+		{
+			try
+			{
+				var users = await _userService.AddUser(user);
+				return Ok(users);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
+		}
+
+		[HttpPut("{userId}")]
+		[Authorize(Roles = "Admin")]
+		public async Task<IActionResult> Update(string userId, UpdateUserRequest request)
+		{
+			try
+			{
+				var user = await _userService.UpdateUser(userId,request);
+				return Ok(user);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
+		}
+		[HttpGet("{userId}")]
+		[Authorize(Roles = "Admin")]
+		
+		public async Task<IActionResult> Get(string userId)
+		{
+			try
+			{
+				var user = await _userService.GetUser(userId);
+				return Ok(user);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
+		}
+
+
 		[HttpGet]
 		[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> GetAll([FromQuery] PageRequest request, RolesEnum role)
@@ -23,36 +68,6 @@ namespace MyShop_Backend.Controllers
 			try
 			{
 				var users = await _userService.GetAllAsync(request.Page, request.PageSize, request.Key, role);
-				return Ok(users);
-			}
-			catch (Exception ex)
-			{
-				return StatusCode(500, ex.Message);
-			}
-		}
-
-		[HttpGet("users")]
-		[Authorize(Roles = "Admin")]
-		public async Task<IActionResult> GetAllUser([FromQuery] PageRequest request)
-		{
-			try
-			{
-				var users = await _userService.GetAllUserAsync(request.Page, request.PageSize, request.Key);
-				return Ok(users);
-			}
-			catch (Exception ex)
-			{
-				return StatusCode(500, ex.Message);
-			}
-		}
-
-		[HttpGet("staffs")]
-		[Authorize(Roles = "Admin")]
-		public async Task<IActionResult> GetAllStaff([FromQuery] PageRequest request)
-		{
-			try
-			{
-				var users = await _userService.GetAllStaffAsync(request.Page, request.PageSize, request.Key);
 				return Ok(users);
 			}
 			catch (Exception ex)

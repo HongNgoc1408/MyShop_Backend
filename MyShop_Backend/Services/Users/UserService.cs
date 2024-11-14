@@ -7,6 +7,7 @@ using MyShop_Backend.ErroMessage;
 using MyShop_Backend.Models;
 using MyShop_Backend.Repositories.DeliveryAddressRepositories;
 using MyShop_Backend.Repositories.ProductFavoriteRepositories;
+using MyShop_Backend.Repositories.TransactionRepositories;
 using MyShop_Backend.Repositories.UserRepositories;
 using MyShop_Backend.Request;
 using MyShop_Backend.Response;
@@ -21,21 +22,139 @@ namespace MyShop_Backend.Services.UserServices
 		private readonly IUserRepository _userRepository;
 		private readonly IDeliveryAddressRepository _deliveryAddressRepository;
 		private readonly IProductFavoriteRepository _productFavoriteRepository;
+		private readonly ITransactionRepository _transactionRepository;
 		private readonly IFileStorage _fileStorage;
 		private readonly string path = "assets/images/avatars";
 		private readonly IMapper _mapper;
 
-		public UserService(UserManager<User> userManager, IUserRepository userRepository, IDeliveryAddressRepository deliveryAdressRepository, IProductFavoriteRepository productFavoriteRepository, IFileStorage fileStorage, IMapper mapper)
+		public UserService(UserManager<User> userManager, IUserRepository userRepository, IDeliveryAddressRepository deliveryAdressRepository, IProductFavoriteRepository productFavoriteRepository, ITransactionRepository transactionRepository, IFileStorage fileStorage, IMapper mapper)
 		{
 			_userManager = userManager;
 			_userRepository = userRepository;
 			_deliveryAddressRepository = deliveryAdressRepository;
 			_productFavoriteRepository = productFavoriteRepository;
+			_transactionRepository = transactionRepository;
 			_fileStorage = fileStorage;
 			_mapper = mapper;
 		}
 
+		public async Task<UserDTO> AddUser(UserCreateDTO user)
+		{
+			using (await _transactionRepository.BeginTransactionAsync())
+			{
+				try
+				{
+					var User = new User()
+					{
+						Email = user.Email,
+						NormalizedEmail = user.Email,
+						UserName = user.Email,
+						NormalizedUserName = user.Email,
+						PhoneNumber = user.PhoneNumber,
+						FullName = user.FullName,
+						SecurityStamp = Guid.NewGuid().ToString(),
+						ConcurrencyStamp = Guid.NewGuid().ToString()
 
+					};
+					var result = await _userManager.CreateAsync(User, user.Password);
+					if (!result.Succeeded)
+					{
+						throw new Exception(ErrorMessage.INVALID);
+					}
+					var roleResult = await _userManager.AddToRolesAsync(User, user.Roles);
+					if (!roleResult.Succeeded)
+					{
+						throw new Exception(ErrorMessage.INVALID);
+					}
+					await _transactionRepository.CommitTransactionAsync();
+					return new UserDTO
+					{
+						Id = User.Id,
+						Email = User.Email,
+						PhoneNumber = User.PhoneNumber,
+						FullName = User.FullName,
+						Roles = user.Roles,
+					};
+				}
+				catch (Exception ex)
+				{
+					await _transactionRepository.RollbackTransactionAsync();
+					throw new Exception(ex.Message);
+				}
+			}
+		}
+		public async Task<UserDTO> UpdateUser(string userId, UpdateUserRequest request)
+		{
+			using (await _transactionRepository.BeginTransactionAsync())
+			{
+				try
+				{
+					var user = await _userManager.FindByIdAsync(userId);
+
+					if (user == null)
+					{
+						throw new Exception(ErrorMessage.NOT_FOUND);
+					}
+
+					if (!string.IsNullOrEmpty(request.FullName))
+					{
+						user.FullName = request.FullName;
+					}
+
+					user.PhoneNumber = request.PhoneNumber;
+
+					var updateRes = await _userManager.UpdateAsync(user);
+
+					if (!updateRes.Succeeded)
+					{
+						throw new Exception(ErrorMessage.INVALID);
+					}
+
+					var currentRoles = await _userManager.GetRolesAsync(user);
+					var removeRole = await _userManager.RemoveFromRolesAsync(user, currentRoles);
+					if (!removeRole.Succeeded)
+					{
+						throw new Exception(ErrorMessage.INVALID);
+					}
+
+					var addRoles = await _userManager.AddToRolesAsync(user, request.Roles);
+					if (!addRoles.Succeeded)
+					{
+						throw new Exception(ErrorMessage.INVALID);
+					}
+					await _transactionRepository.CommitTransactionAsync();
+					return new UserDTO
+					{
+						Id = user.Id,
+						Email = user.Email,
+						PhoneNumber = user.PhoneNumber,
+						FullName = user.FullName,
+						Roles = request.Roles
+					};
+				}
+				catch (Exception ex)
+				{
+					await _transactionRepository.RollbackTransactionAsync();
+					throw new Exception(ex.Message);
+				}
+			}
+		}
+		public async Task<UserDTO> GetUser(string userId)
+		{
+			var user = await _userManager.FindByIdAsync(userId)
+				?? throw new Exception(ErrorMessage.NOT_FOUND);
+
+			var roles = await _userManager.GetRolesAsync(user);
+
+			return new UserDTO
+			{
+				Id = user.Id,
+				Email = user.Email,
+				FullName = user.FullName,
+				Roles = roles,
+				PhoneNumber = user.PhoneNumber
+			};
+		}
 		public async Task<PagedResponse<UserResponse>> GetAllAsync(int page, int pageSize, string? key, RolesEnum role)
 		{
 			int totalUser;
@@ -79,117 +198,7 @@ namespace MyShop_Backend.Services.UserServices
 				PageSize = pageSize,
 			};
 		}
-		public async Task<PagedResponse<UserResponse>> GetAllUserAsync(int page, int pageSize, string? key)
-		{
-			{
-				int totalUser;
-				IEnumerable<User> users;
-				if (string.IsNullOrEmpty(key))
-				{
-					totalUser = await _userRepository.CountAsync(e => e.UserRoles.Any(e => e.Role.Name == "Employee"));
-					users = await _userRepository.GetPagedOrderByDescendingAsync(page, pageSize,
-						e => e.UserRoles.Any(e => e.Role.Name == "Employee"), e => e.CreatedAt);
-				}
-				else
-				{
-					Expression<Func<User, bool>> expression = e => (e.Id.Contains(key)
-						|| (e.FullName != null && e.FullName.Contains(key))
-					|| (e.Email != null && e.Email.Contains(key))
-						|| e.PhoneNumber != null && e.PhoneNumber.Contains(key))
-						&& e.UserRoles.Any(e => e.Role.Name == "User");
-					totalUser = await _userRepository.CountAsync(expression);
-					users = await _userRepository.GetPagedOrderByDescendingAsync(page, pageSize, expression, e => e.CreatedAt);
-				}
-				//var items = _mapper.Map<IEnumerable<UserResponse>>(users).Select(e =>
-				//{
-				//    e.LockedOut = e.LockoutEnd > DateTime.Now;
-				//    e.LockoutEnd = e.LockoutEnd > DateTime.Now ? e.LockoutEnd : null;
-				//    return e;
-				//});
-				//var roles = await _userManager.GetUsersInRoleAsync("User");
-				var items = _mapper.Map<IEnumerable<UserResponse>>(users);
-				return new PagedResponse<UserResponse>
-				{
-					Items = items,
-					TotalItems = totalUser,
-					Page = page,
-					PageSize = pageSize,
-				};
-			}
-			//int totalUser;
-			//IList<User> users;
-			//if (keySearch == null)
-			//{
-			//	totalUser = await _userRepository.CountAsync(keySearch);
-			//	users = (await _userRepository.GetAllUserAsync(page, pageSize)).ToList();
-			//}
-			//else
-			//{
-			//	totalUser = await _userRepository.CountAsync(keySearch);
-			//	users = (await _userRepository.GetAllUserAsync(page, pageSize, keySearch)).ToList();
-			//}
-
-			//var items = new List<UserResponse>();
-
-			//foreach (var user in users)
-			//{
-			//	var roles = await _userManager.GetRolesAsync(user);
-
-			//	if (roles.Count == 0)
-			//	{
-			//		var userResponse = _mapper.Map<UserResponse>(user);
-			//		items.Add(userResponse);
-			//	}
-			//}
-
-
-			//return new PagedResponse<UserResponse>
-			//{
-			//	TotalItems = totalUser,
-			//	Items = items,
-			//	Page = page,
-			//	PageSize = pageSize
-			//};
-		}
-		public async Task<PagedResponse<UserResponse>> GetAllStaffAsync(int page, int pageSize, string? keySearch)
-		{
-			int totalUser;
-			IList<User> users;
-			if (keySearch == null)
-			{
-				totalUser = await _userRepository.CountAsync(keySearch);
-				users = (await _userRepository.GetAllUserAsync(page, pageSize)).ToList();
-			}
-			else
-			{
-				totalUser = await _userRepository.CountAsync(keySearch);
-				users = (await _userRepository.GetAllUserAsync(page, pageSize, keySearch)).ToList();
-			}
-
-			var items = new List<UserResponse>();
-
-			foreach (var user in users)
-			{
-				var roles = await _userManager.GetRolesAsync(user);
-
-				if (roles.Count > 0)
-				{
-					var userResponse = _mapper.Map<UserResponse>(user);
-					userResponse.Roles = roles;
-					items.Add(userResponse);
-				}
-			}
-
-
-			return new PagedResponse<UserResponse>
-			{
-				TotalItems = totalUser,
-				Items = items,
-				Page = page,
-				PageSize = pageSize
-			};
-		}
-
+		
 		public async Task<AddressDTO?> GetUserAddress(string userId)
 		{
 			var delivery = await _deliveryAddressRepository.SingleOrDefaultAsync(e => e.User.Id == userId);
@@ -292,7 +301,7 @@ namespace MyShop_Backend.Services.UserServices
 			};
 			await _productFavoriteRepository.AddAsync(favorites);
 		}
-		
+
 		public async Task DeleteProductFavorite(string userId, long productId)
 		=> await _productFavoriteRepository.DeleteAsync(userId, productId);
 
@@ -309,14 +318,15 @@ namespace MyShop_Backend.Services.UserServices
 
 				await _userManager.UpdateAsync(user);
 			}
-			else throw new ArgumentException($"Id {userId} " + ErrorMessage.NOT_FOUND);     
+			else throw new ArgumentException($"Id {userId} " + ErrorMessage.NOT_FOUND);
 		}
 
 		public async Task<UserDTO> UpdateAvatar(string userId, IFormFile image)
 		{
 			var user = await _userManager.FindByIdAsync(userId);
-			if (user != null) {
-				if(user.ImageURL != null)
+			if (user != null)
+			{
+				if (user.ImageURL != null)
 				{
 					_fileStorage.Delete(user.ImageURL);
 				}
@@ -333,8 +343,9 @@ namespace MyShop_Backend.Services.UserServices
 		public async Task<ImageDTO> GetAvatar(string userId)
 		{
 			var user = await _userManager.FindByIdAsync(userId);
-			if (user != null) { 
-				return _mapper.Map<ImageDTO>(user); 
+			if (user != null)
+			{
+				return _mapper.Map<ImageDTO>(user);
 			}
 			else
 			{
@@ -342,5 +353,7 @@ namespace MyShop_Backend.Services.UserServices
 			}
 
 		}
+
+
 	}
 }

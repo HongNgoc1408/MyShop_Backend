@@ -7,9 +7,11 @@ namespace MyShop_Backend.Services.UserServices
 {
 	public interface IUserService
 	{
+		Task<UserDTO> AddUser(UserCreateDTO user);
+		Task<UserDTO> UpdateUser(string userId, UpdateUserRequest request);
+		Task<UserDTO> GetUser(string userId);
 		Task<PagedResponse<UserResponse>> GetAllAsync(int page, int pageSize, string? key, RolesEnum role);
-		Task<PagedResponse<UserResponse>> GetAllUserAsync(int page, int pageSize, string? keySearch);
-		Task<PagedResponse<UserResponse>> GetAllStaffAsync(int page, int pageSize, string? keySearch);
+
 		Task<AddressDTO?> GetUserAddress(string userId);
 		Task<AddressDTO?> UpdateUserAddress(string userId, AddressDTO address);
 		Task<UserDTO> GetUserInfo(string userId);

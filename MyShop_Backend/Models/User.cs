@@ -7,6 +7,7 @@ namespace MyShop_Backend.Models
 	{
 		[MaxLength(50)]
 		public string? FullName { get; set; }
+		public string? PhoneNumber { get; set; }
 		public DeliveryAddress? DeliveryAddress { get; set; }
 		public string? ImageURL { get; set; }
 		public DateTime CreatedAt { get; set; }
