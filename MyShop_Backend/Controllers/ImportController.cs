@@ -15,7 +15,7 @@ namespace MyShop_Backend.Controllers
 		private readonly IImportService _importService = importService;
 
 		[HttpPost]
-		[Authorize(Roles = "Admin")]
+		[Authorize(Roles = "Admin,Inventorier")]
 
 		public async Task<IActionResult> Create([FromBody] ImportRequest request)
 		{
@@ -35,7 +35,7 @@ namespace MyShop_Backend.Controllers
 		}
 
 		[HttpPut("{id}")]
-		[Authorize(Roles = "Admin")]
+		[Authorize(Roles = "Admin,Inventorier")]
 
 		public async Task<IActionResult> Update(long id, [FromBody] ImportRequest request)
 		{
@@ -51,7 +51,7 @@ namespace MyShop_Backend.Controllers
 		}
 
 		[HttpGet]
-		[Authorize(Roles = "Admin")]
+		[Authorize(Roles = "Admin,Inventorier")]
 		public async Task<IActionResult> GetAll([FromQuery] PageRequest request)
 		{
 			try
@@ -65,7 +65,7 @@ namespace MyShop_Backend.Controllers
 		}
 
 		[HttpGet("{id}")]
-		[Authorize(Roles = "Admin")]
+		[Authorize(Roles = "Admin,Inventorier")]
 		public async Task<IActionResult> GetStockDetail(long id)
 		{
 			try

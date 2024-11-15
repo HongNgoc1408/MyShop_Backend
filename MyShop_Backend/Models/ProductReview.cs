@@ -33,7 +33,7 @@ namespace MyShop_Backend.Models
 			get => JsonConvert.SerializeObject(ImagesUrls);
 			set => ImagesUrls = value == null ? null : JsonConvert.DeserializeObject<List<string>>(value);
 		}
-
+		public bool Enable {  get; set; }
 		public DateTime CreatedAt { get; set; }
 		public DateTime? UpdatedAt { get; set; }
 	} 

@@ -2,6 +2,7 @@
 using MyShop_Backend.CommonRepository.CommonRepository;
 using MyShop_Backend.Data;
 using MyShop_Backend.DTO;
+using MyShop_Backend.Enumerations;
 using MyShop_Backend.Models;
 using MyShop_Backend.Services.PagedServices;
 using System.Linq.Expressions;
@@ -68,6 +69,45 @@ namespace MyShop_Backend.Repositories.OrderRepositories
 					Time = g.Key.Date,
 					Statistic = g.Sum(x => x.Total)
 				}).ToArrayAsync();
+		}
+
+		public async Task<IEnumerable<StatisticDTO>> GetTotalProductSalesByYear(long productId, int year, int? month) => month == null
+			? await _dbContext.Orders
+			.Where(e => e.ReceivedDate.Year == year &&
+				  (e.OrderStatus == DeliveryStatusEnum.Received))
+			.SelectMany(r => r.OrderDetails)
+			.Where(e => e.ProductId == productId)
+			.GroupBy(e => e.Order.ReceivedDate.Month)
+			.Select(g => new StatisticDTO
+			{
+				Time = g.Key,
+				Statistic = g.Sum(x => x.Price)
+			}).ToArrayAsync()
+			: await _dbContext.Orders
+			.Where(e => e.ReceivedDate.Year == year && e.ReceivedDate.Month == month &&
+				  (e.OrderStatus == DeliveryStatusEnum.Received))
+			.SelectMany(r => r.OrderDetails)
+			.Where(e => e.ProductId == productId)
+			.GroupBy(e => e.Order.ReceivedDate.Day)
+			.Select(g => new StatisticDTO
+			{
+				Time = g.Key,
+				Statistic = g.Sum(x => x.Price)
+			}).ToArrayAsync();
+
+		public async Task<IEnumerable<StatisticDateDTO>> GetTotalProductSales(long productId, DateTime dateFrom, DateTime dateTo)
+		{
+			return await _dbContext.Orders
+			   .Where(e => e.ReceivedDate >= dateFrom && e.ReceivedDate <= dateTo.AddDays(1) &&
+				   (e.OrderStatus == DeliveryStatusEnum.Received))
+			   .SelectMany(s => s.OrderDetails)
+			   .Where(e => e.ProductId == productId)
+			   .GroupBy(gb => gb.Order.ReceivedDate.Date)
+			   .Select(g => new StatisticDateDTO
+			   {
+				   Time = g.Key,
+				   Statistic = g.Sum(x => x.Price)
+			   }).ToArrayAsync();
 		}
 	}
 }

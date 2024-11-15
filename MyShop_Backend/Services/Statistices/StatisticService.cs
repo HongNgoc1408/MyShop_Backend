@@ -102,53 +102,54 @@ namespace MyShop_Backend.Services.Statistices
 				Total = salesData.Total - spendingData.Total
 			};
 		}
-		public Task<StatisticProductReponse> GetStatisticProduct(int productId, DateTime from, DateTime to)
+	
+		public async Task<RevenueResponse> GetProductRevenueByYear(long productId, int year, int? month)
 		{
-			throw new NotImplementedException();
-		}
+			var productSpending = await _importRepository.GetTotalProductSpendingByYear(productId, year, month);
+			var productSales = await _orderRepository.GetTotalProductSalesByYear(productId, year, month);
 
-		public Task<StatisticProductReponse> GetStatisticProductYear(int productId, int year, int? month)
-		{
-			throw new NotImplementedException();
-		}
-
-		public async Task<StatisticDateResponse> GetTotalSold(DateTime dateFrom, DateTime dateTo)
-		{
-			var res = await _orderRepository.GetTotalSold(dateFrom, dateTo);
-			return new StatisticDateResponse
+			var spendingData = new StatisticResponse
 			{
-				StatisticDateDTO = res,
-				Total = res.Sum(x => x.Statistic)
+				StatisticDTO = productSpending,
+				Total = productSpending.Sum(x => x.Statistic)
+			};
+
+			var salesData = new StatisticResponse
+			{
+				StatisticDTO = productSales,
+				Total = productSales.Sum(x => x.Statistic)
+			};
+
+			return new RevenueResponse
+			{
+				Spending = spendingData,
+				Sales = salesData,
+				Total = salesData.Total - spendingData.Total
 			};
 		}
 
-		public async Task<StatisticResponse> GetTotalSoldByYear(int year, int? month)
+		public async Task<RevenueDateResponse> GetProductRevenue(long productId, DateTime dateFrom, DateTime dateTo)
 		{
-			var res = await _orderRepository.GetTotalSoldByYear(year, month);
-			return new StatisticResponse
-			{
-				StatisticDTO = res,
-				Total = res.Sum(e => e.Statistic)
-			};
-		}
+			var productSpending = await _importRepository.GetTotalProductSpending(productId, dateFrom, dateTo);
+			var productSales = await _orderRepository.GetTotalProductSales(productId, dateFrom, dateTo);
 
-		public async Task<StatisticDateResponse> GetTotalSpending(DateTime dateFrom, DateTime dateTo)
-		{
-			var res = await _importRepository.GetTotalSpending(dateFrom, dateTo);
-			return new StatisticDateResponse
+			var spendingData = new StatisticDateResponse
 			{
-				StatisticDateDTO = res,
-				Total = res.Sum(x => x.Statistic)
+				StatisticDateDTO = productSpending,
+				Total = productSpending.Sum(e => e.Statistic)
 			};
-		}
 
-		public async Task<StatisticResponse> GetTotalSpendingByYear(int year, int? month)
-		{
-			var res = await _importRepository.GetTotalSpendingByYear(year, month);
-			return new StatisticResponse
+			var salesData = new StatisticDateResponse
 			{
-				StatisticDTO = res,
-				Total = res.Sum(x => x.Statistic)
+				StatisticDateDTO = productSales,
+				Total = productSales.Sum(e => e.Statistic)
+			};
+
+			return new RevenueDateResponse
+			{
+				Spending = spendingData,
+				Sales = salesData,
+				Total = salesData.Total - spendingData.Total
 			};
 		}
 	}

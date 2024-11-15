@@ -76,7 +76,7 @@ namespace MyShop_Backend.Controllers
 		}
 
 		[HttpGet("name")]
-		[Authorize(Roles = "Admin")]
+		[Authorize(Roles = "Admin,Inventorier")]
 		public async Task<IActionResult> GetName()
 		{
 			try
@@ -90,7 +90,7 @@ namespace MyShop_Backend.Controllers
 		}
 
 		[HttpGet("color/{id}")]
-		[Authorize(Roles = "Admin")]
+		[Authorize(Roles = "Admin,Inventorier")]
 		public async Task<IActionResult> GetColorById(long id)
 		{
 			try
@@ -105,7 +105,7 @@ namespace MyShop_Backend.Controllers
 		}
 
 		[HttpGet("size/{id}")]
-		[Authorize(Roles = "Admin")]
+		[Authorize(Roles = "Admin,Inventorier")]
 		public async Task<IActionResult> GetSizeById(long id)
 		{
 			try
@@ -120,7 +120,7 @@ namespace MyShop_Backend.Controllers
 		}
 
 		[HttpPost("create")]
-		[Authorize(Roles = "Admin")]
+		[Authorize(Roles = "Admin,Inventorier")]
 		public async Task<IActionResult> Create([FromForm] ProductRequest request, [FromForm] IFormFileCollection images)
 		{
 			try
@@ -135,7 +135,7 @@ namespace MyShop_Backend.Controllers
 		}
 
 		[HttpPut("update/{id}")]
-		[Authorize(Roles = "Admin")]
+		[Authorize(Roles = "Admin,Inventorier")]
 		public async Task<IActionResult> Update(long id, [FromForm] ProductRequest request, [FromForm] IFormFileCollection images)
 		{
 			try
@@ -154,7 +154,7 @@ namespace MyShop_Backend.Controllers
 		}
 
 		[HttpPut("updateEnable/{id}")]
-		[Authorize(Roles = "Admin")]
+		[Authorize(Roles = "Admin,,Inventorier")]
 		public async Task<IActionResult> UpdateProductEnable(long id, [FromBody] UpdateEnableRequest request)
 		{
 			try
@@ -173,7 +173,7 @@ namespace MyShop_Backend.Controllers
 		}
 
 		[HttpDelete("delete/{id}")]
-		[Authorize(Roles = "Admin")]
+		[Authorize(Roles = "Admin,,Inventorier")]
 		public async Task<IActionResult> Delete(long id)
 		{
 			try

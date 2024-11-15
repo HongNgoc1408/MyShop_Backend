@@ -25,7 +25,7 @@ namespace MyShop_Backend.Controllers
 		}
 
 		[HttpPost("create")]
-		[Authorize(Roles = "Admin")]
+		[Authorize(Roles = "Admin,Inventorier")]
 		
 		public async Task<IActionResult> Create([FromForm] NameRequest request, [FromForm] IFormFileCollection image)
 		{
@@ -41,7 +41,7 @@ namespace MyShop_Backend.Controllers
 		}
 
 		[HttpPut("update/{id}")]
-		[Authorize(Roles = "Admin")]
+		[Authorize(Roles = "Admin,Inventorier")]
 		public async Task<IActionResult> Update(int id, [FromForm] NameRequest request, [FromForm] IFormCollection files)
 		{
 			try
@@ -61,7 +61,7 @@ namespace MyShop_Backend.Controllers
 		}
 
 		[HttpDelete("delete/{id}")]
-		[Authorize(Roles = "Admin")]
+		[Authorize(Roles = "Admin,Inventorier")]
 		public async Task<IActionResult> Delete(int id)
 		{
 			try

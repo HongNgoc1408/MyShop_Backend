@@ -13,7 +13,7 @@ namespace MyShop_Backend.Controllers
 		private readonly IStatisticService _statisticService = statisticService;
 
 		[HttpGet("totalImport")]
-		[Authorize(Roles = "Admin")]
+		[Authorize(Roles = "Admin,Inventorier,Staff,Manage")]
 
 		public async Task<IActionResult> GetTotalImport()
 		{
@@ -28,7 +28,7 @@ namespace MyShop_Backend.Controllers
 		}
 
 		[HttpGet("totalOrder")]
-		[Authorize(Roles = "Admin")]
+		[Authorize(Roles = "Admin,Inventorier,Staff,Manage")]
 		public async Task<IActionResult> GetTotalOrder() {
 			try
 			{
@@ -42,7 +42,7 @@ namespace MyShop_Backend.Controllers
 		}
 
 		[HttpGet("totalOrderDone")]
-		[Authorize(Roles = "Admin")]
+		[Authorize(Roles = "Admin,Inventorier,Staff,Manage")]
 		public async Task<IActionResult> GetTotalOrderDone()
 		{
 			try
@@ -57,7 +57,7 @@ namespace MyShop_Backend.Controllers
 		}
 
 		[HttpGet("totalProduct")]
-		[Authorize(Roles = "Admin")]
+		[Authorize(Roles = "Admin,Inventorier,Staff,Manage")]
 		public async Task<IActionResult> GetTotalProduct()
 		{
 			try
@@ -72,7 +72,7 @@ namespace MyShop_Backend.Controllers
 		}
 
 		[HttpGet("totalUser")]
-		[Authorize(Roles = "Admin")]
+		[Authorize(Roles = "Admin,Inventorier,Staff,Manage")]
 		public async Task<IActionResult> GetTotalUser()
 		{
 			try
@@ -85,68 +85,9 @@ namespace MyShop_Backend.Controllers
 				return BadRequest(ex.Message);
 			}
 		}
-		[HttpGet("totalSpendingYear")]
-		[Authorize(Roles = "Admin")]
-		public async Task<IActionResult> GetTotalSpendingByYear(int year, int? month)
-		{
-			try
-			{
-				var result = await _statisticService.GetTotalSpendingByYear(year, month);
-				return Ok(result);
-			}
-			catch (Exception ex)
-			{
-				return BadRequest(new { message = ex.Message });
-			}
-		}
-
-		[HttpGet("totalSpending")]
-		[Authorize(Roles = "Admin")]
-		public async Task<IActionResult> GetTotalSpending(DateTime dateFrom, DateTime dateTo)
-		{
-			try
-			{
-				var res = await _statisticService.GetTotalSpending(dateFrom, dateTo);
-				return Ok(res);
-			}
-			catch (Exception ex)
-			{
-				return BadRequest(ex.Message);
-			}
-		}
-
-		[HttpGet("totalSoldYear")]
-		[Authorize(Roles = "Admin")]
-		public async Task<IActionResult> GetTotalSoldByYear(int year, int? month)
-		{
-			try
-			{
-				var result = await _statisticService.GetTotalSoldByYear(year, month);
-				return Ok(result);
-			}
-			catch (Exception ex)
-			{
-				return BadRequest(ex.Message);
-			}
-		}
-
-		[HttpGet("totalSold")]
-		[Authorize(Roles = "Admin")]
-		public async Task<IActionResult> GetTotalSold(DateTime dateFrom, DateTime dateTo)
-		{
-			try
-			{
-				var res = await _statisticService.GetTotalSold(dateFrom, dateTo);
-				return Ok(res);
-			}
-			catch (Exception ex)
-			{
-				return StatusCode(500, ex.Message);
-			}
-		}
 
 		[HttpGet("totalRevenueYear")]
-		[Authorize(Roles = "Admin")]
+		[Authorize(Roles = "Admin,Inventorier,Staff,Manage")]
 		public async Task<IActionResult> GetTotalRevenueYear(int year, int? month)
 		{
 			try
@@ -161,12 +102,42 @@ namespace MyShop_Backend.Controllers
 		}
 
 		[HttpGet("totalRevenue")]
-		[Authorize(Roles = "Admin")]
+		[Authorize(Roles = "Admin,Inventorier,Staff,Manage")]
 		public async Task<IActionResult> GetTotalRevenue(DateTime dateFrom, DateTime dateTo)
 		{
 			try
 			{
 				var res = await _statisticService.GetRevenue(dateFrom, dateTo);
+				return Ok(res);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
+		}
+
+		[HttpGet("totalRevenueProductYear")]
+		[Authorize(Roles = "Admin,Inventorier,Staff,Manage")]
+		public async Task<IActionResult> GetProductRevenueByYear(int year, int? month, long productId)
+		{
+			try
+			{
+				var res = await _statisticService.GetProductRevenueByYear(productId, year, month);
+				return Ok(res);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
+		}
+
+		[HttpGet("totalRevenueProduct")]
+		[Authorize(Roles = "Admin,Inventorier,Staff,Manage")]
+		public async Task<IActionResult> GetProductRevenue(DateTime dateFrom, DateTime dateTo, long productId)
+		{
+			try
+			{
+				var res = await _statisticService.GetProductRevenue(productId, dateFrom, dateTo);
 				return Ok(res);
 			}
 			catch (Exception ex)

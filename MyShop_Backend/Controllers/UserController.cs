@@ -45,7 +45,7 @@ namespace MyShop_Backend.Controllers
 			}
 		}
 		[HttpGet("{userId}")]
-		[Authorize(Roles = "Admin")]
+		[Authorize(Roles = "Admin,Manage")]
 		
 		public async Task<IActionResult> Get(string userId)
 		{
@@ -62,7 +62,7 @@ namespace MyShop_Backend.Controllers
 
 
 		[HttpGet]
-		[Authorize(Roles = "Admin")]
+		[Authorize(Roles = "Admin,Manage")]
 		public async Task<IActionResult> GetAll([FromQuery] PageRequest request, RolesEnum role)
 		{
 			try
@@ -77,7 +77,7 @@ namespace MyShop_Backend.Controllers
 		}
 
 		[HttpPut("lock-out/{id}")]
-		[Authorize(Roles = "Admin")]
+		[Authorize(Roles = "Admin,Manage")]
 		public async Task<IActionResult> LockOut(string id, [FromBody] LockOutRequest request)
 		{
 			try

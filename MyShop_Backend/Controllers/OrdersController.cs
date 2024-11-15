@@ -17,7 +17,7 @@ namespace MyShop_Backend.Controllers
 
 		//Admin
 		[HttpGet("get-all")]
-		[Authorize(Roles = "Admin")]
+		[Authorize(Roles = "Admin,Staff")]
 		public async Task<IActionResult> GetAll([FromQuery] PageRequest request)
 		{
 			try
@@ -33,7 +33,7 @@ namespace MyShop_Backend.Controllers
 		
 
 		[HttpPut("updateStatus/{id}")]
-		[Authorize(Roles = "Admin")]
+		[Authorize(Roles = "Admin,Staff")]
 		public async Task<IActionResult> UpdateStatus(int id, [FromBody] UpdateStatusOrderRequest request)
 		{
 			try
@@ -52,7 +52,7 @@ namespace MyShop_Backend.Controllers
 		}
 
 		[HttpDelete("delete/{id}")]
-		[Authorize(Roles = "Admin")]
+		[Authorize(Roles = "Admin,Staff")]
 		public async Task<IActionResult> Delete(long id)
 		{
 			try
@@ -71,7 +71,7 @@ namespace MyShop_Backend.Controllers
 		}
 
 		[HttpPut("shipping/{orderId}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Staff")]
         public async Task<IActionResult> Shipping(long orderId, [FromBody] OrderToShippingRequest request)
         {
             try
@@ -93,7 +93,7 @@ namespace MyShop_Backend.Controllers
             }
         }
 		[HttpGet("status/{status}")]
-		[Authorize(Roles = "Admin")]
+		[Authorize(Roles = "Admin,Staff")]
 		public async Task<IActionResult> GetWithOrderStatus(DeliveryStatusEnum status, [FromQuery] PageRequest request)
 		{
 			try
@@ -107,7 +107,7 @@ namespace MyShop_Backend.Controllers
 			}
 		}
 		[HttpGet("user/{status}")]
-		[Authorize(Roles = "Admin")]
+		[Authorize(Roles = "Admin,Staff")]
 		public async Task<IActionResult> GetWithOrderStatusUser(DeliveryStatusEnum status, [FromQuery] PageRequest request)
 		{
 			try
@@ -155,7 +155,7 @@ namespace MyShop_Backend.Controllers
 			try
 			{
 				var roles = User.FindAll(ClaimTypes.Role).Select(e => e.Value);
-				var isAdmin = roles.Contains("Admin");
+				var isAdmin = roles.Any(role => role.Equals("Admin") || role.Equals("Staff"));
 
 				if (isAdmin)
 				{
@@ -182,6 +182,7 @@ namespace MyShop_Backend.Controllers
 				return StatusCode(500, ex.Message);
 			}
 		}
+
 		[HttpPost("create")]
 		public async Task<IActionResult> Create([FromBody] OrderRequest request)
 		{

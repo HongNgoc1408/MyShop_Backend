@@ -26,7 +26,7 @@ namespace MyShop_Backend.Response
 		public StatisticDateResponse Sales { get; set; }
 		public double Total { get; set; }
 	}
-	public class StatisticProductReponse
+	public class StatisticProductResponse
 	{
 		public IEnumerable<StatisticDTO> StatisticProduct { get; set; }
 		public double Total { get; set; }

@@ -15,7 +15,7 @@ namespace MyShop_Backend.Controllers
 		private readonly ILogImportService _logService = logService;
 
 		[HttpGet]
-		[Authorize(Roles = "Admin")]
+		[Authorize(Roles = "Admin,Inventorier")]
 		public async Task<IActionResult> GetAll([FromQuery] PageRequest request)
 		{
 			try
@@ -30,7 +30,7 @@ namespace MyShop_Backend.Controllers
 		}
 
 		[HttpGet("{id}")]
-		[Authorize(Roles = "Admin")]
+		[Authorize(Roles = "Admin,Inventorier")]
 		public async Task<IActionResult> GetById(long id)
 		{
 			try

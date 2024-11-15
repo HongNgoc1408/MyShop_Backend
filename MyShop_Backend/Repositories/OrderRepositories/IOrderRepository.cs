@@ -10,5 +10,7 @@ namespace MyShop_Backend.Repositories.OrderRepositories
 		Task<Order?> SingleOrDefaultAsyncInclude(Expression<Func<Order, bool>> expression);
 		Task<IEnumerable<StatisticDTO>> GetTotalSoldByYear(int year, int? month);
 		Task<IEnumerable<StatisticDateDTO>> GetTotalSold(DateTime dateFrom, DateTime dateTo);
+		Task<IEnumerable<StatisticDTO>> GetTotalProductSalesByYear(long productId, int year, int? month);
+		Task<IEnumerable<StatisticDateDTO>> GetTotalProductSales(long productId, DateTime dateFrom, DateTime dateTo);
 	}
 }
