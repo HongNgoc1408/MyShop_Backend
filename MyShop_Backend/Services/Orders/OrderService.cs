@@ -99,7 +99,7 @@ namespace MyShop_Backend.Services.Orders
 					District_Id = request.District_Id,
 					Ward_Id = request.Ward_Id,
 					OrderDate = now,
-					Total = request.Total,
+					Total = request.Total,	
 				};
 
 				var method = await _paymentMethodRepository
@@ -285,7 +285,7 @@ namespace MyShop_Backend.Services.Orders
 
 			foreach (var item in items)
 			{
-				var p = (await _orderDetailRepository.GetAsync(x => x.OrderId == item.Id)).FirstOrDefault()?.Product;
+				var p = (await _orderDetailRepository.GetAsync(x => x.OrderId == item.Id)).FirstOrDefault();
 				item.Product = _mapper.Map<ProductDTO>(p);
 			}
 

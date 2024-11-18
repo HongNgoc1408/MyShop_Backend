@@ -21,6 +21,7 @@ namespace MyShop_Backend.Mappers
 			CreateMap<User, UserResponse>();
 			CreateMap<User, UserDTO>().ReverseMap();
 			CreateMap<DeliveryAddress, AddressDTO>().ReverseMap();
+
 			//product
 			CreateMap<Product, NameDTO>().ReverseMap();
 			CreateMap<Product, ProductDTO>().ReverseMap();
@@ -58,11 +59,12 @@ namespace MyShop_Backend.Mappers
 
 			CreateMap<OrderRequest, Order>().ReverseMap();
 			CreateMap<OrderDetail, ProductOrderDetails>();
-
 			CreateMap<Order, OrderDetailsResponse>()
 				.ForMember(d => d.PaymentMethod, opt => opt.MapFrom(src => src.PaymentMethodName))
 				.ForMember(dest => dest.ProductOrderDetails, opt => opt.MapFrom(src => src.OrderDetails));
 
+			CreateMap<OrderDetail, ProductDTO>()
+				.ForMember(d => d.Name, opt => opt.MapFrom(src => src.ProductName));
 			//Payment Method
 			CreateMap<PaymentMethod, PaymentMethodDTO>().ReverseMap();
 
