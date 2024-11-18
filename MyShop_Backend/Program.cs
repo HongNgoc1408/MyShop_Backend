@@ -178,10 +178,11 @@ builder.Services.AddCors(opt =>
 	});
 });
 
-// Configure Kestrel to increase the max request body size (30MB to 50MB as example)
+
+
 builder.WebHost.ConfigureKestrel(options =>
 {
-	options.Limits.MaxRequestBodySize = 50 * 1024 * 1024; // Set to 50MB (in bytes)
+	options.Limits.MaxRequestBodySize = 50 * 1024 * 1024; 
 });
 
 var app = builder.Build();

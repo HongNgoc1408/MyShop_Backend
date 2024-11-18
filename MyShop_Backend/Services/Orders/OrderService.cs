@@ -312,17 +312,21 @@ namespace MyShop_Backend.Services.Orders
 
 					var listProductUpdate = new List<Product>();
 
+
 					foreach (var detail in orderDetail)
 					{
-						var size = await _productSizeRepository
-						.SingleAsyncInclude(e => e.ProductColorId == detail.ColorId && e.SizeId == detail.SizeId);
-						if (size != null)
+						if (detail.ProductId != null)
 						{
-							detail.Product.Sold -= detail.Quantity;
-							size.InStock += detail.Quantity;
-							listProductUpdate.Add(detail.Product);
+							var size = await _productSizeRepository
+													.SingleAsyncInclude(e => e.ProductColorId == detail.ColorId && e.SizeId == detail.SizeId);
+							if (size != null)
+							{
+								detail.Product.Sold -= detail.Quantity;
+								size.InStock += detail.Quantity;
+								listProductUpdate.Add(detail.Product);
+							}
 						}
-						else continue;
+
 					}
 					_cache.Remove("Order " + orderId);
 					await _orderRepository.UpdateAsync(order);

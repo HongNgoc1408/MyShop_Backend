@@ -27,7 +27,7 @@ namespace MyShop_Backend.Controllers
 				return StatusCode(500, ex.Message);
 			}
 		}
-		[HttpGet("get/{id}")]
+		[HttpGet("/{id}")]
 		public async Task<IActionResult> GetById(int id)
 		{
 			try

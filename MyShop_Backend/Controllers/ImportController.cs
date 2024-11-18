@@ -8,7 +8,7 @@ using System.Security.Claims;
 
 namespace MyShop_Backend.Controllers
 {
-	[Route("api/import")]
+	[Route("api/imports")]
 	[ApiController]
 	public class ImportController(IImportService importService) : ControllerBase
 	{

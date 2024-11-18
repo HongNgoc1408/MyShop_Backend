@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using MyShop_Backend.Models;
 using MyShop_Backend.Request;
 using MyShop_Backend.Services.AuthServices;

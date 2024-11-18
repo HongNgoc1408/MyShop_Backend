@@ -1,8 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Cors.Infrastructure;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using MyShop_Backend.Models;
 using MyShop_Backend.Request;
 using MyShop_Backend.Services.Carts;
 using System.Security.Claims;
