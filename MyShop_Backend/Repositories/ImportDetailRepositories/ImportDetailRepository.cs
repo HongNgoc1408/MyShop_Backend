@@ -15,8 +15,6 @@ namespace MyShop_Backend.Repositories.ImportDetailRepositories
 			return await _dbcontext.ImportDetails
 				.Where(expression)
 				.Include(e => e.Product)
-				//.Include(e => e.ProductColors)
-				//.Include(e => e.ProductSize)
 				.ToListAsync();
 		}
 	}

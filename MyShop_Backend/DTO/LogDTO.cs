@@ -8,6 +8,6 @@
 		public string? Note { get; set; }
 		public double Total { get; set; }
 		public DateTime EntryDate { get; set; }
-		public DateTime CreateAt { get; set; }
+		public DateTime CreatedAt { get; set; }
 	}
 }

@@ -595,6 +595,7 @@ namespace MyShop_Backend.Services.Orders
 							ImagesUrls = pathNames,
 							ColorName = colorName,
 							SizeName = sizeName,
+							Enable = true,
 						});
 					}
 				}

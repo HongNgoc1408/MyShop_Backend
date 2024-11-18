@@ -5,11 +5,19 @@ namespace MyShop_Backend.Models
 	public class Product : IBaseEntity
 	{
 		public long Id { get; set; }
+
 		[MaxLength(150)]
 		public string Name { get; set; }
-		[MaxLength(500)]
+
+		[MaxLength(1024)]
 		public string? Description { get; set; }
-		  
+
+		[MaxLength(1024)]
+		public string? GuideSize { get; set; }
+
+		[MaxLength(1024)]
+		public string? Care { get; set; }
+
 		[Range(0, 100)]
 		public float Discount { get; set; }
 
@@ -33,7 +41,5 @@ namespace MyShop_Backend.Models
 		public ICollection<ProductColor> ProductColors { get; } = new HashSet<ProductColor>();
 		public ICollection<ProductFavorite> ProductFavorites { get; } = new HashSet<ProductFavorite>();
 		public ICollection<ProductReview> ProductReviews { get; } = new HashSet<ProductReview>();
-
-		//public ICollection<ImportDetail> ImportDetails { get; } = new HashSet<ImportDetail>();
 	}
 }

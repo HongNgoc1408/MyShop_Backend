@@ -1,4 +1,6 @@
-﻿namespace MyShop_Backend.Models
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace MyShop_Backend.Models
 {
 	public class OrderDetail
 	{
@@ -6,6 +8,8 @@
 		public long OrderId { get; set; }
 		public Order Order { get; set; }
 		public long? ProductId { get; set; }
+
+		[DeleteBehavior(DeleteBehavior.SetNull)]
 		public Product? Product { get; set; }
 		public string ProductName { get; set; }
 		public string SizeName { get; set; }

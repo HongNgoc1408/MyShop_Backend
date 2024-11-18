@@ -5,6 +5,8 @@
 		public long Id { get; set; }
 		public string Name { get; set; }
 		public string? Description { get; set; }
+		public string? GuideSize { get; set; }
+		public string? Care { get; set; }
 		public float Discount { get; set; } = 0;
 		public double Price { get; set; }
 		public int Sold { get; set; }

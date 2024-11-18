@@ -43,5 +43,6 @@ namespace MyShop_Backend.Models
 		public DateTime? UpdatedAt { get; set; }
 
 		public ICollection<OrderDetail> OrderDetails { get; } = new HashSet<OrderDetail>();
+
 	}
 }

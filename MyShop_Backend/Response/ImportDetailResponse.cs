@@ -1,6 +1,4 @@
-﻿using MyShop_Backend.Models;
-
-namespace MyShop_Backend.Response
+﻿namespace MyShop_Backend.Response
 {
 	public class ImportDetailResponse
 	{

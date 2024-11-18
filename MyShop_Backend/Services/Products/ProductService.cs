@@ -131,13 +131,13 @@ namespace MyShop_Backend.Services.Products
 			var product = await _productRepository.FindAsync(id);
 			if (product != null)
 			{
-				var images = await _imageRepository.GetImageByProductIdAsync(id);
-				var colorImages = await _productColorRepository.GetAsync(e => e.ProductId == id);
+				//var images = await _imageRepository.GetImageByProductIdAsync(id);
+				//var colorImages = await _productColorRepository.GetAsync(e => e.ProductId == id);
 
-				var deleteList = colorImages.Select(e => e.ImageUrl).ToList();
-				deleteList.AddRange(images.Select(e => e.ImageUrl));
+				//var deleteList = colorImages.Select(e => e.ImageUrl).ToList();
+				//deleteList.AddRange(images.Select(e => e.ImageUrl));
 
-				_fileStorage.Delete(deleteList);
+				//_fileStorage.Delete(deleteList);
 				await _productRepository.DeleteAsync(product);
 			}
 			else throw new ArgumentException($"Id {id} " + ErrorMessage.NOT_FOUND);
@@ -377,6 +377,8 @@ namespace MyShop_Backend.Services.Products
 				{
 					product.Name = request.Name;
 					product.Description = request.Description;
+					product.GuideSize = request.GuideSize;
+					product.Care = request.Care;
 					product.Price = request.Price;
 					product.CategoryId = request.CategoryId;
 					product.BrandId = request.BrandId;

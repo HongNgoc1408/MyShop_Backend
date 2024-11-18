@@ -23,5 +23,7 @@ namespace MyShop_Backend.DTO
 
 		public ProductDTO Product { get; set; }
 		public bool Reviewed { get; set; }
+
+		public string? ImageUrl { get; set; }
 	}
 }

@@ -46,6 +46,7 @@ using MyShop_Backend.Repositories.LogDetailRepositories;
 using MyShop_Backend.Services.Log;
 using MyShop_Backend.Services.LogImports;
 using MyShop_Backend.DataSeeding;
+using MyShop_Backend.Services.Reviews;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -142,6 +143,7 @@ builder.Services.AddScoped<IVNPayLibrary, VNPayLibrary>();
 builder.Services.AddScoped<IImportService, ImportService>();
 builder.Services.AddScoped<ILogImportService, LogService>();
 builder.Services.AddScoped<IStatisticService, StatisticService>();
+builder.Services.AddScoped<IReviewService, ReviewService>();
 
 
 // Repositories

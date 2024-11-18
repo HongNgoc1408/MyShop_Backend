@@ -14,6 +14,6 @@
 		public long ProductId { get; set; }
 		public Product Product { get; set; }
 
-		public ICollection<ProductColor> ProductColors { get; } = new HashSet<ProductColor>();
+		//public ICollection<ProductColor> ProductColors { get; } = new HashSet<ProductColor>();
 	}
 }
