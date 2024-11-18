@@ -70,6 +70,7 @@ namespace MyShop_Backend.Services.Imports
 							SizeName = product.Size.Name,
 							Quantity = item.Quantity,
 							Price = item.Price,
+							ProductName = product.ProductColor.Product.Name
 						};
 						listImportDetail.Add(importDetail);
 					}

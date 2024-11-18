@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using MailKit.Search;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Caching.Memory;
 using MyShop_Backend.DTO;
@@ -99,7 +100,7 @@ namespace MyShop_Backend.Services.Orders
 					District_Id = request.District_Id,
 					Ward_Id = request.Ward_Id,
 					OrderDate = now,
-					Total = request.Total,	
+					Total = request.Total,
 				};
 
 				var method = await _paymentMethodRepository
@@ -307,9 +308,29 @@ namespace MyShop_Backend.Services.Orders
 					|| order.OrderStatus.Equals(DeliveryStatusEnum.Confirmed))
 				{
 					order.OrderStatus = DeliveryStatusEnum.Canceled;
+					var orderDetail = await _orderDetailRepository.GetAsync(e => e.OrderId == orderId);
 
+					var listProductUpdate = new List<Product>();
+
+					foreach (var detail in orderDetail)
+					{
+						var size = await _productSizeRepository
+						.SingleAsyncInclude(e => e.ProductColorId == detail.ColorId && e.SizeId == detail.SizeId);
+						if (size != null)
+						{
+							detail.Product.Sold -= detail.Quantity;
+							size.InStock += detail.Quantity;
+							listProductUpdate.Add(detail.Product);
+						}
+						else continue;
+					}
 					_cache.Remove("Order " + orderId);
 					await _orderRepository.UpdateAsync(order);
+					await _productRepository.UpdateAsync(listProductUpdate);
+
+
+					//_cache.Remove("Order " + orderId);
+					//await _orderRepository.UpdateAsync(order);
 				}
 				else throw new Exception(ErrorMessage.CANNOT_CANCEL);
 			}
@@ -392,7 +413,7 @@ namespace MyShop_Backend.Services.Orders
 			}
 		}
 		public double CalcShip(double price) => price >= 500000 ? 0 : price >= 200000 ? 20000 : 30000;
-		
+
 
 		public async Task<OrderDTO> UpdateOrder(long id, string userId, UpdateOrderRequest request)
 		{
@@ -425,16 +446,42 @@ namespace MyShop_Backend.Services.Orders
 
 				if (request.OrderStatus != null)
 				{
-					order.OrderStatus = request.OrderStatus;
+					if (order.OrderStatus == DeliveryStatusEnum.Canceled)
+					{
+						order.OrderStatus = DeliveryStatusEnum.Canceled;
+						var orderDetail = await _orderDetailRepository.GetAsync(e => e.OrderId == id);
+
+						var listProductUpdate = new List<Product>();
+
+						foreach (var detail in orderDetail)
+						{
+							var size = await _productSizeRepository
+							.SingleAsyncInclude(e => e.ProductColorId == detail.ColorId && e.SizeId == detail.SizeId);
+							if (size != null)
+							{
+								detail.Product.Sold -= detail.Quantity;
+								size.InStock += detail.Quantity;
+								listProductUpdate.Add(detail.Product);
+							}
+							else continue;
+						}
+						_cache.Remove("Order " + id);
+						await _orderRepository.UpdateAsync(order);
+						await _productRepository.UpdateAsync(listProductUpdate);
+					}
+					else
+					{
+						order.OrderStatus = request.OrderStatus;
+						await _orderRepository.UpdateAsync(order);
+					}
 				}
 
-				await _orderRepository.UpdateAsync(order);
 				return _mapper.Map<OrderDTO>(order);
 			}
 			else throw new ArgumentException($"Id {id} " + ErrorMessage.NOT_FOUND);
 		}
 
-		
+
 		public async Task CancelOrder(long orderId)
 		{
 			var order = await _orderRepository.SingleOrDefaultAsync(e => e.Id == orderId);
@@ -711,18 +758,18 @@ namespace MyShop_Backend.Services.Orders
 		{
 			var now = DateTime.Now;
 			var order = await _orderRepository.SingleOrDefaultAsync(e => e.Id == orderId && e.UserId == userId);
-				if (order != null)
+			if (order != null)
+			{
+				if (order.OrderStatus.Equals(DeliveryStatusEnum.Shipping))
 				{
-					if (order.OrderStatus.Equals(DeliveryStatusEnum.Shipping))
-					{
-						order.OrderStatus = DeliveryStatusEnum.Received;
-						order.ReceivedDate = now;
+					order.OrderStatus = DeliveryStatusEnum.Received;
+					order.ReceivedDate = now;
 					await _orderRepository.UpdateAsync(order);
-					}
-					else throw new Exception(ErrorMessage.CANNOT_RECEIVED);
 				}
-				else throw new ArgumentException($"Id {orderId} " + ErrorMessage.NOT_FOUND);
-		
+				else throw new Exception(ErrorMessage.CANNOT_RECEIVED);
+			}
+			else throw new ArgumentException($"Id {orderId} " + ErrorMessage.NOT_FOUND);
+
 		}
 	}
 }

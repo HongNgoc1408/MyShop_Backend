@@ -23,6 +23,8 @@ namespace MyShop_Backend.Repositories.ProductSizeRepositories
 		{
 			return await _dbContext.ProductSizes
 				.Include(e => e.ProductColor)
+					.ThenInclude(x => x.Product)
+
 				.Include(e => e.Size)
 				.SingleAsync(expression);
 		}

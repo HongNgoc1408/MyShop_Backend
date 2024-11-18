@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
 
 namespace MyShop_Backend.Models
 {
@@ -19,6 +20,7 @@ namespace MyShop_Backend.Models
 		public string ColorName { get; set; }
 
 		public long? ProductId { get; set; }
+		[DeleteBehavior(DeleteBehavior.SetNull)]
 		public Product? Product { get; set; }
 
 		public string? UserId { get; set; }

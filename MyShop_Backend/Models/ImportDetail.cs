@@ -1,4 +1,6 @@
-﻿namespace MyShop_Backend.Models
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace MyShop_Backend.Models
 {
 	public class ImportDetail
 	{
@@ -11,8 +13,12 @@
 		public string SizeName { get; set; }
 		public long ImportId { get; set; }
 		public Import Import { get; set; }
-		public long ProductId { get; set; }
+		public long? ProductId { get; set; }
+
+		[DeleteBehavior(DeleteBehavior.SetNull)]
 		public Product Product { get; set; }
+
+		public string ProductName { get; set; }
 
 		//public ICollection<ProductColor> ProductColors { get; } = new HashSet<ProductColor>();
 	}
