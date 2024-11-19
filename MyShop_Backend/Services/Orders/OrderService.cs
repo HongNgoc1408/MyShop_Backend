@@ -219,10 +219,10 @@ namespace MyShop_Backend.Services.Orders
 					cacheOptions.RegisterPostEvictionCallback(OnVNPayDeadline, this);
 					_cache.Set("Order " + order.Id, orderCache, cacheOptions);
 
-					var message = $"Đơn hàng {order.Id} đã được xác nhận.";
-					await _emailSender.SendEmailAsync(order.Email, $"Xin chào {order.Receiver}", message +
-						$"Chúng tôi sẽ thông báo khi đơn hàng được vận chuyển." +
-						$"Cảm ơn bạn đã mua sắm tại cửa hàng chúng tôi!");
+					//var message = $"Đơn hàng {order.Id} đã được xác nhận.";
+					//await _emailSender.SendEmailAsync(order.Email, $"Xin chào {order.Receiver}", message +
+					//	$"Chúng tôi sẽ thông báo khi đơn hàng được vận chuyển." +
+					//	$"Cảm ơn bạn đã mua sắm tại cửa hàng chúng tôi!");
 				}
 				await transaction.CommitAsync();
 				return paymentUrl;
@@ -466,7 +466,7 @@ namespace MyShop_Backend.Services.Orders
 
 				if (request.OrderStatus != null)
 				{
-					if (order.OrderStatus == DeliveryStatusEnum.Canceled)
+					if (request.OrderStatus.Equals(DeliveryStatusEnum.Canceled))
 					{
 						order.OrderStatus = DeliveryStatusEnum.Canceled;
 						var orderDetail = await _orderDetailRepository.GetAsync(e => e.OrderId == id);
@@ -490,13 +490,9 @@ namespace MyShop_Backend.Services.Orders
 						await _productRepository.UpdateAsync(listProductUpdate);
 
 					}
-					else if (order.OrderStatus == DeliveryStatusEnum.Confirmed)
+					else if (request.OrderStatus.Equals(DeliveryStatusEnum.Confirmed))
 					{
-
-						//var token = new Random().Next(100000, 999999).ToString();
-						//_cache.Set(order.Email, token, TimeSpan.FromMinutes(5));
 						var message = $"Đơn hàng {order.Id} đã được xác nhận. ";
-						//var message = $"Đơn hàng {order.Id} đã được xác nhận.";
 						await _emailSender.SendEmailAsync(order.Email, $"Xin chào {order.Receiver}", message +
 							$"Chúng tôi sẽ thông báo khi đơn hàng được vận chuyển." +
 							$"Cảm ơn bạn đã mua sắm tại cửa hàng chúng tôi!");
@@ -504,10 +500,14 @@ namespace MyShop_Backend.Services.Orders
 						order.OrderStatus = DeliveryStatusEnum.Confirmed;
 						await _orderRepository.UpdateAsync(order);
 					}
-					
-					order.OrderStatus = request.OrderStatus;
-					await _orderRepository.UpdateAsync(order);
-					
+					else
+					{
+						order.OrderStatus = request.OrderStatus;
+						await _orderRepository.UpdateAsync(order);
+					}
+
+
+
 				}
 
 				return _mapper.Map<OrderDTO>(order);
