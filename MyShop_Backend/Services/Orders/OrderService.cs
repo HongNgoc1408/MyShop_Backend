@@ -2,6 +2,7 @@
 using MailKit.Search;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using MyShop_Backend.DTO;
 using MyShop_Backend.Enumerations;
 using MyShop_Backend.ErroMessage;
@@ -59,7 +60,7 @@ namespace MyShop_Backend.Services.Orders
 			IConfiguration configuration,
 			IServiceScopeFactory serviceScopeFactory,
 			ICachingService cache,
-			IMapper mapper)
+		IMapper mapper)
 		{
 			_orderRepository = orderRepository;
 			_cartItemRepository = cartItemRepository;

@@ -92,39 +92,41 @@ namespace MyShop_Backend.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-		[HttpGet("status/{status}")]
-		[Authorize(Roles = "Admin,Staff")]
-		public async Task<IActionResult> GetWithOrderStatus(DeliveryStatusEnum status, [FromQuery] PageRequest request)
-		{
-			try
-			{
-				var result = await _orderService.GetWithOrderStatus(status, request);
-				return Ok(result);
-			}
-			catch (Exception ex)
-			{
-				return StatusCode(500, ex.Message);
-			}
-		}
-		[HttpGet("user/{status}")]
-		[Authorize(Roles = "Admin,Staff")]
-		public async Task<IActionResult> GetWithOrderStatusUser(DeliveryStatusEnum status, [FromQuery] PageRequest request)
-		{
-			try
-			{
-				var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-				if (userId == null)
-				{
-					return Unauthorized();
-				}
-				var result = await _orderService.GetWithOrderStatusUser(userId, status, request);
-				return Ok(result);
-			}
-			catch (Exception ex)
-			{
-				return StatusCode(500, ex.Message);
-			}
-		}
+		//[HttpGet("status/{status}")]
+		//[Authorize(Roles = "Admin,Staff")]
+		//public async Task<IActionResult> GetWithOrderStatus(DeliveryStatusEnum status, [FromQuery] PageRequest request)
+		//{
+		//	try
+		//	{
+		//		var result = await _orderService.GetWithOrderStatus(status, request);
+		//		return Ok(result);
+		//	}
+		//	catch (Exception ex)
+		//	{
+		//		return StatusCode(500, ex.Message);
+		//	}
+		//}
+
+		//[HttpGet("user/{status}")]
+		//[Authorize(Roles = "Admin,Staff")]
+		//public async Task<IActionResult> GetWithOrderStatusUser(DeliveryStatusEnum status, [FromQuery] PageRequest request)
+		//{
+		//	try
+		//	{
+		//		var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+		//		if (userId == null)
+		//		{
+		//			return Unauthorized();
+		//		}
+		//		var result = await _orderService.GetWithOrderStatusUser(userId, status, request);
+		//		return Ok(result);
+		//	}
+		//	catch (Exception ex)
+		//	{
+		//		return StatusCode(500, ex.Message);
+		//	}
+		//}
+
 		///User
 		[HttpGet]
 		public async Task<IActionResult> GetOrdersByUserId([FromQuery] PageRequest request)
@@ -206,28 +208,28 @@ namespace MyShop_Backend.Controllers
 			}
 		}
 
-		[HttpPut("update/{id}")]
-		public async Task<IActionResult> Update(int id, [FromBody] UpdateOrderRequest request)
-		{
-			try
-			{
-				var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-				if (userId == null)
-				{
-					return Unauthorized();
-				}
-				var orders = await _orderService.UpdateOrder(id, userId, request);
-				return Ok(orders);
-			}
-			catch (ArgumentException ex)
-			{
-				return NotFound(ex.Message);
-			}
-			catch (Exception ex)
-			{
-				return StatusCode(500, ex.Message);
-			}
-		}
+		//[HttpPut("update/{id}")]
+		//public async Task<IActionResult> Update(int id, [FromBody] UpdateOrderRequest request)
+		//{
+		//	try
+		//	{
+		//		var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+		//		if (userId == null)
+		//		{
+		//			return Unauthorized();
+		//		}
+		//		var orders = await _orderService.UpdateOrder(id, userId, request);
+		//		return Ok(orders);
+		//	}
+		//	catch (ArgumentException ex)
+		//	{
+		//		return NotFound(ex.Message);
+		//	}
+		//	catch (Exception ex)
+		//	{
+		//		return StatusCode(500, ex.Message);
+		//	}
+		//}
 
 		[HttpPut("received/{id}")]
 		public async Task<IActionResult> Received(int id, [FromBody] UpdateStatusOrderRequest request)

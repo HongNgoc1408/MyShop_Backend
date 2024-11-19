@@ -14,7 +14,7 @@ namespace MyShop_Backend.Controllers
 		private readonly IReviewService _reviewService = reviewService;
 
 		[HttpPut("updateEnable/{id}")]
-		[Authorize(Roles = "Admin")]
+		[Authorize(Roles = "Admin,Staff")]
 		public async Task<IActionResult> UpdateEnable(string id, [FromBody] UpdateEnableRequest request)
 		{
 			try
@@ -33,7 +33,7 @@ namespace MyShop_Backend.Controllers
 		}
 
 		[HttpDelete("{id}")]
-		[Authorize(Roles = "Admin")]
+		[Authorize(Roles = "Admin,Staff")]
 		public async Task<IActionResult> DeleteReview(string id)
 		{
 			try

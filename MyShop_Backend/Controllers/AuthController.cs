@@ -40,19 +40,20 @@ namespace MyShop_Backend.Controllers
 			}
 			else return BadRequest(result.Errors);
 		}
-		[HttpPost("refresh-token")]
-		public async Task<IActionResult> RefreshToken(Token token)
-		{
-			var result = await _authService.RefreshToken(token);
-			if (result != null)
-			{
-				return Ok(result);
-			}
-			else
-			{
-				return Unauthorized("Invalid attempt");
-			};
-		}
+
+		//[HttpPost("refresh-token")]
+		//public async Task<IActionResult> RefreshToken(Token token)
+		//{
+		//	var result = await _authService.RefreshToken(token);
+		//	if (result != null)
+		//	{
+		//		return Ok(result);
+		//	}
+		//	else
+		//	{
+		//		return Unauthorized("Invalid attempt");
+		//	};
+		//}
 
 		[HttpPost("logout")]
 		public async Task<IActionResult> Logout()

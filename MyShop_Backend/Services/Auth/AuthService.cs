@@ -111,7 +111,7 @@ namespace MyShop_Backend.Services.AuthServices
 					SecurityStamp = Guid.NewGuid().ToString(),
 					ConcurrencyStamp = Guid.NewGuid().ToString()
 				};
-				//return await _userManager.CreateAsync(User, request.Password);
+
 				var result = await _userManager.CreateAsync(user, request.Password);
 				if (!result.Succeeded)
 				{
@@ -191,10 +191,10 @@ namespace MyShop_Backend.Services.AuthServices
 			return result.Succeeded;
 		}
 
-		public Task<Token> RefreshToken(Token token)
-		{
-			throw new NotImplementedException();
-		}
+		//public Task<Token> RefreshToken(Token token)
+		//{
+		//	throw new NotImplementedException();
+		//}
 
 	}
 }
