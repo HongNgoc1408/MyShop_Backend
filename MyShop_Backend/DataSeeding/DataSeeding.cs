@@ -66,7 +66,7 @@ namespace MyShop_Backend.DataSeeding
 			var staffEmail = "lengoc14082002@gmail.com";
 			var staff = new User
 			{
-				FullName = "Le Ngoc",
+				FullName = "Le Thi Hong Ngoc",
 				Email = staffEmail,
 				NormalizedEmail = staffEmail.ToUpper(),
 				UserName = staffEmail,
