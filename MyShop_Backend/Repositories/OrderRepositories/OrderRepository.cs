@@ -13,9 +13,11 @@ namespace MyShop_Backend.Repositories.OrderRepositories
 	{
 		private readonly MyShopDbContext _dbContext = context;
 
+		
 		public Task<Order?> SingleOrDefaultAsyncInclude(Expression<Func<Order, bool>> expression)
 		{
 			return _dbContext.Orders
+				.Include(e => e.User)
 				.Include(e => e.OrderDetails)
 				.SingleOrDefaultAsync(expression);
 		}

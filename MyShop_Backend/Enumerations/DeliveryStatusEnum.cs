@@ -4,9 +4,8 @@
 	{
 		Processing,
 		Confirmed,
-		AwaitingPickup,
 		Shipping,
 		Received,
-		Canceled,
+		Canceled,//AwaitingPickup,
 	}
 }

@@ -15,6 +15,9 @@ namespace MyShop_Backend.Models
 		public DateTime OrderDate { get; set; }
 		public DateTime ReceivedDate { get; set; }
 
+		//
+		public string? Email {  get; set; }
+
 		[MaxLength(100)]
 		public string Receiver { get; set; }
 

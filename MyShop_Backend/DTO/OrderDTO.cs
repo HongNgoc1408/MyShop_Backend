@@ -7,6 +7,7 @@ namespace MyShop_Backend.DTO
 	public class OrderDTO
 	{
 		public long Id { get; set; }
+		public string? Email { get; set; }
 		public string Receiver { get; set; }
 		public string DeliveryAddress { get; set; }
 		public double Total { get; set; }
