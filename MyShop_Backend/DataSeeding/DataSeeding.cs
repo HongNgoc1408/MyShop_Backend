@@ -63,6 +63,7 @@ namespace MyShop_Backend.DataSeeding
 				PhoneNumberConfirmed = true,
 				SecurityStamp = Guid.NewGuid().ToString(),
 			};
+
 			var staffEmail = "lengoc14082002@gmail.com";
 			var staff = new User
 			{
@@ -85,6 +86,19 @@ namespace MyShop_Backend.DataSeeding
 				UserName = inventorierEmail,
 				NormalizedUserName = inventorierEmail.ToUpper(),
 				PhoneNumber = "0358103707",
+				PhoneNumberConfirmed = true,
+				SecurityStamp = Guid.NewGuid().ToString(),
+			};
+
+			var managerEmail = "hongngoc14082002@gmail.com";
+			var manager = new User
+			{
+				FullName = "Nhân viên quản lý",
+				Email = managerEmail,
+				NormalizedEmail = managerEmail.ToUpper(),
+				UserName = managerEmail,
+				NormalizedUserName = managerEmail.ToUpper(),
+				PhoneNumber = "0945224811",
 				PhoneNumberConfirmed = true,
 				SecurityStamp = Guid.NewGuid().ToString(),
 			};
@@ -113,7 +127,14 @@ namespace MyShop_Backend.DataSeeding
 					await userManager.AddToRoleAsync(inventorier, RolesEnum.Inventorier.ToString());
 				}
 			}
-
+			if (!context.Users.Any(u => u.UserName == manager.UserName))
+			{
+				var result = await userManager.CreateAsync(manager, "Ngoc123@");
+				if (result.Succeeded)
+				{
+					await userManager.AddToRoleAsync(manager, RolesEnum.Manager.ToString());
+				}
+			}
 		}
 	}
 }

@@ -13,7 +13,7 @@ namespace MyShop_Backend.Controllers
 		private readonly IStatisticService _statisticService = statisticService;
 
 		[HttpGet("totalImport")]
-		[Authorize(Roles = "Admin,Inventorier,Staff")]
+		[Authorize(Roles = "Admin,Inventorier,Manager,Staff")]
 
 		public async Task<IActionResult> GetTotalImport()
 		{
@@ -28,7 +28,7 @@ namespace MyShop_Backend.Controllers
 		}
 
 		[HttpGet("totalOrder")]
-		[Authorize(Roles = "Admin,Inventorier,Staff")]
+		[Authorize(Roles = "Admin,Inventorier,Manager,Staff")]
 		public async Task<IActionResult> GetTotalOrder() {
 			try
 			{
@@ -42,7 +42,7 @@ namespace MyShop_Backend.Controllers
 		}
 
 		[HttpGet("totalOrderDone")]
-		[Authorize(Roles = "Admin,Inventorier,Staff")]
+		[Authorize(Roles = "Admin,Inventorier,Manager,Staff")]
 		public async Task<IActionResult> GetTotalOrderDone()
 		{
 			try
@@ -57,7 +57,7 @@ namespace MyShop_Backend.Controllers
 		}
 
 		[HttpGet("totalProduct")]
-		[Authorize(Roles = "Admin,Inventorier,Staff")]
+		[Authorize(Roles = "Admin,Inventorier,Manager,Staff")]
 		public async Task<IActionResult> GetTotalProduct()
 		{
 			try
@@ -72,7 +72,7 @@ namespace MyShop_Backend.Controllers
 		}
 
 		[HttpGet("totalUser")]
-		[Authorize(Roles = "Admin,Inventorier,Staff")]
+		[Authorize(Roles = "Admin,Inventorier,Manager,Staff")]
 		public async Task<IActionResult> GetTotalUser()
 		{
 			try
@@ -87,7 +87,7 @@ namespace MyShop_Backend.Controllers
 		}
 
 		[HttpGet("totalRevenueYear")]
-		[Authorize(Roles = "Admin,Inventorier,Staff")]
+		[Authorize(Roles = "Admin,Inventorier,Manager,Staff")]
 		public async Task<IActionResult> GetTotalRevenueYear(int year, int? month)
 		{
 			try
@@ -102,7 +102,7 @@ namespace MyShop_Backend.Controllers
 		}
 
 		[HttpGet("totalRevenue")]
-		[Authorize(Roles = "Admin,Inventorier,Staff")]
+		[Authorize(Roles = "Admin,Inventorier,Manager,Staff")]
 		public async Task<IActionResult> GetTotalRevenue(DateTime dateFrom, DateTime dateTo)
 		{
 			try
@@ -117,7 +117,7 @@ namespace MyShop_Backend.Controllers
 		}
 
 		[HttpGet("totalRevenueProductYear")]
-		[Authorize(Roles = "Admin,Inventorier,Staff")]
+		[Authorize(Roles = "Admin,Inventorier,Manager,Staff")]
 		public async Task<IActionResult> GetProductRevenueByYear(int year, int? month, long productId)
 		{
 			try
@@ -132,7 +132,7 @@ namespace MyShop_Backend.Controllers
 		}
 
 		[HttpGet("totalRevenueProduct")]
-		[Authorize(Roles = "Admin,Inventorier,Staff")]
+		[Authorize(Roles = "Admin,Inventorier,Manager,Staff")]
 		public async Task<IActionResult> GetProductRevenue(DateTime dateFrom, DateTime dateTo, long productId)
 		{
 			try

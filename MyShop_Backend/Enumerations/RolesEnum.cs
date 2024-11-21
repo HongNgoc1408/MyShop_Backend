@@ -5,7 +5,7 @@
 		Admin,
 		Staff,
 		Inventorier,
-		//Manage,
+		Manager,
 		User
 	}
 }

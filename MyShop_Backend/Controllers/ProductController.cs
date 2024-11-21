@@ -173,7 +173,7 @@ namespace MyShop_Backend.Controllers
 		}
 
 		[HttpDelete("delete/{id}")]
-		[Authorize(Roles = "Admin,,Inventorier")]
+		[Authorize(Roles = "Admin,Inventorier")]
 		public async Task<IActionResult> Delete(long id)
 		{
 			try

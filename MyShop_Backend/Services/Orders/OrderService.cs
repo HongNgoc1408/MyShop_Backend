@@ -1,9 +1,6 @@
 ﻿using AutoMapper;
-using MailKit.Search;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using MyShop_Backend.DTO;
 using MyShop_Backend.Enumerations;
 using MyShop_Backend.ErroMessage;
@@ -24,7 +21,6 @@ using MyShop_Backend.Services.Payments;
 using MyShop_Backend.Services.SendMailServices;
 using MyShop_Backend.Storages;
 using MyStore.Repository.ProductRepository;
-using NuGet.Common;
 using System.Linq.Expressions;
 
 namespace MyShop_Backend.Services.Orders
