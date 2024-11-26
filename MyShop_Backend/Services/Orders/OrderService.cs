@@ -215,7 +215,7 @@ namespace MyShop_Backend.Services.Orders
 
 					var cacheOptions = new MemoryCacheEntryOptions
 					{
-						AbsoluteExpiration = DateTime.Now.AddSeconds(30)
+						AbsoluteExpiration = DateTime.Now.AddMinutes(15)
 					};
 					cacheOptions.RegisterPostEvictionCallback(OnVNPayDeadline, this);
 					_cache.Set("Order " + order.Id, orderCache, cacheOptions);
