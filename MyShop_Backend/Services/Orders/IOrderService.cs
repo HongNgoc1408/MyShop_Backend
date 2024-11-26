@@ -1,4 +1,5 @@
 ﻿using MyShop_Backend.DTO;
+using MyShop_Backend.Models;
 using MyShop_Backend.Request;
 using MyShop_Backend.Response;
 
@@ -22,5 +23,6 @@ namespace MyShop_Backend.Services.Orders
 		//Task<PagedResponse<OrderDTO>> GetWithOrderStatus(DeliveryStatusEnum statusEnum, PageRequest request);
 		//Task<PagedResponse<OrderDTO>> GetWithOrderStatusUser(string userId, DeliveryStatusEnum statusEnum, PageRequest request);
 		Task Review(long orderId, string userId, IEnumerable<ReviewRequest> reviews);
+		//Task SendEmail(Order order, IEnumerable<OrderDetail> orderDetail);
 	}
 }

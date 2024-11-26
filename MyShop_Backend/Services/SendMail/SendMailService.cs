@@ -2,6 +2,7 @@
 using MailKit.Net.Smtp;
 using Microsoft.Extensions.Options;
 using MailKit.Security;
+using Microsoft.AspNetCore.Hosting;
 
 
 namespace MyShop_Backend.Services.SendMailServices
@@ -18,10 +19,12 @@ namespace MyShop_Backend.Services.SendMailServices
 	public class SendMailService : ISendMailService
 	{
 		private readonly MailSettings _settings;
+		private readonly IWebHostEnvironment _webHostEnvironment;
 
-		public SendMailService(IOptions<MailSettings> settings)
+		public SendMailService(IOptions<MailSettings> settings, IWebHostEnvironment webHostEnvironment)
 		{
 			_settings = settings.Value;
+			_webHostEnvironment = webHostEnvironment;
 		}
 
 		public async Task SendEmailAsync(string email, string subject, string htmlMessage)
@@ -56,7 +59,10 @@ namespace MyShop_Backend.Services.SendMailServices
 				}
 				await smtp.DisconnectAsync(true);
 			}
-
 		}
+
+
+		public string GetPathOrderConfirm => Path.Combine(_webHostEnvironment.ContentRootPath, "Template", "email.txt");
+		public string GetPathProductList => Path.Combine(_webHostEnvironment.ContentRootPath, "Template", "product.txt");
 	}
 }

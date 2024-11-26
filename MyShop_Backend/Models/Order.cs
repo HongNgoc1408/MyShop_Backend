@@ -14,8 +14,6 @@ namespace MyShop_Backend.Models
 		public double ShippingCost { get; set; }
 		public DateTime OrderDate { get; set; }
 		public DateTime ReceivedDate { get; set; }
-
-		//
 		public string? Email {  get; set; }
 
 		[MaxLength(100)]

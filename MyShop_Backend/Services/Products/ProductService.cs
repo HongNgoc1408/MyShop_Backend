@@ -182,10 +182,11 @@ namespace MyShop_Backend.Services.Products
 				{
 					expression = CombineExpressions(expression, e => e.Discount > 0);
 				}
-				//if (filters.Rating != null)
-				//{
-				//	expression = CombineExpressions(expression, e => e.ProductReviews.Average(e => e.Star) >= filters.Rating);
-				//}
+				if (filters.Rating != null)
+				{
+					expression = CombineExpressions(expression, e => e.ProductReviews.Average(e => e.Star) >= filters.Rating);
+				}
+
 				if (filters.CategoryIds != null && filters.CategoryIds.Any())
 				{
 					expression = CombineExpressions(expression, e => filters.CategoryIds.Contains(e.CategoryId));

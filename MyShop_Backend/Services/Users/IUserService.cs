@@ -15,6 +15,7 @@ namespace MyShop_Backend.Services.UserServices
 		Task<AddressDTO?> GetUserAddress(string userId);
 		Task<AddressDTO?> UpdateUserAddress(string userId, AddressDTO address);
 		Task<UserDTO> GetUserInfo(string userId);
+		Task<UpdateInfoRequest> UpdateUserInfo(string userId, UpdateInfoRequest request);
 		Task<UserDTO> UpdateAvatar(string userId, IFormFile image);
 		Task<ImageDTO> GetAvatar(string userId);
 		Task<IEnumerable<long>> GetFavorites(string userId);

@@ -18,7 +18,8 @@ namespace MyShop_Backend.Mappers
 
 			//user
 			CreateMap<User, ImageDTO>();
-			CreateMap<User, UserResponse>();
+			CreateMap<User, UserResponse>(); 
+			CreateMap<User, UpdateInfoRequest>();
 			CreateMap<User, UserDTO>().ReverseMap();
 			CreateMap<DeliveryAddress, AddressDTO>().ReverseMap();
 
@@ -84,7 +85,7 @@ namespace MyShop_Backend.Mappers
 			//review
 			CreateMap<ProductReview, ReviewDTO>()
 				.ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.User != null ? src.User.FullName : null));
-				//.ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.User.ImageURL));
+			//.ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.User.ImageURL));
 		}
 	}
 }

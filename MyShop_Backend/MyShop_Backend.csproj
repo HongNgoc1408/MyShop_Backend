@@ -28,6 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Template\" />
     <Folder Include="wwwroot\assets\images\reviews\" />
   </ItemGroup>
 

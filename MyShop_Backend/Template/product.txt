@@ -1,0 +1,141 @@
+<table
+                                                      class="t62"
+                                                      role="presentation"
+                                                      cellpadding="0"
+                                                      cellspacing="0"
+                                                      align="left"
+                                                      valign="middle"
+                                                    >
+                                                      <tr class="t61">
+                                                        <td></td>
+                                                        <td
+                                                          class="t54"
+                                                          width="305.12397"
+                                                          valign="middle"
+                                                        >
+                                                          <table
+                                                            role="presentation"
+                                                            width="100%"
+                                                            cellpadding="0"
+                                                            cellspacing="0"
+                                                            class="t53"
+                                                            style="width: 100%"
+                                                          >
+                                                            <tr>
+                                                              <td
+                                                                class="t50"
+                                                                style="
+                                                                  width: 10px;
+                                                                "
+                                                                width="10"
+                                                              ></td>
+                                                              <td class="t51">
+                                                                <h1
+                                                                  class="t49"
+                                                                  style="
+                                                                    margin: 0;
+                                                                    margin: 0;
+                                                                    font-family: Times
+                                                                        New
+                                                                        Roman,
+                                                                      Georgia,
+                                                                      Times New
+                                                                        Roman,
+                                                                      Times,
+                                                                      serif;
+                                                                    line-height: 16px;
+                                                                    font-weight: 700;
+                                                                    font-style: normal;
+                                                                    font-size: 14px;
+                                                                    text-decoration: none;
+                                                                    text-transform: capitalize;
+                                                                    direction: ltr;
+                                                                    color: #1a1a1a;
+                                                                    text-align: left;
+                                                                    mso-line-height-rule: exactly;
+                                                                    mso-text-raise: 1px;
+                                                                  "
+                                                                >
+                                                                  {ProductName}<br>
+                                                                  Phân loại:
+                                                                  {ColorName} -
+                                                                  {SizeName}
+                                                                </h1>
+                                                              </td>
+                                                              <td
+                                                                class="t52"
+                                                                style="
+                                                                  width: 10px;
+                                                                "
+                                                                width="10"
+                                                              ></td>
+                                                            </tr>
+                                                          </table>
+                                                        </td>
+                                                        <td
+                                                          class="t60"
+                                                          width="194.87603"
+                                                          valign="middle"
+                                                        >
+                                                          <table
+                                                            role="presentation"
+                                                            width="100%"
+                                                            cellpadding="0"
+                                                            cellspacing="0"
+                                                            class="t59"
+                                                            style="width: 100%"
+                                                          >
+                                                            <tr>
+                                                              <td
+                                                                class="t56"
+                                                                style="
+                                                                  width: 10px;
+                                                                "
+                                                                width="10"
+                                                              ></td>
+                                                              <td class="t57">
+                                                                <p
+                                                                  class="t55"
+                                                                  style="
+                                                                    margin: 0;
+                                                                    margin: 0;
+                                                                    font-family: Times
+                                                                        New
+                                                                        Roman,
+                                                                      Georgia,
+                                                                      Times New
+                                                                        Roman,
+                                                                      Times,
+                                                                      serif;
+                                                                    line-height: 22px;
+                                                                    font-weight: 400;
+                                                                    font-style: normal;
+                                                                    font-size: 14px;
+                                                                    text-decoration: none;
+                                                                    text-transform: capitalize;
+                                                                    letter-spacing: -0.56px;
+                                                                    direction: ltr;
+                                                                    color: #333333;
+                                                                    text-align: right;
+                                                                    mso-line-height-rule: exactly;
+                                                                    mso-text-raise: 2px;
+                                                                  "
+                                                                >
+                                                                  Số&nbsp;
+                                                                  lượng:
+                                                                  {Quantity}
+                                                                </p>
+                                                              </td>
+                                                              <td
+                                                                class="t58"
+                                                                style="
+                                                                  width: 10px;
+                                                                "
+                                                                width="10"
+                                                              ></td>
+                                                            </tr>
+                                                          </table>
+                                                        </td>
+                                                        <td></td>
+                                                      </tr>
+                                                    </table>

@@ -44,6 +44,7 @@ namespace MyShop_Backend.Controllers
 				return StatusCode(500, ex.Message);
 			}
 		}
+
 		[HttpGet("{userId}")]
 		[Authorize(Roles = "Admin,Manage")]
 		
@@ -154,6 +155,28 @@ namespace MyShop_Backend.Controllers
 			catch (ArgumentException ex)
 			{
 				return BadRequest(ex.Message);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
+		}
+		[HttpPut("profile")]
+		public async Task<IActionResult> UpdateInfo([FromBody] UpdateInfoRequest request)
+		{
+			try
+			{
+				var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+				if (userId == null)
+				{
+					return Unauthorized();
+				}
+				var res = await _userService.UpdateUserInfo(userId, request);
+				return Ok(res);
+			}
+			catch (InvalidOperationException ex)
+			{
+				return NotFound(ex.Message);
 			}
 			catch (Exception ex)
 			{

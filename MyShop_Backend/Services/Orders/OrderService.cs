@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Extensions.Caching.Memory;
 using MyShop_Backend.DTO;
 using MyShop_Backend.Enumerations;
@@ -14,6 +15,7 @@ using MyShop_Backend.Repositories.PaymentMethodRepositories;
 using MyShop_Backend.Repositories.ProductReviewRepositories;
 using MyShop_Backend.Repositories.ProductSizeRepositories;
 using MyShop_Backend.Repositories.TransactionRepositories;
+using MyShop_Backend.Repositories.UserRepositories;
 using MyShop_Backend.Request;
 using MyShop_Backend.Response;
 using MyShop_Backend.Services.CachingServices;
@@ -44,7 +46,8 @@ namespace MyShop_Backend.Services.Orders
 		private readonly ICachingService _cache;
 		private readonly IMapper _mapper;
 		private readonly UserManager<User> _userManager;
-		private readonly ISendMailService _emailSender;
+		private readonly IUserRepository _userRepository;
+		private readonly ISendMailService _sendMailService;
 		private readonly string pathReviewImages = "assets/images/reviews";
 		public OrderService(IOrderRepository orderRepository,
 			ICartItemRepository cartItemRepository,
@@ -63,7 +66,8 @@ namespace MyShop_Backend.Services.Orders
 			ICachingService cache,
 			IMapper mapper,
 			UserManager<User> userManager,
-			ISendMailService emailSender
+			IUserRepository userRepository,
+			ISendMailService sendMailService
 			)
 
 		{
@@ -84,7 +88,8 @@ namespace MyShop_Backend.Services.Orders
 			_cache = cache;
 			_mapper = mapper;
 			_userManager = userManager;
-			_emailSender = emailSender;
+			_userRepository = userRepository;
+			_sendMailService = sendMailService;
 		}
 		struct OrderCache
 		{
@@ -210,18 +215,17 @@ namespace MyShop_Backend.Services.Orders
 
 					var cacheOptions = new MemoryCacheEntryOptions
 					{
-						AbsoluteExpiration = DateTime.Now.AddMinutes(15)
+						AbsoluteExpiration = DateTime.Now.AddSeconds(30)
 					};
 					cacheOptions.RegisterPostEvictionCallback(OnVNPayDeadline, this);
 					_cache.Set("Order " + order.Id, orderCache, cacheOptions);
 
-					//var message = $"Đơn hàng {order.Id} đã được xác nhận.";
-					//await _emailSender.SendEmailAsync(order.Email, $"Xin chào {order.Receiver}", message +
-					//	$"Chúng tôi sẽ thông báo khi đơn hàng được vận chuyển." +
-					//	$"Cảm ơn bạn đã mua sắm tại cửa hàng chúng tôi!");
+
 				}
+
 				await transaction.CommitAsync();
 				return paymentUrl;
+
 			}
 			catch (Exception ex)
 			{
@@ -297,7 +301,11 @@ namespace MyShop_Backend.Services.Orders
 		{
 			var orders = await _orderRepository.GetPagedOrderByDescendingAsync(page.Page, page.PageSize, e => e.UserId == userId, x => x.CreatedAt);
 			var total = await _orderRepository.CountAsync(e => e.UserId == userId);
-			var items = _mapper.Map<IEnumerable<OrderDTO>>(orders);
+			var items = _mapper.Map<IEnumerable<OrderDTO>>(orders).Select(x =>
+			{
+				x.PayBackUrl = _cache.Get<OrderCache?>("Order " + x.Id)?.Url;
+				return x;
+			});
 
 			foreach (var item in items)
 			{
@@ -364,7 +372,9 @@ namespace MyShop_Backend.Services.Orders
 				var orderRepository = _scope.ServiceProvider.GetRequiredService<IOrderRepository>();
 				var vnPayLibrary = _scope.ServiceProvider.GetRequiredService<IVNPayLibrary>();
 				var configuration = _scope.ServiceProvider.GetRequiredService<IConfiguration>();
-
+				var orderDetailRepository = _scope.ServiceProvider.GetRequiredService<IOrderDetailRepository>();
+				var productSizeRepository = _scope.ServiceProvider.GetRequiredService<IProductSizeRepository>();
+				var productRepository = _scope.ServiceProvider.GetRequiredService<IProductRepository>();
 
 				var data = (OrderCache)value;
 				var vnp_QueryDrUrl = configuration["VNPay:vnp_QueryDrUrl"] ?? throw new Exception(ErrorMessage.ERROR);
@@ -423,13 +433,36 @@ namespace MyShop_Backend.Services.Orders
 							}
 							else
 							{
+
 								order.OrderStatus = DeliveryStatusEnum.Canceled;
+
+								var orderDetail = await orderDetailRepository.GetAsync(e => e.OrderId == order.Id);
+
+								var listProductUpdate = new List<Product>();
+
+								foreach (var detail in orderDetail)
+								{
+									var size = await productSizeRepository
+									.SingleAsyncInclude(e => e.ProductColorId == detail.ColorId && e.SizeId == detail.SizeId);
+									if (size != null)
+									{
+										detail.Product.Sold -= detail.Quantity;
+										size.InStock += detail.Quantity;
+										listProductUpdate.Add(detail.Product);
+									}
+									else continue;
+								}
+								_cache.Remove("Order " + order.Id);
+								//await orderRepository.UpdateAsync(order);
+								await productRepository.UpdateAsync(listProductUpdate);
+
 							}
 							await orderRepository.UpdateAsync(order);
 						}
 					}
 				}
 			}
+
 		}
 		public double CalcShip(double price) => price >= 500000 ? 0 : price >= 200000 ? 20000 : 30000;
 
@@ -484,26 +517,12 @@ namespace MyShop_Backend.Services.Orders
 						_cache.Remove("Order " + id);
 						await _orderRepository.UpdateAsync(order);
 						await _productRepository.UpdateAsync(listProductUpdate);
-
-					}
-					else if (request.OrderStatus.Equals(DeliveryStatusEnum.Confirmed))
-					{
-						var message = $"Đơn hàng {order.Id} đã được xác nhận. ";
-						await _emailSender.SendEmailAsync(order.Email, $"Xin chào {order.Receiver}", message +
-							$"Chúng tôi sẽ thông báo khi đơn hàng được vận chuyển." +
-							$"Cảm ơn bạn đã mua sắm tại cửa hàng chúng tôi!");
-
-						order.OrderStatus = DeliveryStatusEnum.Confirmed;
-						await _orderRepository.UpdateAsync(order);
 					}
 					else
 					{
 						order.OrderStatus = request.OrderStatus;
 						await _orderRepository.UpdateAsync(order);
 					}
-
-
-
 				}
 
 				return _mapper.Map<OrderDTO>(order);
@@ -511,6 +530,40 @@ namespace MyShop_Backend.Services.Orders
 			else throw new ArgumentException($"Id {id} " + ErrorMessage.NOT_FOUND);
 		}
 
+		public async Task SendEmail(Order order, IEnumerable<OrderDetail> orderDetail)
+		{
+			var pathEmail = _sendMailService.GetPathOrderConfirm;
+			var pathProduct = _sendMailService.GetPathProductList;
+
+			if (File.Exists(pathEmail) && File.Exists(pathProduct))
+			{
+				var user = await _userRepository.SingleAsync(x => x.Id == order.UserId);
+
+				string body = File.ReadAllText(pathEmail);
+				body = body.Replace("{OrderId}", order.Id.ToString());
+				body = body.Replace("{OrderDate}", order.OrderDate.ToString());
+				body = body.Replace("{Username}", order.Receiver.Split('-')[0].Trim());
+				body = body.Replace("{Receiver}", order.Receiver);
+				body = body.Replace("{DeliveryAddress}", order.DeliveryAddress);
+				body = body.Replace("{Method}", order.PaymentMethodName);
+				body = body.Replace("{ShippingCode}", order.ShippingCode);
+
+
+				string productList = File.ReadAllText(pathProduct);
+				string listProductBody = "";
+
+				foreach (var item in orderDetail)
+				{
+					string res = productList.Replace("{ProductName}", item.ProductName);
+					res = res.Replace("{ColorName}", item.ColorName);
+					res = res.Replace("{SizeName}", item.SizeName);
+					res = res.Replace("{Quantity}", item.Quantity.ToString());
+					listProductBody += res;
+				}
+				body = body.Replace("{listProduct}", listProductBody);
+				_ = Task.Run(() => _sendMailService.SendEmailAsync(user.Email!, "Cảm ơn bạn đã đặt hàng tại My Shop!", body));
+			}
+		}
 
 		//public async Task CancelOrder(long orderId)
 		//{
@@ -616,6 +669,9 @@ namespace MyShop_Backend.Services.Orders
 			order.Expected_delivery_time = dataResponse?.Data?.Expected_delivery_time;
 
 			order.OrderStatus = DeliveryStatusEnum.Shipping;
+			var orderDetail = await _orderDetailRepository.GetAsync(e => e.OrderId == orderId);
+			await SendEmail(order, orderDetail);
+
 			await _orderRepository.UpdateAsync(order);
 		}
 
@@ -801,5 +857,6 @@ namespace MyShop_Backend.Services.Orders
 			else throw new ArgumentException($"Id {orderId} " + ErrorMessage.NOT_FOUND);
 
 		}
+
 	}
 }

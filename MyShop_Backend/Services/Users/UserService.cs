@@ -236,6 +236,20 @@ namespace MyShop_Backend.Services.UserServices
 			throw new InvalidOperationException(ErrorMessage.USER_NOT_FOUND);
 		}
 
+		public async Task<UpdateInfoRequest> UpdateUserInfo(string userId, UpdateInfoRequest request)
+		{
+			var user = await _userManager.FindByIdAsync(userId);
+			if (user != null)
+			{
+				user.FullName = request.FullName;
+				user.PhoneNumber = request.PhoneNumber;
+				await _userManager.UpdateAsync(user);
+
+				return _mapper.Map<UpdateInfoRequest>(user);
+			}
+			throw new InvalidOperationException(ErrorMessage.NOT_FOUND);
+		}
+
 		public async Task<AddressDTO?> UpdateUserAddress(string userId, AddressDTO address)
 		{
 			var delivery = await _deliveryAddressRepository.SingleOrDefaultAsync(e => e.UserId == userId);

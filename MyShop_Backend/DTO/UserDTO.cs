@@ -8,6 +8,6 @@
 		public string? PhoneNumber { get; set; }
 		public string? ImageURL { get; set; }
 		public IList<string> Roles { get; set; } = new List<string>();
-
 	}
+	
 }

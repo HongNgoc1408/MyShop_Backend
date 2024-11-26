@@ -165,7 +165,10 @@ namespace MyShop_Backend.Services.Payments
 						await _orderRepository.UpdateAsync(order);
 						_cache.Remove("Order " + orderId);
 					}
-					else throw new Exception(ErrorMessage.PAYMENT_FAILED);
+					else
+					{
+						throw new Exception(ErrorMessage.PAYMENT_FAILED);
+					};
 				}
 				else throw new ArgumentException("Số tiền " + ErrorMessage.INVALID);
 			}

@@ -68,11 +68,11 @@ namespace MyShop_Backend.Data
 			{
 				if (entry.State == EntityState.Added)
 				{
-					((IBaseEntity)entry.Entity).CreatedAt = DateTime.UtcNow;
+					((IBaseEntity)entry.Entity).CreatedAt = DateTime.Now;
 				}
 				if (entry.State == EntityState.Modified)
 				{
-					((IBaseEntity)entry.Entity).UpdatedAt = DateTime.UtcNow;
+					((IBaseEntity)entry.Entity).UpdatedAt = DateTime.Now;
 				}
 			}
 		}
