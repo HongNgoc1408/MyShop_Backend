@@ -25,7 +25,7 @@ namespace MyShop_Backend.Controllers
 		}
 
 		[HttpPost]
-		[Authorize(Roles = "Admin")]
+		[Authorize(Roles = "Admin,Manager")]
 		public async Task<IActionResult> Create([FromBody] CreatePaymentMethodRequest request)
 		{
 			try
@@ -45,7 +45,7 @@ namespace MyShop_Backend.Controllers
 
 
 		[HttpPut("{id}")]
-		[Authorize(Roles = "Admin")]
+		[Authorize(Roles = "Admin,Manager")]
 		public async Task<IActionResult> Update(int id, [FromBody] UpdatePaymentMethodRequest request)
 		{
 			try
@@ -64,7 +64,7 @@ namespace MyShop_Backend.Controllers
 		}
 
 		[HttpDelete("{id}")]
-		[Authorize(Roles = "Admin")]
+		[Authorize(Roles = "Admin,Manager")]
 		public async Task<IActionResult> Delete(int id)
 		{
 			try

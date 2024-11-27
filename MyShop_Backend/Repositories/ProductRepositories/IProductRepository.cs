@@ -8,6 +8,7 @@ namespace MyStore.Repository.ProductRepository
 		Task<IEnumerable<Product>> GetPageProductAsync(int page, int pageSize, string search);
 		Task<IEnumerable<Product>> GetPageProductAsync(int page, int pageSize);
 		//Task<int> CountAsync(string search);
+
 		Task<Product?> GetProductByIdAsync(long id);
 	}
 }

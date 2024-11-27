@@ -80,18 +80,22 @@ namespace MyShop_Backend.CommonRepository.ProductRepository
 		{
 			return expression == null
 				? await _dbContext.Products
+					.OrderByDescending(orderByDesc)
+					.Paginate(page, pageSize)
 					.Include(e => e.Brand)
 					.Include(e => e.Caterory)
 					.Include(e => e.Images)
-					.OrderBy(orderByDesc)
-					.Paginate(page, pageSize)
+					.AsSingleQuery()
+					
 					.ToListAsync()
-				: await _dbContext.Products.Where(expression)
+				: await _dbContext.Products
+					.Where(expression)
+					.OrderByDescending(orderByDesc)
+					.Paginate(page, pageSize)
 					.Include(e => e.Brand)
 					.Include(e => e.Caterory)
 					.Include(e => e.Images)
-					.OrderBy(orderByDesc)
-					.Paginate(page, pageSize)
+					.AsSingleQuery()
 					.ToListAsync();
 		}
 	}

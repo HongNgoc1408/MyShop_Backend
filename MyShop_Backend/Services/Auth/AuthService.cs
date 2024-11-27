@@ -148,8 +148,8 @@ namespace MyShop_Backend.Services.AuthServices
 			var token = new Random().Next(100000, 999999).ToString();
 			_cachingService.Set(email, token, TimeSpan.FromMinutes(5));
 
-			var message = $"Your password reset code is: {token}";
-			await _emailSender.SendEmailAsync(email, "OTP reset password", message);
+			var message = $"Mã xác thực khôi phục mật khẩu là: {token}";
+			await _emailSender.SendEmailAsync(email, "Mã xác thực khôi phục mật khẩu", message);
 
 			return true;
 		}
@@ -160,7 +160,7 @@ namespace MyShop_Backend.Services.AuthServices
 			_cachingService.Set(email, token, TimeSpan.FromMinutes(5));
 
 			var message = $"Mã xác nhận tạo tài khoản MyShop: {token}";
-			await _emailSender.SendEmailAsync(email, "OTP", message);
+			await _emailSender.SendEmailAsync(email, "Mã xác thực", message);
 
 			return true;
 		}

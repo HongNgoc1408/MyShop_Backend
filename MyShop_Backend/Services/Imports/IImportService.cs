@@ -6,6 +6,7 @@ namespace MyShop_Backend.Services.Imports
 {
 	public interface IImportService
 	{
+
 		Task<ImportDTO> CreateImport(string userId, ImportRequest request);
 		Task<ImportDTO> UpdateImport(long importId, ImportRequest request);
 		Task<PagedResponse<ImportDTO>> GetAll(int page, int pageSize, string? search);

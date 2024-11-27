@@ -182,6 +182,7 @@ namespace MyShop_Backend.Services.Products
 				{
 					expression = CombineExpressions(expression, e => e.Discount > 0);
 				}
+
 				if (filters.Rating != null)
 				{
 					expression = CombineExpressions(expression, e => e.ProductReviews.Average(e => e.Star) >= filters.Rating);
@@ -224,15 +225,7 @@ namespace MyShop_Backend.Services.Products
 											   .GetPagedOrderByDescendingAsync(filters.Page, filters.PageSize, expression, e => e.CreatedAt),
 				};
 				var res = _mapper.Map<IEnumerable<ProductDTO>>(products);
-				//.Select(x =>
-				//{
-				//    var image = products.Single(e => e.Id == x.Id).Images.FirstOrDefault();
-				//    if (image != null)
-				//    {
-				//        x.ImageUrl = image.ImageUrl;
-				//    }
-				//    return x;
-				//});
+		
 
 				return new PagedResponse<ProductDTO>
 				{

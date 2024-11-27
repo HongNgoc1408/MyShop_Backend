@@ -26,7 +26,7 @@ namespace MyShop_Backend.Controllers
 			}
 			else
 			{
-				return Unauthorized("Ten hoac mat khau khong chinh xac");
+				return Unauthorized("Tên hoặc mật khẩu không chính xác");
 			}
 		}
 
