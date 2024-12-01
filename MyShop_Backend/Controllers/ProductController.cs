@@ -139,7 +139,7 @@ namespace MyShop_Backend.Controllers
 		public async Task<IActionResult> Update(long id, [FromForm] ProductRequest request, [FromForm] IFormFileCollection images)
 		{
 			try
-			{
+			{	
 				var result = await _productService.UpdateProductAsync(id, request, images);
 				return Ok(result);
 			}

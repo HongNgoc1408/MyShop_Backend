@@ -15,6 +15,10 @@ using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 using System.Text;
 using MyShop_Backend.Repositories.ProductReviewRepositories;
+using System.Drawing;
+using System.Security.Cryptography;
+using System.Linq;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace MyShop_Backend.Services.Products
 {
@@ -170,6 +174,12 @@ namespace MyShop_Backend.Services.Products
 						expression = CombineExpressions(expression, e => (e.Price - (e.Price * (e.Discount / 100.0))) <= filters.MaxPrice);
 					}
 				}
+				// Nếu có từ khóa tìm kiếm, gọi hàm GetSearchProducts
+				//if (!string.IsNullOrEmpty(filters.Key))
+				//{
+				//	expression = await GetSearchProducts(filters.Key);
+				//	totalProduct = expression.Count(); // Tổng số sản phẩm dựa trên kết quả tìm kiếm
+				//}
 
 				if (!string.IsNullOrEmpty(filters.Key))
 				{
@@ -211,7 +221,7 @@ namespace MyShop_Backend.Services.Products
 				totalProduct = await _productRepository.CountAsync(expression);
 				Expression<Func<Product, double>> priceExp = e => e.Price - (e.Price * (e.Discount / 100.0));
 
-				 products = filters.Sorter switch
+				products = filters.Sorter switch
 				{
 					SortEnum.SOLD => await _productRepository
 											   .GetPagedOrderByDescendingAsync(filters.Page, filters.PageSize, expression, e => e.Sold),
@@ -225,7 +235,7 @@ namespace MyShop_Backend.Services.Products
 											   .GetPagedOrderByDescendingAsync(filters.Page, filters.PageSize, expression, e => e.CreatedAt),
 				};
 				var res = _mapper.Map<IEnumerable<ProductDTO>>(products);
-		
+
 
 				return new PagedResponse<ProductDTO>
 				{
@@ -239,6 +249,23 @@ namespace MyShop_Backend.Services.Products
 			{
 				throw new Exception(ex.Message);
 			}
+		}
+
+		public async Task<IEnumerable<ProductDTO>> GetSearchProducts(string key)
+		{
+			var inputWords = key.Trim().Split(' ').Select(word => word.ToLower());
+
+			var products = await _productRepository.GetPagedAsync(1, 5,
+				e => inputWords.All(word => e.Name.ToLower().Contains(word)), e => e.Name);
+
+			if (!products.Any())
+			{
+				var productList = await _productRepository.GetPagedAsync(1, 20,
+					e => inputWords.Any(word => e.Name.ToLower().Contains(word)), e => e.Name);
+
+				products = productList.Where(e => IsMatchingSearchCriteriaWithoutTones(e.Name, inputWords)).Take(5);
+			}
+			return _mapper.Map<IEnumerable<ProductDTO>>(products);
 		}
 
 		private Expression<Func<T, bool>> CombineExpressions<T>(Expression<Func<T, bool>> expr1, Expression<Func<T, bool>> expr2)
@@ -273,7 +300,7 @@ namespace MyShop_Backend.Services.Products
 				var res = _mapper.Map<ProductDetailsResponse>(product);
 
 				res.ColorSizes = _mapper.Map<IEnumerable<ColorSizeResponse>>(product.ProductColors);
-				
+
 				res.ImageUrls = product.Images.Select(e => e.ImageUrl);
 
 				return res;
@@ -327,23 +354,6 @@ namespace MyShop_Backend.Services.Products
 			}
 		}
 
-		public async Task<IEnumerable<ProductDTO>> GetSearchProducts(string key)
-		{
-			var inputWords = key.Trim().Split(' ').Select(word => word.ToLower());
-
-			var products = await _productRepository.GetPagedAsync(1, 5,
-				e => inputWords.All(word => e.Name.ToLower().Contains(word)), e => e.Name);
-
-			if (!products.Any())
-			{
-				var productList = await _productRepository.GetPagedAsync(1, 20,
-					e => inputWords.Any(word => e.Name.ToLower().Contains(word)), e => e.Name);
-
-				products = productList.Where(e => IsMatchingSearchCriteriaWithoutTones(e.Name, inputWords)).Take(5);
-			}
-			return _mapper.Map<IEnumerable<ProductDTO>>(products);
-		}
-
 		private bool IsMatchingSearchCriteriaWithoutTones(string productName, IEnumerable<string> inputWords)
 		{
 			var normalizedProductName = RemoveVietnameseTones(productName).ToLower();
@@ -383,8 +393,10 @@ namespace MyShop_Backend.Services.Products
 
 					List<string> colorFileNames = new();
 					List<IFormFile> colorImages = new();
-					List<ProductSize> productSizes = new();
 
+					//List<string> listImageDelete = new();
+
+					List<ProductSize> productSizes = new();
 					List<ProductColor> pColorDelete = new();
 					var oldProductColors = await _productColorRepository.GetAsync(e => e.ProductId == product.Id);
 
@@ -399,19 +411,67 @@ namespace MyShop_Backend.Services.Products
 						pColorDelete.AddRange(colorDel);
 
 						//cập nhật số lượng size cũ
-						var oldIds = request.ColorSizes.Where(e => e.Id != null).Select(e => e.Id);
-						var colorUpdate = oldProductColors.Where(old => oldIds.Contains(old.Id));
+						var oldColorIds = request.ColorSizes.Where(e => e.Id != null).Select(e => e.Id);
+						var colorUpdate = oldProductColors.Where(old => oldColorIds.Contains(old.Id));
 
 						foreach (var color in colorUpdate)
 						{
 							var matchingColor = request.ColorSizes.Single(e => e.Id == color.Id);
+							var newImage = request.ColorSizes.SingleOrDefault(e => e.Id == color.Id);
+							if (newImage != null)
+							{
+								color.ColorName = newImage.ColorName;
+								if (newImage.Image != null)
+								{
+									var name = "";
+									name = Guid.NewGuid().ToString() + Path.GetExtension(newImage.Image.FileName);
+									colorFileNames.Add(name);
+									colorImages.Add(newImage.Image);
+									//listImageDelete.Add(color.ImageUrl);
+
+									color.ImageUrl = Path.Combine(productPath, name);
+								}
+							}
+
+
+							var newSizes = matchingColor.SizeInStocks.Select(s => (long)s.SizeId).ToList();
+							var oldSizes = color.ProductSizes.Select(s => (long)s.SizeId).ToList();
+
+							var lstNewSize = newSizes.Except(oldSizes).Select(sizeId =>
+							{
+								var matchingSize = matchingColor.SizeInStocks.Single(s => s.SizeId == sizeId);
+								return new ProductSize
+								{
+									ProductColorId = color.Id,
+									SizeId = sizeId,
+									InStock = matchingSize.InStock
+								};
+							});
+
 							foreach (var size in color.ProductSizes)
 							{
-								var matchingSize = matchingColor.SizeInStocks.Single(s => s.SizeId == size.SizeId);
-								size.InStock = matchingSize.InStock;
+								if (!newSizes.Contains(size.SizeId))
+								{
+									await _productSizeRepository.DeleteAsync(matchingColor.Id, size.SizeId);
+								}
+								else
+								{
+									var matchingSize = matchingColor.SizeInStocks.SingleOrDefault(s => s.SizeId == size.SizeId);
+									if (matchingSize != null)
+									{
+										size.InStock = matchingSize.InStock;
+									}
+								}
+							}
+							if (lstNewSize.Any())
+							{
+								await _productSizeRepository.AddAsync(lstNewSize);
 							}
 						}
-
+						if (colorUpdate.Any())
+						{
+							await _productColorRepository.UpdateAsync(colorUpdate);
+						}
 					}
 					//xóa màu
 					_fileStorage.Delete(pColorDelete.Select(e => e.ImageUrl));
@@ -452,18 +512,7 @@ namespace MyShop_Backend.Services.Products
 							productSizes.AddRange(sizes);
 						}
 						await _productSizeRepository.AddAsync(productSizes);
-						await _fileStorage.SaveAsync(productPath, colorImages, colorFileNames);
 					}
-
-					//var pMaterials = await _productMaterialRepository.GetAsync(e => e.ProductId == product.Id);
-					//await _productMaterialRepository.DeleteRangeAsync(pMaterials);
-
-					//var productMaterials = request.MaterialIds.Select(e => new ProductMaterial
-					//{
-					//	ProductId = id,
-					//	MaterialId = e
-					//});
-					//await _productMaterialRepository.AddAsync(productMaterials);
 
 					List<Image> imageDelete = new();
 					var oldImgs = await _imageRepository.GetImageByProductIdAsync(id);
@@ -495,6 +544,11 @@ namespace MyShop_Backend.Services.Products
 						});
 						await _imageRepository.AddAsync(imgs);
 						await _fileStorage.SaveAsync(productPath, images, fileNames);
+					}
+
+					if (colorImages.Any())
+					{
+						await _fileStorage.SaveAsync(productPath, colorImages, colorFileNames);
 					}
 
 					await _productRepository.UpdateAsync(product);

@@ -172,7 +172,7 @@ namespace MyShop_Backend.Services.Imports
 					DateTimeStyles.None,
 					out dateSearch);
 
-				Expression<Func<Import, bool>> expression = e => e.Id.Equals(isSearch) || (!isLong && isDate && e.CreatedAt.Date == dateSearch.Date) || (!isLong && isDate && e.EntryDate.Date == dateSearch.Date);
+				Expression<Func<Import, bool>> expression = e => e.Id.Equals(isSearch) || (!isLong && e.User.FullName.ToLower().Contains(search.ToLower())) || (isDate && (e.CreatedAt.Date == dateSearch.Date || e.EntryDate.Date == dateSearch.Date));
 
 				total = await _importRepository.CountAsync(expression);
 				import = await _importRepository.GetPagedOrderByDescendingAsync(page, pageSize, expression, e => e.CreatedAt);
