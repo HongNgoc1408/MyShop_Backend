@@ -86,7 +86,6 @@ namespace MyShop_Backend.CommonRepository.ProductRepository
 					.Include(e => e.Caterory)
 					.Include(e => e.Images)
 					.AsSingleQuery()
-					
 					.ToListAsync()
 				: await _dbContext.Products
 					.Where(expression)

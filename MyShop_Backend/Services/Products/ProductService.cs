@@ -15,10 +15,6 @@ using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 using System.Text;
 using MyShop_Backend.Repositories.ProductReviewRepositories;
-using System.Drawing;
-using System.Security.Cryptography;
-using System.Linq;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace MyShop_Backend.Services.Products
 {
@@ -174,13 +170,6 @@ namespace MyShop_Backend.Services.Products
 						expression = CombineExpressions(expression, e => (e.Price - (e.Price * (e.Discount / 100.0))) <= filters.MaxPrice);
 					}
 				}
-				// Nếu có từ khóa tìm kiếm, gọi hàm GetSearchProducts
-				//if (!string.IsNullOrEmpty(filters.Key))
-				//{
-				//	expression = await GetSearchProducts(filters.Key);
-				//	totalProduct = expression.Count(); // Tổng số sản phẩm dựa trên kết quả tìm kiếm
-				//}
-
 				if (!string.IsNullOrEmpty(filters.Key))
 				{
 					var inputWords = filters.Key.Trim().Split(' ').Select(word => word.ToLower());
@@ -256,16 +245,18 @@ namespace MyShop_Backend.Services.Products
 			var inputWords = key.Trim().Split(' ').Select(word => word.ToLower());
 
 			var products = await _productRepository.GetPagedAsync(1, 5,
-				e => inputWords.All(word => e.Name.ToLower().Contains(word)), e => e.Name);
+				e => inputWords.All(word => e.Name.ToLower().Contains(word)), e => e.Sold);
 
 			if (!products.Any())
 			{
 				var productList = await _productRepository.GetPagedAsync(1, 20,
-					e => inputWords.Any(word => e.Name.ToLower().Contains(word)), e => e.Name);
+					null, e => e.Sold);
 
 				products = productList.Where(e => IsMatchingSearchCriteriaWithoutTones(e.Name, inputWords)).Take(5);
 			}
-			return _mapper.Map<IEnumerable<ProductDTO>>(products);
+
+			var res =  _mapper.Map<IEnumerable<ProductDTO>>(products);
+			return res;
 		}
 
 		private Expression<Func<T, bool>> CombineExpressions<T>(Expression<Func<T, bool>> expr1, Expression<Func<T, bool>> expr2)

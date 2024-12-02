@@ -11,7 +11,6 @@ namespace MyShop_Backend.Services.Products
 
 		Task<PagedResponse<ProductDTO>> GetFeaturedProductsAsync(int page, int pageSize);
 		Task<PagedResponse<ProductDTO>> GetFilterProductsAsync(ProductFiltersRequest filters);
-
 		Task<IEnumerable<ProductDTO>> GetSearchProducts(string key);
 		Task<IEnumerable<ColorDTO>> GetColorById(long id);
 		Task<IEnumerable<SizeDTO>> GetSizeById(long id);
